@@ -1,0 +1,7 @@
+[
+  {"eye_color": {"type": "string",
+    "value": ["Blue", "Green"]}},
+  {"eye_color": {"type": "string",
+    "value": ["Brown"]}}
+
+]

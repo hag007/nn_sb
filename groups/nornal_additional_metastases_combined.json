@@ -1,0 +1,148 @@
+[
+  {
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "UVM"
+      ]
+    },
+    "clinical_M": {
+      "type": "string",
+      "value": [
+        "M0"
+      ]
+    },
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        "Distant Metastasis"
+      ]
+    },
+    "new_neoplasm_event_occurrence_anatomic_site": {
+      "type": "string",
+      "value": [
+        "Liver"
+      ]
+    }
+  },
+  {
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "UVM"
+      ]
+    },
+    "clinical_M": {
+      "type": "string",
+      "value": [
+        "M0"
+      ]
+    },
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        ""
+      ]
+    },
+    "new_neoplasm_event_occurrence_anatomic_site": {
+      "type": "string",
+      "value": [
+        ""
+      ]
+    }
+  },
+  {
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "SKCM"
+      ]
+    },
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        "Distant Metastasis"
+      ]
+    },
+    "new_tumor_metastasis_anatomic_site": {
+      "type": "string",
+      "value": [
+        "Liver"
+      ]
+    }
+  },
+  {
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "SKCM"
+      ]
+    },
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        "Distant Metastasis"
+      ]
+    },
+    "new_tumor_metastasis_anatomic_site": {
+      "type": "string",
+      "value": [
+        "Lung"
+      ]
+    }
+  },
+  {
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "SKCM"
+      ]
+    },
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        "Distant Metastasis"
+      ]
+    },
+    "new_tumor_metastasis_anatomic_site": {
+      "type": "string",
+      "value": [
+        "Brain"
+      ]
+    }
+  },
+  {
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "SKCM"
+      ]
+    },
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        ""
+      ]
+    },
+    "new_tumor_metastasis_anatomic_site": {
+      "type": "string",
+      "value": [
+        ""
+      ]
+    }
+  },
+  {
+    "sample_type.samples": {
+      "type": "string",
+      "value": [
+        "Solid Tissue Normal"
+      ]
+    },
+    "primary_site": {
+      "type": "string",
+      "value": [
+        "Liver"
+      ]
+    }
+  }
+]

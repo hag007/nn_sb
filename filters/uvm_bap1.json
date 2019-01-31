@@ -1,0 +1,7 @@
+[
+  {"BAP1": {"type": "string",
+    "value": ["1", "2"]}},
+  {"BAP1": {"type": "string",
+    "value": ["0"]}}
+
+]

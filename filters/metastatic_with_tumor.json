@@ -1,0 +1,16 @@
+[
+  {
+    "sample_type.samples": {
+      "type": "string",
+      "value": [
+        "Metastatic"
+      ]
+    },
+    "person_neoplasm_cancer_status": {
+      "type": "string",
+      "value": [
+        "WITH TUMOR"
+      ]
+    }
+  }
+]

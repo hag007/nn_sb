@@ -1,0 +1,14 @@
+[
+{
+    "melanoma_clark_level_value": {
+      "type": "string",
+      "value": ["IV"]
+    }
+  },
+  {
+    "melanoma_clark_level_value": {
+      "type": "string",
+      "value": ["I", "II", "III"]
+    }
+  }
+]

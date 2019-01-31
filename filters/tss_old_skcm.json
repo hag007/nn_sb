@@ -1,0 +1,26 @@
+[
+  {
+    "old_tumor_tissue_site": {
+      "type": "string",
+      "value": [
+        "Trunk"
+      ]
+    }
+  },
+  {
+    "old_tumor_tissue_site": {
+      "type": "string",
+      "value": [
+        "Head and Neck"
+      ]
+    }
+  },
+  {
+    "old_tumor_tissue_site": {
+      "type": "string",
+      "value": [
+        "Extremities"
+      ]
+    }
+  }
+]

@@ -1,0 +1,23 @@
+base_folder={BASE_FOLDER}
+networks_folder=$base_folder/networks
+datasets_folder=$base_folder/datasets
+dataset_folder={DATASET_DIR}
+data_folder=$dataset_folder/data
+cache_folder=$dataset_folder/cache
+output_folder=$dataset_folder/output
+is_greedy={IS_GREEDY}
+algo_dir={ALGO_DIR}
+num_of_modules={NUM_OF_MODULES}
+overlap_threshold={OVERLAP_THRESHOLD}
+
+echo {SCORE_FILE_NAME}
+
+
+java -jar $algo_dir/jactivemodules.jar \
+                                 {NETWORK_NAME} \
+                                 {SCORE_FILE_NAME} \
+                                 $is_greedy \
+                                 $num_of_modules \
+                                 $overlap_threshold \
+                                 {OUTPUT_FILE}
+

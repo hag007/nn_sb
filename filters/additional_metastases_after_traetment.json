@@ -1,0 +1,42 @@
+[
+  {
+    "clinical_M": {
+      "type": "string",
+      "value": [
+        "M0"
+      ]
+    },
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        "Distant Metastasis"
+      ]
+    },
+    "new_neoplasm_event_occurrence_anatomic_site": {
+      "type": "string",
+      "value": [
+        "Liver"
+      ]
+    }
+  },
+  {
+    "clinical_M": {
+      "type": "string",
+      "value": [
+        "M0"
+      ]
+    },
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        ""
+      ]
+    },
+    "new_neoplasm_event_occurrence_anatomic_site": {
+      "type": "string",
+      "value": [
+        ""
+      ]
+    }
+  }
+]

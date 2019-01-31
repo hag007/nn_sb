@@ -1,0 +1,15 @@
+[
+  {
+      "mitotic_count": {
+        "type": "string",
+        "value": [""]
+      }
+    },
+    {
+      "mitotic_count": {
+        "type": "number",
+        "op" : "gt",
+        "value": 20
+      }
+    }
+]

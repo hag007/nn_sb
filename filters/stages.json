@@ -1,0 +1,23 @@
+[
+        {"tumor_stage.diagnoses": {"type": "string",
+                                   "value": ["stage i"]}},
+        {"tumor_stage.diagnoses": {"type": "string",
+                                   "value": ["stage ii"]}},
+        {"tumor_stage.diagnoses": {"type": "string",
+                                   "value": ["stage iia"]}},
+        {"tumor_stage.diagnoses": {"type": "string",
+                                   "value": ["stage iib"]}},
+        {"tumor_stage.diagnoses": {"type": "string",
+                                   "value": ["stage iic"]}},
+        {"tumor_stage.diagnoses": {"type": "string",
+                                   "value": ["stage iii"]}},
+        {"tumor_stage.diagnoses": {"type": "string",
+                                   "value": ["stage iiia"]}},
+        {"tumor_stage.diagnoses": {"type": "string",
+                                   "value": ["stage iiib"]}},
+         {"tumor_stage.diagnoses": {"type": "string",
+                                    "value": ["stage iiic"]}},
+        {"tumor_stage.diagnoses": {"type": "string",
+                                   "value": ["stage iv"]}}
+
+    ]

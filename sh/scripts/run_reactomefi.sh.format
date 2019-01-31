@@ -1,0 +1,15 @@
+base_folder={BASE_FOLDER}
+networks_folder=$base_folder/networks
+datasets_folder=$base_folder/datasets
+dataset_folder={DATASET_DIR}
+data_folder=$dataset_folder/data
+cache_folder=$dataset_folder/cache
+output_folder=$dataset_folder/output
+
+
+
+
+java -jar {ALGO_DIR}/reactomefi.jar $data_folder/ge.tsv \
+                                    $networks_folder/{NETWORK_NAME}.sif \
+                                    1.2 \
+                                    $output_folder/reactomefi_modules.txt

@@ -1,0 +1,9 @@
+[{"sample_type.samples": {"type": "string", "value": ["Primary Tumor"]},
+                           "new_tumor_event_after_initial_treatment" : {"type": "string", "value" : ["YES"]}
+
+                          },
+{"sample_type.samples": {"type": "string", "value": ["Primary Tumor"]},
+                           "new_tumor_event_after_initial_treatment" : {"type": "string", "value" : ["NO"]}
+
+                          }
+  ]

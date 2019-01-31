@@ -1,0 +1,16 @@
+[
+  {
+    "sample_type.samples": {
+      "type": "string",
+      "value": [
+        "Solid Tissue Normal"
+      ]
+    },
+    "primary_site": {
+      "type": "string",
+      "value": [
+        "Lung", "Brain", "Liver", "Lymph"
+      ]
+    }
+  }
+]

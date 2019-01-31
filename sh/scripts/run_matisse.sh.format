@@ -1,0 +1,12 @@
+algo_base_dir={ALGO_BASE_DIR}
+
+
+java -jar $algo_base_dir/expander/executable7.0Batch.jar 3 \
+                                 {GE_FILE_NAME} \
+                                 {NETWORK_FILE_NAME} \
+                                 human \
+                                 {BETA} \
+                                 {MINIMAL_MODULE_SIZE} \
+                                 {MAXIMAL_MODULE_SIZE} \
+                                 {OUTPUT_FILE_NAME}
+

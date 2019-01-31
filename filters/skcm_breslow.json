@@ -1,0 +1,16 @@
+[
+{
+    "breslow_depth_value": {
+      "type": "number",
+      "op" : "lt",
+      "value": 4
+    }
+  },
+  {
+    "breslow_depth_value": {
+      "type": "number",
+      "op" : "gt",
+      "value": 6
+    }
+  }
+]

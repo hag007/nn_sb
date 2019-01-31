@@ -1,0 +1,35 @@
+[
+
+  {
+    "tcga_tumor_tissue_site": {
+      "type": "string",
+      "value": [
+        "Primary Tumor"
+      ]
+    }
+  },
+{
+    "tcga_tumor_tissue_site": {
+      "type": "string",
+      "value": [
+        "Regional Cutaneous or Subcutaneous Tissue (includes satellite and in-transit metastasis)"
+      ]
+    }
+},
+  {
+    "tcga_tumor_tissue_site": {
+      "type": "string",
+      "value": [
+        "Regional Lymph Node"
+      ]
+    }
+  },
+  {
+    "tcga_tumor_tissue_site": {
+      "type": "string",
+      "value": [
+        "Distant Metastasis"
+      ]
+    }
+  }
+]

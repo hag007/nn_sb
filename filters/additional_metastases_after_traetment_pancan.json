@@ -1,0 +1,468 @@
+[
+  {
+    "_name": "BRCA normal",
+    "_label": "1",
+    "sample_type.samples": {
+      "type": "string",
+      "value": [
+        "Solid Tissue Normal"
+      ]
+    },
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "BRCA"
+      ]
+    }
+  },
+  {
+    "_name": "BRCA liver",
+    "_label": "2",
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "BRCA"
+      ]
+    },
+    "clinical_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "pathologic_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        "Distant Metastasis"
+      ]
+    },
+    "new_neoplasm_event_occurrence_anatomic_site": {
+      "type": "string",
+      "value": [
+        "Liver"
+      ]
+    }
+  },
+  {
+    "_name": "BRCA other_m",
+    "_label": "3",
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "BRCA"
+      ]
+    },
+    "clinical_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "pathologic_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        "Distant Metastasis"
+      ]
+    },
+    "new_neoplasm_event_occurrence_anatomic_site": {
+      "type": "string",
+      "value": [
+        "Lung",
+        "Bone",
+        "lympth"
+      ]
+    }
+  },
+  {
+    "_name": "BRCA no_m",
+    "_label": "1",
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "BRCA"
+      ]
+    },
+    "clinical_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "pathologic_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        ""
+      ]
+    },
+    "new_neoplasm_event_occurrence_anatomic_site": {
+      "type": "string",
+      "value": [
+        ""
+      ]
+    }
+  },
+  {
+    "_name": "PAAD normal",
+    "_label": "5",
+    "sample_type.samples": {
+      "type": "string",
+      "value": [
+        "Solid Tissue Normal"
+      ]
+    },
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "PAAD"
+      ]
+    }
+  },
+  {
+    "_name": "PAAD liver",
+    "_label": "6",
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "PAAD"
+      ]
+    },
+    "clinical_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "pathologic_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        "Distant Metastasis"
+      ]
+    },
+    "new_neoplasm_event_occurrence_anatomic_site": {
+      "type": "string",
+      "value": [
+        "Liver"
+      ]
+    }
+  },
+  {
+    "_name": "PAAD other_m",
+    "_label": "7",
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "PAAD"
+      ]
+    },
+    "clinical_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "pathologic_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        "Distant Metastasis"
+      ]
+    },
+    "new_neoplasm_event_occurrence_anatomic_site": {
+      "type": "string",
+      "value": [
+        "Lung",
+        "Bone",
+        "lympth"
+      ]
+    }
+  },
+  {
+    "_name": "PAAD no_m",
+    "_label": "8",
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "PAAD"
+      ]
+    },
+    "clinical_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "pathologic_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        ""
+      ]
+    },
+    "new_neoplasm_event_occurrence_anatomic_site": {
+      "type": "string",
+      "value": [
+        ""
+      ]
+    }
+  },
+  {
+    "_name": "STAD normal",
+    "_label": "9",
+    "sample_type.samples": {
+      "type": "string",
+      "value": [
+        "Solid Tissue Normal"
+      ]
+    },
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "STAD"
+      ]
+    }
+  },
+  {
+    "_name": "STAD liver",
+    "_label": "10",
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "STAD"
+      ]
+    },
+    "clinical_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "pathologic_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        "Distant Metastasis"
+      ]
+    },
+    "new_neoplasm_event_occurrence_anatomic_site": {
+      "type": "string",
+      "value": [
+        "Liver"
+      ]
+    }
+  },
+  {
+    "_name": "STAD other_m",
+    "_label": "11",
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "STAD"
+      ]
+    },
+    "clinical_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "pathologic_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        "Distant Metastasis"
+      ]
+    },
+    "new_neoplasm_event_occurrence_anatomic_site": {
+      "type": "string",
+      "value": [
+        "Lung",
+        "Bone",
+        "lympth"
+      ]
+    }
+  },
+  {
+    "_name": "STAD no_m",
+    "_label": "12",
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "STAD"
+      ]
+    },
+    "clinical_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "pathologic_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        ""
+      ]
+    },
+    "new_neoplasm_event_occurrence_anatomic_site": {
+      "type": "string",
+      "value": [
+        ""
+      ]
+    }
+  },
+  {
+    "_name": "liver normal",
+    "_label": "13",
+    "sample_type.samples": {
+      "type": "string",
+      "value": [
+        "Solid Tissue Normal"
+      ]
+    },
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "LIHC"
+      ]
+    }
+  },
+  {
+    "_name": "UVM liver",
+    "_label": "14",
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "UVM"
+      ]
+    },
+    "clinical_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "pathologic_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        "Distant Metastasis"
+      ]
+    },
+    "new_neoplasm_event_occurrence_anatomic_site": {
+      "type": "string",
+      "value": [
+        "Liver"
+      ]
+    }
+  },
+  {
+    "_name": "UVM no_m",
+    "_label": "15",
+    "disease_code": {
+      "type": "string",
+      "value": [
+        "UVM"
+      ]
+    },
+    "clinical_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "pathologic_M": {
+      "type": "string",
+      "value": [
+        "M0",
+        ""
+      ]
+    },
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        ""
+      ]
+    },
+    "new_neoplasm_event_occurrence_anatomic_site": {
+      "type": "string",
+      "value": [
+        ""
+      ]
+    }
+  }
+]

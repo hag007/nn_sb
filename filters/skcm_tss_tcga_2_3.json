@@ -1,0 +1,18 @@
+[
+{
+    "tcga_tumor_tissue_site": {
+      "type": "string",
+      "value": [
+        "Regional Lymph Node"
+      ]
+    }
+  },
+  {
+    "tcga_tumor_tissue_site": {
+      "type": "string",
+      "value": [
+        "Distant Metastasis"
+      ]
+    }
+  }
+]

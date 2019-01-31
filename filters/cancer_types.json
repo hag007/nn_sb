@@ -1,0 +1,18 @@
+[
+  {
+      "disease_code": {
+        "type": "string",
+        "value": [
+          "GBM"
+        ]
+      }
+    },
+    {
+      "disease_code": {
+        "type": "string",
+        "value": [
+          "LGG"
+        ]
+      }
+    }
+]

@@ -1,0 +1,18 @@
+[
+  {
+      "origin": {
+        "type": "string",
+        "value": [
+          "AR"
+        ]
+      }
+    },
+    {
+      "origin": {
+        "type": "string",
+        "value": [
+          "NO_AR"
+        ]
+      }
+    }
+]

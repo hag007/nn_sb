@@ -1,0 +1,7 @@
+[
+  {"histological_type": {"type": "string",
+    "value": ["Epithelioid Cell"]}},
+  {"histological_type": {"type": "string",
+    "value": ["Spindle Cell"]}}
+
+]

@@ -1,0 +1,16 @@
+se_folder={BASE_FOLDER}
+network_folder=$base_folder/networks
+datasets_folder=$base_folder/datasets
+data_folder=$dataset_folder/data
+cache_folder=$dataset_folder/cache
+output_folder=$dataset_folder/output
+dataset_folder={DATASET_DIR}
+export NETBOX_HOME={NETBOX_DIR} # ../repos/netbox
+export PATH=$PATH:$NETBOX_HOME/bin
+
+echo $NETBOX_HOME/bin/netAnalyze.py
+echo {CONFIG_FILE_NAME}
+
+python $NETBOX_HOME/bin/netAnalyze.py {CONFIG_FILE_NAME}
+
+

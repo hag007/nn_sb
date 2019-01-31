@@ -1,0 +1,6 @@
+     [
+       {"melanoma_ulceration_indicator": {"type": "string",
+                                                                 "value": ["YES"]}},
+       {"melanoma_ulceration_indicator": {"type": "string",
+                                                                 "value": ["NO"]}}
+     ]

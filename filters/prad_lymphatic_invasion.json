@@ -1,0 +1,18 @@
+[
+  {
+      "lymphatic_invasion": {
+        "type": "string",
+        "value": [
+          "YES"
+        ]
+      }
+    },
+    {
+      "lymphatic_invasion": {
+        "type": "string",
+        "value": [
+          "NO"
+        ]
+      }
+    }
+]

@@ -1,0 +1,22 @@
+[
+    {
+      "_label": "1",
+      "_name" : "normal",
+      "sample_type.samples": {
+        "type": "string",
+        "value": [
+          "Solid Tissue Normal"
+        ]
+      }
+    },
+     {
+       "_label": "2",
+      "_name" : "tumor",
+      "sample_type.samples": {
+        "type": "string",
+        "value": [
+          "Primary Tumor"
+        ]
+      }
+    }
+  ]

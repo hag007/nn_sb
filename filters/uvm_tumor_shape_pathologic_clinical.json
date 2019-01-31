@@ -1,0 +1,7 @@
+[
+  {"tumor_shape_pathologic_clinical": {"type": "string",
+    "value": ["Mushroom"]}},
+  {"tumor_shape_pathologic_clinical": {"type": "string",
+    "value": ["Dome"]}}
+
+]

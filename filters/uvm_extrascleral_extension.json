@@ -1,0 +1,7 @@
+[
+  {"extrascleral_extension": {"type": "string",
+    "value": ["YES"]}},
+  {"extrascleral_extension": {"type": "string",
+    "value": ["NO"]}}
+
+]

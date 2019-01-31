@@ -1,0 +1,18 @@
+[
+  {
+    "neoplasm_histologic_grade": {
+      "type": "string",
+      "value": [
+        "G2"
+      ]
+    }
+  },
+  {
+    "neoplasm_histologic_grade": {
+    "type": "string",
+    "value": [
+      "G3"
+    ]
+  }
+}
+]

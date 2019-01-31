@@ -1,0 +1,18 @@
+[
+  {
+      "PAM50Call_RNAseq": {
+        "type": "string",
+        "value": [
+          "LumA"
+        ]
+      }
+    },
+    {
+      "PAM50Call_RNAseq": {
+        "type": "string",
+        "value": [
+          "LumB"
+        ]
+      }
+    }
+]

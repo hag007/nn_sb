@@ -1,0 +1,17 @@
+[
+  {
+    "sample_type.samples": {
+      "type": "string",
+      "value": [
+        "Primary Tumor"
+      ]
+    },
+    "person_neoplasm_cancer_status": {
+      "type": "string",
+      "value": [
+        "WITH TUMOR"
+      ]
+    }
+  }
+]
+

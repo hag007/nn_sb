@@ -1,0 +1,18 @@
+[
+  {
+    "new_neoplasm_event_type": {
+      "type": "string",
+      "value": [
+        "Locoregional Disease"
+      ]
+    }
+  },
+  {
+    "new_neoplasm_event_type": {
+    "type": "string",
+    "value": [
+      "Progression of Disease"
+    ]
+  }
+}
+]

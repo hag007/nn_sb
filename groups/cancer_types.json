@@ -1,0 +1,22 @@
+[
+  {
+      "_name" : "BRCA",
+      "_label" : "1",
+      "disease_code": {
+        "type": "string",
+        "value": [
+          "BRCA"
+        ]
+      }
+    },
+    {
+      "_name" : "UVM",
+      "_label" : "2",
+      "disease_code": {
+        "type": "string",
+        "value": [
+          "UVM"
+        ]
+      }
+    }
+]

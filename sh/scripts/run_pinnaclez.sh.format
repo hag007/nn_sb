@@ -1,0 +1,44 @@
+bbase_folder={BASE_DIR} # home/hag007/bnet
+network_folder={NETWORK_DIR} # $base_folder/networks
+datasets_folder={DATSETS_DIR} # $base_folder/datasets
+dataset_folder={DATASET_DIR} # $datasets_folder/TNFa_2
+data_folder={DATA_DIR} # $dataset_folder/data
+cache_folder={CACHE_DIR} # $dataset_folder/cache
+output_folder={OUTPUT_DIR} # $dataset_folder/output
+
+
+radius=10
+max_degree=4000
+score=MI
+trials=100
+improvement=0.001
+ST1=0.05
+ST2=0.11
+ST3=0.00005
+
+java -jar {PINNACLEZ_DIR}/pinnaclez-ORIGINAL.jar $data_folder/TNFa_class \
+                                 $data_folder/ge.tsv \
+                                 ~/bnet/networks/dip_out.sif \
+                                 -r $radius \
+                                 -d $max_degree \
+                                 -s $score \
+                                 -t $trials \
+                                 -i $improvement \
+                                 -1 $ST1 \
+                                 -2 $ST2 \
+                                 -3 $ST3 \
+                                 -o $output_folder/pinnaclez_results.txt
+
+
+# java -jar ../repos/pinnaclez/pinnaclez-ORIGINAL.jar $data_folder/TNFa_class \
+#                                  $data_folder/ge.tsv \
+#                                  ~/bnet/networks/dip_out.sif \
+#                                  -r $radius \
+#                                  -d $max_degree \
+#                                  -s $score \
+#                                  -t $trials \
+#                                  -i $improvement \
+#                                  -1 $ST1 \
+#                                  -2 $ST2 \
+#                                  -3 $ST3 \
+#                                  -o $output_folder/pinnaclez_results.txt

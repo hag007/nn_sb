@@ -1,0 +1,19 @@
+[
+
+  {
+    "cytogenetic_abnormality": {
+      "type": "string",
+      "value": [
+        "Chromosome 6p gain", "Chromosome 1 loss", "Chromosome 3 loss",""
+      ]
+    }
+  },
+{
+    "cytogenetic_abnormality": {
+      "type": "string",
+      "value": [
+        "Chromosome 8q gain"
+      ]
+    }
+}
+]
