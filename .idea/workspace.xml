@@ -4,7 +4,10 @@
     <bookmark url="file://$PROJECT_DIR$/ge_pca_by_samples.py" line="22" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9e55475e-0c21-4595-b296-132938523ae1" name="Default" comment="" />
+    <list default="true" id="9e55475e-0c21-4595-b296-132938523ae1" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/ge_pca_by_samples.py" beforeDir="false" afterPath="$PROJECT_DIR$/ge_pca_by_samples.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/combat_remote.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/combat_remote.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -20,8 +23,8 @@
       <file leaf-file-name="ge_pca_by_samples.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ge_pca_by_samples.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="209">
-              <caret line="26" column="36" selection-start-line="26" selection-start-column="36" selection-end-line="26" selection-end-column="36" />
+            <state relative-caret-position="530">
+              <caret line="122" column="26" lean-forward="true" selection-start-line="122" selection-start-column="26" selection-end-line="122" selection-end-column="26" />
               <folding>
                 <element signature="e#1#52#0" expanded="true" />
               </folding>
@@ -32,8 +35,8 @@
       <file leaf-file-name="combat_remote.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/utils/combat_remote.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="214" column="77" selection-start-line="214" selection-start-column="77" selection-end-line="214" selection-end-column="77" />
+            <state relative-caret-position="608">
+              <caret line="256" column="97" selection-start-line="256" selection-start-column="97" selection-end-line="256" selection-end-column="97" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -183,6 +186,11 @@
               <item name="pytorch" type="b2602c69:ProjectViewProjectNode" />
               <item name="pytorch" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="pytorch" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pytorch" type="462c0819:PsiDirectoryNode" />
+              <item name="utils" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -206,7 +214,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.combat_remote">
+  <component name="RunManager" selected="Python.ge_pca_by_samples">
     <configuration name="combat_remote" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="pytorch" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -306,8 +314,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.combat_remote" />
         <item itemvalue="Python.ge_pca_by_samples" />
+        <item itemvalue="Python.combat_remote" />
         <item itemvalue="Python.constants" />
         <item itemvalue="Python.infra" />
         <item itemvalue="Python.pca" />
@@ -329,6 +337,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="-4" width="1855" height="1084" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49894738" visible="true" weight="0.24959569" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -793,16 +802,6 @@ ax.plot(X, y, &quot;.&quot;)</expression-string>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ge_pca_by_samples.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="26" column="36" selection-start-line="26" selection-start-column="36" selection-end-line="26" selection-end-column="36" />
-          <folding>
-            <element signature="e#1#52#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/groups/primary_normal.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="266">
@@ -810,10 +809,20 @@ ax.plot(X, y, &quot;.&quot;)</expression-string>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/ge_pca_by_samples.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="530">
+          <caret line="122" column="26" lean-forward="true" selection-start-line="122" selection-start-column="26" selection-end-line="122" selection-end-column="26" />
+          <folding>
+            <element signature="e#1#52#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/utils/combat_remote.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="214" column="77" selection-start-line="214" selection-start-column="77" selection-end-line="214" selection-end-column="77" />
+        <state relative-caret-position="608">
+          <caret line="256" column="97" selection-start-line="256" selection-start-column="97" selection-end-line="256" selection-end-column="97" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>

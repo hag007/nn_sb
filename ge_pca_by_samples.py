@@ -20,7 +20,7 @@ from utils.param_builder import build_gdc_params, build_tcga_params
 
 if __name__=="__main__":
 
-    for dataset in ["COMB","BRCA"]:
+    for dataset in ["COMB"]:
         constants.update_dirs(DATASET_NAME_u=dataset)
         meta_groups= [json.load(file("groups/temp.json"))]
         constants.update_dirs(CANCER_TYPE_u=dataset)

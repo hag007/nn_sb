@@ -254,4 +254,4 @@ if __name__ == "__main__":
 
         sys.stdout.write(str(ebat.iloc[:5, :5]))
 
-        ebat.to_csv("TCGA-{}.htseq_fpkm_bc.tsv".format(dataset), sep="\t")
+        ebat.to_csv(os.path.join(constants.DATA_DIR, "TCGA-{}.htseq_fpkm_bc.tsv".format(dataset)), sep="\t")
