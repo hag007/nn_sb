@@ -249,7 +249,7 @@ if __name__ == "__main__":
 
         t = time.time()
 
-        ebat = combat(dat, pheno['sample_type.samples'])
+        ebat = combat(dat, pheno['batch_number'])
         sys.stdout.write("%.2f seconds\n" % (time.time() - t))
 
         sys.stdout.write(str(ebat.iloc[:5, :5]))

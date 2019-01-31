@@ -4,10 +4,7 @@
     <bookmark url="file://$PROJECT_DIR$/ge_pca_by_samples.py" line="22" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9e55475e-0c21-4595-b296-132938523ae1" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/ge_pca_by_samples.py" beforeDir="false" afterPath="$PROJECT_DIR$/ge_pca_by_samples.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/combat_remote.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/combat_remote.py" afterDir="false" />
-    </list>
+    <list default="true" id="9e55475e-0c21-4595-b296-132938523ae1" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
