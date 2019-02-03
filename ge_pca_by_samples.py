@@ -1,7 +1,9 @@
 
 from utils.ensembl2gene_symbol import e2g_convertor
 from matplotlib import style
-style.use("ggplot")
+import matplotlib
+matplotlib.use('Agg')
+matplotlib.use('pdf')
 from scipy.stats import zscore
 import scipy
 import logging
@@ -20,14 +22,14 @@ from utils.param_builder import build_gdc_params, build_tcga_params
 
 if __name__=="__main__":
 
-    for dataset in ["COMB"]:
+    for dataset in ["PANCAN"]:
         constants.update_dirs(DATASET_NAME_u=dataset)
         meta_groups= [json.load(file("groups/temp.json"))]
         constants.update_dirs(CANCER_TYPE_u=dataset)
-        data_normalizaton = "fpkm_bc"
+        data_normalizaton = "fpkm"
         gene_expression_file_name, phenotype_file_name, survival_file_name, mutation_file_name, mirna_file_name, pval_preprocessing_file_name = build_gdc_params(dataset=dataset, data_normalizaton=data_normalizaton)
-        tested_gene_list_file_name= "protein_coding_long.txt" # "mir_total.txt" #
-        total_gene_list_file_name= "protein_coding_long.txt" # "mir_total.txt" #
+        tested_gene_list_file_name="protein_coding_long.txt" # "mir_total.txt" # 
+        total_gene_list_file_name= "protein_coding_long.txt" # mir_total.txt" #          
         var_th_index=200
         is_unsupervised=True
         start_k=2
