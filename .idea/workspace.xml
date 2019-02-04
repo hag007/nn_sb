@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/ge_pca_by_samples.py" line="22" />
+    <bookmark url="file://$PROJECT_DIR$/ge_pca_by_samples.py" line="23" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9e55475e-0c21-4595-b296-132938523ae1" name="Default" comment="" />
+    <list default="true" id="9e55475e-0c21-4595-b296-132938523ae1" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/cancer_type_dataset.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/make_animation.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/torch_main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/torch_vae.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/constants.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ge_pca_by_samples.py" beforeDir="false" afterPath="$PROJECT_DIR$/ge_pca_by_samples.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/groups/cancer_types.json" beforeDir="false" afterPath="$PROJECT_DIR$/groups/cancer_types.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/groups/temp.json" beforeDir="false" afterPath="$PROJECT_DIR$/groups/temp.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/ensembl2gene_symbol.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/ensembl2gene_symbol.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/pca.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/pca.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/tsne.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/tsne.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,11 +30,32 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ge_pca_by_samples.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ge_pca_by_samples.py">
+      <file leaf-file-name="torch_main.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/torch_main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="530">
-              <caret line="122" column="26" lean-forward="true" selection-start-line="122" selection-start-column="26" selection-end-line="122" selection-end-column="26" />
+            <state relative-caret-position="2318">
+              <caret line="139" column="4" selection-start-line="139" selection-start-column="4" selection-end-line="139" selection-end-column="4" />
+              <folding>
+                <element signature="e#0#12#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="make_animation.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/make_animation.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="19">
+              <caret line="1" selection-start-line="1" selection-end-line="1" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pca.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/utils/pca.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="171">
+              <caret line="14" column="37" selection-start-line="14" selection-end-line="14" selection-end-column="37" />
               <folding>
                 <element signature="e#1#52#0" expanded="true" />
               </folding>
@@ -29,89 +63,68 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="combat_remote.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/utils/combat_remote.py">
+      <file leaf-file-name="function_base.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/numpy/lib/function_base.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="608">
-              <caret line="256" column="97" selection-start-line="256" selection-start-column="97" selection-end-line="256" selection-end-column="97" />
+            <state relative-caret-position="88103">
+              <caret line="4637" column="4" selection-start-line="4637" selection-start-column="4" selection-end-line="4637" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="tsne.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/utils/tsne.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="19">
+              <caret line="1" selection-start-line="1" selection-end-line="1" selection-end-column="33" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="module.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/torch/nn/modules/module.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="8911">
+              <caret line="476" column="16" selection-start-line="476" selection-start-column="16" selection-end-line="476" selection-end-column="16" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="cancer_type_dataset.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/cancer_type_dataset.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="57">
+              <caret line="3" column="12" lean-forward="true" selection-start-line="3" selection-start-column="12" selection-end-line="3" selection-end-column="12" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="torch_vae.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/torch_vae.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="125">
+              <caret line="95" column="45" selection-start-line="95" selection-start-column="45" selection-end-line="95" selection-end-column="45" />
               <folding>
-                <element signature="e#0#11#0" expanded="true" />
+                <element signature="e#0#12#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="constants.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/constants.py">
+      <file leaf-file-name="tensor.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/torch/tensor.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="80" column="68" selection-start-line="80" selection-start-column="54" selection-end-line="80" selection-end-column="68" />
-              <folding>
-                <element signature="e#0#25#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="229">
+              <caret line="101" selection-start-line="101" selection-end-line="101" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="histologic_grade_lgg.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/groups/histologic_grade_lgg.json">
+      <file leaf-file-name="linear.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/torch/nn/modules/linear.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="17" column="1" selection-end-line="17" selection-end-column="1" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="lymphatic_invasion.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/groups/lymphatic_invasion.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="17" column="1" selection-end-line="17" selection-end-column="1" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="tss_old_skcm.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/groups/tss_old_skcm.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="190">
-              <caret line="10" column="30" selection-end-line="25" selection-end-column="1" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="primary_normal.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/groups/primary_normal.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="266">
-              <caret line="14" column="26" selection-start-line="14" selection-start-column="7" selection-end-line="14" selection-end-column="26" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="temp.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/groups/temp.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="380">
-              <caret line="20" column="18" selection-start-line="20" selection-start-column="18" selection-end-line="20" selection-end-column="18" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="tss_tcga_skcm.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/groups/tss_tcga_skcm.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="122">
-              <caret line="10" column="1" selection-end-line="34" selection-end-column="1" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="new_neoplasm_event_type_gbm.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/groups/new_neoplasm_event_type_gbm.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="17" column="1" selection-end-line="17" selection-end-column="1" />
+            <state relative-caret-position="184">
+              <caret line="65" selection-start-line="65" selection-end-line="65" />
             </state>
           </provider>
         </entry>
@@ -136,7 +149,23 @@
       <find>tcga</find>
       <find>tested_gene_expression_headers_columns</find>
       <find>use</find>
+      <find>Agg</find>
+      <find>pheno =</find>
       <find>mirna_file_name</find>
+      <find>label</find>
+      <find>ml_colors</find>
+      <find>labels_unique</find>
+      <find>colormap</find>
+      <find>cm</find>
+      <find>labels</find>
+      <find>top</find>
+      <find>use_ca</find>
+      <find>long</find>
+      <find>pca</find>
+      <find>matpl</find>
+      <find>TSNE</find>
+      <find>forwa</find>
+      <find>mu, var</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -147,26 +176,34 @@
       <list>
         <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/plot_pca.py" />
-        <option value="$PROJECT_DIR$/groups/cancer_types.json" />
         <option value="$PROJECT_DIR$/groups/primary_normal.json" />
-        <option value="$PROJECT_DIR$/utils/pca.py" />
-        <option value="$PROJECT_DIR$/utils/tsne.py" />
         <option value="$PROJECT_DIR$/infra.py" />
-        <option value="$PROJECT_DIR$/constants.py" />
         <option value="$PROJECT_DIR$/groups/tss_tcga_skcm.json" />
         <option value="$PROJECT_DIR$/groups/stages.json" />
         <option value="$PROJECT_DIR$/groups/tss_old_skcm.json" />
         <option value="$PROJECT_DIR$/groups/mutation_binary.json" />
+        <option value="$PROJECT_DIR$/utils/combat_remote.py" />
+        <option value="$PROJECT_DIR$/Dataset.py" />
+        <option value="$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/sklearn/manifold/t_sne.py" />
+        <option value="$PROJECT_DIR$/utils/ensembl2gene_symbol.py" />
+        <option value="$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/matplotlib/cm.py" />
+        <option value="$PROJECT_DIR$/utils/tsne.py" />
+        <option value="$PROJECT_DIR$/utils/pca.py" />
+        <option value="$PROJECT_DIR$/groups/cancer_types.json" />
         <option value="$PROJECT_DIR$/groups/temp.json" />
         <option value="$PROJECT_DIR$/ge_pca_by_samples.py" />
-        <option value="$PROJECT_DIR$/utils/combat_remote.py" />
+        <option value="$PROJECT_DIR$/constants.py" />
+        <option value="$PROJECT_DIR$/torch_main.py" />
+        <option value="$PROJECT_DIR$/make_animation.py" />
+        <option value="$PROJECT_DIR$/cancer_type_dataset.py" />
+        <option value="$PROJECT_DIR$/torch_vae.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="65" />
+    <option name="x" value="766" />
     <option name="y" value="-4" />
-    <option name="width" value="1855" />
+    <option name="width" value="1154" />
     <option name="height" value="1084" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -211,26 +248,8 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.ge_pca_by_samples">
-    <configuration name="combat_remote" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="pytorch" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/utils" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/utils/combat_remote.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-    </configuration>
-    <configuration name="constants" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.torch_vae">
+    <configuration name="cancer_type_dataset" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="pytorch" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -242,7 +261,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/constants.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/cancer_type_dataset.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -266,7 +285,7 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="infra" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="torch_main" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="pytorch" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -278,13 +297,31 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/infra.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/torch_main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="pca" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="torch_vae" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="pytorch" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/torch_vae.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="tsne" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="pytorch" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -296,7 +333,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/utils/pca.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/utils/tsne.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -304,18 +341,18 @@
     </configuration>
     <list>
       <item itemvalue="Python.ge_pca_by_samples" />
-      <item itemvalue="Python.pca" />
-      <item itemvalue="Python.constants" />
-      <item itemvalue="Python.infra" />
-      <item itemvalue="Python.combat_remote" />
+      <item itemvalue="Python.tsne" />
+      <item itemvalue="Python.torch_main" />
+      <item itemvalue="Python.cancer_type_dataset" />
+      <item itemvalue="Python.torch_vae" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.torch_vae" />
+        <item itemvalue="Python.torch_main" />
+        <item itemvalue="Python.cancer_type_dataset" />
         <item itemvalue="Python.ge_pca_by_samples" />
-        <item itemvalue="Python.combat_remote" />
-        <item itemvalue="Python.constants" />
-        <item itemvalue="Python.infra" />
-        <item itemvalue="Python.pca" />
+        <item itemvalue="Python.tsne" />
       </list>
     </recent_temporary>
   </component>
@@ -332,20 +369,25 @@
     </task>
     <servers />
   </component>
+  <component name="TestHistory">
+    <history-entry file="Doctests_in_TSNE - 2019.01.31 at 21h 27m 42s.xml">
+      <configuration name="Doctests in TSNE" configurationId="tests" />
+    </history-entry>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="65" y="-4" width="1855" height="1084" extended-state="6" />
+    <frame x="64" y="-11" width="1857" height="1092" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49894738" visible="true" weight="0.24959569" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49894738" visible="true" weight="0.13962264" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.26229507" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.26536885" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.38854805" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.32991803" />
       <window_info id="Favorites" order="2" sideWeight="0.5010526" side_tool="true" weight="0.24959569" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.37704918" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -372,24 +414,34 @@
           <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/ge_pca_by_samples.py</url>
-          <line>122</line>
-          <option name="timeStamp" value="40" />
+          <url>file://$PROJECT_DIR$/utils/tsne.py</url>
+          <line>45</line>
+          <option name="timeStamp" value="61" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/ge_pca_by_samples.py</url>
-          <line>53</line>
-          <option name="timeStamp" value="57" />
+          <url>file://$PROJECT_DIR$/utils/tsne.py</url>
+          <line>19</line>
+          <option name="timeStamp" value="64" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/infra.py</url>
-          <line>365</line>
-          <option name="timeStamp" value="58" />
+          <url>file://$PROJECT_DIR$/utils/tsne.py</url>
+          <line>42</line>
+          <option name="timeStamp" value="65" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/infra.py</url>
-          <line>439</line>
-          <option name="timeStamp" value="59" />
+          <url>file://$PROJECT_DIR$/torch_main.py</url>
+          <line>181</line>
+          <option name="timeStamp" value="97" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/torch_main.py</url>
+          <line>180</line>
+          <option name="timeStamp" value="98" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/torch_main.py</url>
+          <line>139</line>
+          <option name="timeStamp" value="100" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -399,11 +451,17 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="60" />
+      <option name="time" value="104" />
     </breakpoint-manager>
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="evaluateCodeFragment">
+      <expression>
+        <expression-string>[i for i in
+                        np.array(list(range(len(labels))))]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>labels_assignment = labels_assignments(meta_groups, phenotype_file_name,
                                                tested_gene_expression_headers_columns)</expression-string>
@@ -425,226 +483,68 @@ ax.plot(X, y, &quot;.&quot;)</expression-string>
     </expressions>
     <expressions id="evaluateExpression">
       <expression>
-        <expression-string>np.unique(labels_assignment)</expression-string>
+        <expression-string>(self.samples.dropna()/self.samples.dropna().max()).values.max()</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>filtered_gene_expression_bool</expression-string>
+        <expression-string>self.samples.dropna()/self.samples.dropna().max()</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>len(filtered_gene_expression_bool)</expression-string>
+        <expression-string>self.samples.dropna().max()</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>lrn(filtered_gene_expression_bool)</expression-string>
+        <expression-string>self.samples.dropna().max</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>mutation_dataset[[False if a in duplicated_i else True for a in range(col_original_len)],:]</expression-string>
+        <expression-string>self.samples.dropna()</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>mutation_dataset.shape, col_original_len</expression-string>
+        <expression-string>self.samples.dropna().values</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>mutation_dataset.shape</expression-string>
+        <expression-string>self.samples.dropna().values.max()</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>mutation_dataset</expression-string>
+        <expression-string>self.samples
+
+max()</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>mutation_dataset.shape ,col_original_len</expression-string>
+        <expression-string>self.samples.values
+
+max()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>self.samples.values.max()
+
+max()</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="18" column="22" selection-start-line="18" selection-start-column="21" selection-end-line="18" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/pca.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="20" selection-start-line="20" selection-end-line="20" />
-          <folding>
-            <element signature="e#1#52#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ge_pca_by_samples.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="12" column="13" lean-forward="true" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
-          <folding>
-            <element signature="e#1#52#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/venv/lib/python2.7/site-packages/torchvision/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="5" column="4" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.1/system/python_stubs/1681512473/__builtin__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6270">
-          <caret line="330" column="4" selection-start-line="330" selection-start-column="4" selection-end-line="330" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/venv/lib/python2.7/site-packages/torch/nn/modules/module.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="14877">
-          <caret line="783" column="39" selection-start-line="783" selection-start-column="39" selection-end-line="783" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/omic_svm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="19">
-          <caret line="1" selection-start-line="1" selection-end-line="1" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="5" selection-start-line="4" selection-end-line="5" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/venv/lib/python2.7/site-packages/torch/nn/modules/module.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="14744">
-          <caret line="783" column="39" selection-start-line="783" selection-start-column="39" selection-end-line="783" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.1/system/python_stubs/1681512473/__builtin__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6270">
-          <caret line="330" column="4" selection-start-line="330" selection-start-column="4" selection-end-line="330" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/venv/lib/python2.7/site-packages/torchvision/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="5" column="4" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/plot_pca.py" />
-    <entry file="file://$PROJECT_DIR$/utils/omic_svm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="790">
-          <caret line="433" selection-start-line="433" selection-end-line="433" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="17" column="22" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/groups/additional_metastases_all.json">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/groups/additional_metastases_after_traetment_skcm.json">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/groups/additional_metastases_after_traetment_alt.json">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/groups/chromosome_abnormality.json">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/groups/normal.json">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/numpy/lib/format.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="733" selection-start-line="733" selection-end-line="733" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/sklearn/decomposition/pca.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="380" selection-start-line="380" selection-end-line="380" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/param_builder.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="456">
-          <caret line="24" column="39" lean-forward="true" selection-start-line="24" selection-start-column="39" selection-end-line="24" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/numpy/random/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="466">
-          <caret line="105" selection-start-line="105" selection-end-line="105" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/utils/clustering.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="49">
           <caret line="72" column="27" lean-forward="true" selection-start-line="72" selection-start-column="27" selection-end-line="72" selection-end-column="27" />
-          <folding>
-            <element signature="e#0#34#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils/tsne.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="97">
-          <caret line="7" column="104" lean-forward="true" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="104" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -662,23 +562,6 @@ ax.plot(X, y, &quot;.&quot;)</expression-string>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils/pca.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="181">
-          <caret line="54" column="4" selection-start-line="54" selection-start-column="4" selection-end-line="54" selection-end-column="4" />
-          <folding>
-            <element signature="e#1#52#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/infra.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="123">
-          <caret line="254" lean-forward="true" selection-start-line="254" selection-end-line="254" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/groups/additional_metastases_after_traetment_liver_vs_all.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="19">
@@ -691,13 +574,6 @@ ax.plot(X, y, &quot;.&quot;)</expression-string>
     </entry>
     <entry file="file://$PROJECT_DIR$/groups/prad_tumor_level.json">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/groups/cancer_types.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="20" column="5" lean-forward="true" selection-end-line="21" selection-end-column="1" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/groups/additional_metastases_after_traetment.json">
       <provider selected="true" editor-type-id="text-editor">
@@ -727,13 +603,6 @@ ax.plot(X, y, &quot;.&quot;)</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="171">
           <caret line="9" column="52" lean-forward="true" selection-end-line="22" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/groups/gender.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="19">
-          <caret line="1" selection-end-line="1" selection-end-column="66" />
         </state>
       </provider>
     </entry>
@@ -782,46 +651,237 @@ ax.plot(X, y, &quot;.&quot;)</expression-string>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/groups/brca_pam53.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="17" column="1" selection-end-line="17" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/combat_remote.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="530">
+          <caret line="256" column="46" selection-start-line="256" selection-start-column="46" selection-end-line="256" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/env/omics/sync_omics.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="4" selection-start-line="4" selection-end-line="4" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/groups/primary_normal.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="361">
+          <caret line="19" column="7" selection-end-line="21" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/sklearn/decomposition/pca.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="512">
+          <caret line="339" column="8" lean-forward="true" selection-start-line="339" selection-start-column="8" selection-end-line="339" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/sklearn/decomposition/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="98" column="8" selection-start-line="98" selection-start-column="8" selection-end-line="98" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/sklearn/manifold/t_sne.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="533">
+          <caret line="628" column="53" lean-forward="true" selection-start-line="628" selection-start-column="53" selection-end-line="628" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/convert_scz_files.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/scripts.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/ensembl2gene_symbol.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="152">
+          <caret line="8" selection-start-line="8" selection-end-line="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/matplotlib/pyplot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="30" selection-start-line="30" selection-end-line="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/matplotlib/cm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="17" column="55" lean-forward="true" selection-start-line="17" selection-start-column="55" selection-end-line="17" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/groups/cancer_types.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="602">
+          <caret line="282" column="3" selection-start-line="282" selection-start-column="3" selection-end-line="282" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/groups/gender.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19">
+          <caret line="1" column="37" lean-forward="true" selection-end-line="1" selection-end-column="66" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/groups/temp.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="20" column="18" selection-start-line="20" selection-start-column="18" selection-end-line="20" selection-end-column="18" />
+        <state relative-caret-position="38">
+          <caret line="2" column="31" selection-start-line="2" selection-start-column="31" selection-end-line="2" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.1/system/python_stubs/1681512473/__builtin__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="222">
+          <caret line="290" column="4" selection-start-line="290" selection-start-column="4" selection-end-line="290" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ge_pca_by_samples.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="25" column="59" lean-forward="true" selection-start-line="25" selection-start-column="8" selection-end-line="25" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/pandas/core/frame.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="376" column="8" selection-start-line="376" selection-start-column="8" selection-end-line="376" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/infra.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19">
+          <caret line="419" column="29" lean-forward="true" selection-start-line="419" selection-start-column="29" selection-end-line="419" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/torch/nn/functional.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="229">
+          <caret line="1789" selection-start-line="1789" selection-end-line="1789" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/torch/utils/data/dataloader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1995">
+          <caret line="121" selection-start-line="121" selection-end-line="121" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/lib/python2.7/multiprocessing/queues.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1957">
+          <caret line="116" selection-start-line="116" selection-end-line="116" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/constants.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="80" column="68" selection-start-line="80" selection-start-column="54" selection-end-line="80" selection-end-column="68" />
+        <state relative-caret-position="323">
+          <caret line="18" column="16" selection-start-line="18" selection-start-column="16" selection-end-line="18" selection-end-column="16" />
           <folding>
             <element signature="e#0#25#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/groups/primary_normal.json">
+    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/torch/nn/modules/module.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="14" column="26" selection-start-line="14" selection-start-column="7" selection-end-line="14" selection-end-column="26" />
+        <state relative-caret-position="8911">
+          <caret line="476" column="16" selection-start-line="476" selection-start-column="16" selection-end-line="476" selection-end-column="16" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ge_pca_by_samples.py">
+    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/numpy/lib/function_base.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="530">
-          <caret line="122" column="26" lean-forward="true" selection-start-line="122" selection-start-column="26" selection-end-line="122" selection-end-column="26" />
+        <state relative-caret-position="88103">
+          <caret line="4637" column="4" selection-start-line="4637" selection-start-column="4" selection-end-line="4637" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils/pca.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="14" column="37" selection-start-line="14" selection-end-line="14" selection-end-column="37" />
           <folding>
             <element signature="e#1#52#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils/combat_remote.py">
+    <entry file="file://$PROJECT_DIR$/utils/tsne.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="608">
-          <caret line="256" column="97" selection-start-line="256" selection-start-column="97" selection-end-line="256" selection-end-column="97" />
+        <state relative-caret-position="19">
+          <caret line="1" selection-start-line="1" selection-end-line="1" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/torch_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2318">
+          <caret line="139" column="4" selection-start-line="139" selection-start-column="4" selection-end-line="139" selection-end-column="4" />
           <folding>
-            <element signature="e#0#11#0" expanded="true" />
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/make_animation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19">
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/torch/nn/modules/linear.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="184">
+          <caret line="65" selection-start-line="65" selection-end-line="65" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cancer_type_dataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="3" column="12" lean-forward="true" selection-start-line="3" selection-start-column="12" selection-end-line="3" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/torch/tensor.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="229">
+          <caret line="101" selection-start-line="101" selection-end-line="101" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/torch_vae.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="125">
+          <caret line="95" column="45" selection-start-line="95" selection-start-column="45" selection-end-line="95" selection-end-column="45" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
           </folding>
         </state>
       </provider>

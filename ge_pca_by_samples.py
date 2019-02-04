@@ -1,12 +1,11 @@
-
 from utils.ensembl2gene_symbol import e2g_convertor
 from matplotlib import style
-import matplotlib
-matplotlib.use('Agg')
-matplotlib.use('pdf')
+
+style.use("ggplot")
 from scipy.stats import zscore
 import scipy
 import logging
+
 sh = logging.StreamHandler()
 logger = logging.getLogger("log")
 logger.addHandler(sh)
@@ -20,22 +19,23 @@ from utils.param_builder import build_gdc_params, build_tcga_params
 ############################ () cluster and enrichment #############################
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
 
-    for dataset in ["PANCAN"]:
+    for dataset in ["SKCM"]:
         constants.update_dirs(DATASET_NAME_u=dataset)
-        meta_groups= [json.load(file("groups/temp.json"))]
+        meta_groups = [json.load(file("groups/temp.json"))]
         constants.update_dirs(CANCER_TYPE_u=dataset)
         data_normalizaton = "fpkm"
-        gene_expression_file_name, phenotype_file_name, survival_file_name, mutation_file_name, mirna_file_name, pval_preprocessing_file_name = build_gdc_params(dataset=dataset, data_normalizaton=data_normalizaton)
-        tested_gene_list_file_name="protein_coding_long.txt" # "mir_total.txt" # 
-        total_gene_list_file_name= "protein_coding_long.txt" # mir_total.txt" #          
-        var_th_index=200
-        is_unsupervised=True
-        start_k=2
-        end_k=2
-        #[{"gender.demographic": {"type": "string", "value": ["male"]}},
-                                           # {"gender.demographic": {"type": "string", "value": ["female"]}}]
+        gene_expression_file_name, phenotype_file_name, survival_file_name, mutation_file_name, mirna_file_name, pval_preprocessing_file_name = build_gdc_params(
+            dataset=dataset, data_normalizaton=data_normalizaton)
+        tested_gene_list_file_name = "protein_coding_long.txt"  # "mir_total.txt" #
+        total_gene_list_file_name = "protein_coding_long.txt"  # "mir_total.txt" #
+        var_th_index = 2000
+        is_unsupervised = True
+        start_k = 2
+        end_k = 2
+        # [{"gender.demographic": {"type": "string", "value": ["male"]}},
+        # {"gender.demographic": {"type": "string", "value": ["female"]}}]
         filter_expression = None
 
         d_codes = []
@@ -45,12 +45,12 @@ if __name__=="__main__":
         # , "person_neoplasm_cancer_status" : {"type": "string", "value" : ["WITH TUMOR"]}
 
         # for cur_tt in ["Primary Tumor"]:
-        filter_expression = None # [{"sample_type.samples": {"type": "string", "value": ["Primary Tumor","Metastatic"]},
-                              # "person_neoplasm_cancer_status" : {"type": "string", "value" : ["WITH TUMOR"]} ,
-                              # "disease_code": {"type": "string",
-                              #              "value": d_codes
-                              #              }
-                              # }]
+        filter_expression = None  # [{"sample_type.samples": {"type": "string", "value": ["Primary Tumor","Metastatic"]},
+        # "person_neoplasm_cancer_status" : {"type": "string", "value" : ["WITH TUMOR"]} ,
+        # "disease_code": {"type": "string",
+        #              "value": d_codes
+        #              }
+        # }]
         print "process {}".format(dataset)
 
         data = load_integrated_ge_data(tested_gene_list_file_name=tested_gene_list_file_name,
@@ -123,5 +123,26 @@ if __name__=="__main__":
         # labels_assignment=[np.array([1 if x in pheno[0] else 2 if x in pheno[1]  else 3 if x in pheno[2]  else 4 if x in pheno[3] else 0 for x in all_patients])]
 
         plot_pca_by_samples(gene_expression_top_var, labels_assignment, meta_groups, n_components=2)
+        # from sklearn.decomposition import PCA
+        # n_components=2
+        # import matplotlib.pyplot as plt
+        # import time
+        #
+        # X = np.array(gene_expression_top_var)
+        # y = np.array([0 for x in gene_expression_top_var])
+        # pca = PCA(n_components=n_components)
+        # pca.fit_transform(X)
+        #
+        # fig = plt.figure(1, figsize=(20, 20))
+        # plt.clf()
+        #
+        # if n_components == 2:
+        #     ax = fig.add_subplot(111)
+        #     ax.scatter(X[:, 0], X[:, 1], c=y, cmap='jet')
+        # plt.savefig(os.path.join(constants.BASE_PROFILE, "output", "PCA_by_samples_{}_{}_{}_{}.png").format(
+        #     constants.CANCER_TYPE,
+        #     tested_gene_list_file_name.split(".")[0] if tested_gene_list_file_name is not None else "none",
+        #     n_components, time.time()))
+
 
         plot_tsne(gene_expression_top_var, labels_assignment, meta_groups, n_components=2)

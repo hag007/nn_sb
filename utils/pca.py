@@ -59,8 +59,8 @@ def plot_pca_by_samples(dataset, labels_assignment, meta_groups, tested_gene_lis
     label_ids_unique = np.unique(labels_assignment[0])
     labels = [x[0] for x in groups_md if x[1] in label_ids_unique]
     label_ids = [x[1] for x in groups_md if x[1] in label_ids_unique]
-    
-    
+
+
     X = []
     y = []
     for cur in label_ids_unique :
@@ -72,7 +72,7 @@ def plot_pca_by_samples(dataset, labels_assignment, meta_groups, tested_gene_lis
 
 
     X = PCA(n_components=n_components).fit_transform(X)
-    
+
     fig = plt.figure(1, figsize=(20, 20))
     plt.clf()
     if n_components == 3:
@@ -193,4 +193,3 @@ def plot_detailed_pca(tested_gene_list_file_name, total_gene_list_file_name, gen
             os.path.join(constants.OUTPUT_GLOBAL_DIR, 'pca', constants.DATASET_NAME, algo_name ,"PCA_detailed_{}_{}.png".format(os.path.splitext(tested_gene_list_file_name)[0], time.time())),)
 
     return (X,labels, pr, roc)
-
