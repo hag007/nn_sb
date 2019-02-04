@@ -1,8 +1,9 @@
+import sys
+sys.path.insert(0, '../')
 import math
 import os
 import pandas as pd
 import patsy
-import sys
 import numpy.linalg as la
 import numpy as np
 import constants
@@ -216,7 +217,7 @@ if __name__ == "__main__":
     """
 
     # for dataset in ["LUSC", "SKCM", "MESO", "OV", "PCPG", "PRAD", "READ", "SARC", "TGCT", "THYM", "THCA", "UCS"]:
-    for dataset in ["COMB"]:
+    for dataset in ["PANCAN"]:
         print "current dataset: {}".format(dataset)
         constants.update_dirs(DATASET_NAME_u=dataset)
         data_normalizaton = "fpkm"
