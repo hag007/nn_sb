@@ -1,3 +1,22 @@
-[{"_name":"male","_label":"1",
-  "gender.demographic": {"type": "string", "value": ["male"]}},
-  {"_name":"female","_label":"2", "gender.demographic": {"type": "string", "value": ["female"]}}]
+[
+    {
+      "_label": "1",
+      "_name" : "normal",
+      "sample_type.samples": {
+        "type": "string",
+        "value": [
+          "Solid Tissue Normal"
+        ]
+      }
+    },
+     {
+       "_label": "2",
+      "_name" : "tumor",
+      "sample_type.samples": {
+        "type": "string",
+        "value": [
+          "Primary Tumor"
+        ]
+      }
+    }
+  ]

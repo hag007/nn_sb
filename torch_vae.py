@@ -75,7 +75,7 @@ def loss_function(recon_x, x, mu, logvar):
     return BCE + KLD
 
 datasets=cancer_type_dataset.CANCER_TYPES
-trainset = CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=[x.split("/")[0] for x in cancer_type_dataset.META_GROUPS])
+trainset = CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=["{}".format(x.split("/")[1].split(".")[0],i_x) for i_x, x in enumerate(cancer_type_dataset.META_GROUPS)])
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=10,
                                           shuffle=True, num_workers=5, pin_memory=True)
 testset = trainset
@@ -115,7 +115,7 @@ for epoch in range(100000):  # loop over the dataset multiple times
     torch.save(net.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model"))
     ###########################
 
-    if epoch % 100 == 0:
+    if epoch % 10 == 0:
         correct = 0
         total = 0
         X = None
@@ -152,7 +152,7 @@ for epoch in range(100000):  # loop over the dataset multiple times
                             label_ids_unique / float(max(label_ids))]
         patches = [Line2D([0], [0], marker='o', color='gray', label=a,
                           markerfacecolor=c) for a, c in
-                   zip(datasets, colorlist_unique)]
+                   zip(trainset.get_labels_unique(), colorlist_unique)]
         ax.legend(handles=patches)
 
         plt.savefig(
@@ -172,7 +172,7 @@ for epoch in range(100000):  # loop over the dataset multiple times
                             label_ids_unique / float(max(label_ids))]
         patches = [Line2D([0], [0], marker='o', color='gray', label=a,
                           markerfacecolor=c) for a, c in
-                   zip(datasets, colorlist_unique)]
+                   zip(trainset.get_labels_unique(), colorlist_unique)]
         ax.legend(handles=patches)
 
         plt.savefig(
@@ -192,7 +192,7 @@ for epoch in range(100000):  # loop over the dataset multiple times
                             label_ids_unique / float(max(label_ids))]
         patches = [Line2D([0], [0], marker='o', color='gray', label=a,
                           markerfacecolor=c) for a, c in
-                   zip(datasets, colorlist_unique)]
+                   zip(trainset.get_labels_unique(), colorlist_unique)]
         ax.legend(handles=patches)
 
         plt.savefig(
