@@ -7,28 +7,29 @@ import constants
 import simplejson as json
 from utils.param_builder import build_gdc_params
 
-CANCER_TYPES=['LUSC', 'LUAD' , 'MESO', 'HNSC', 'BRCA', 'PRAD', 'SKCM', 'UVM', 'KIRP', 'KICH', 'KIRC', 'GBM', 'LGG', 'STAD', 'PAAD']
-
+# CANCER_TYPES=['LUSC', 'LUAD' , 'MESO', 'HNSC', 'BRCA', 'PRAD', 'SKCM', 'UVM', 'KIRP', 'KICH', 'KIRC', 'GBM', 'LGG', 'STAD', 'PAAD']
+CANCER_TYPES=['BRCA', 'COAD']
+META_GROUPS = ["groups/temp.json", "groups/temp.json"]
 
 class CancerTypesDataset(Dataset):
 
-    def __init__(self, csv_files, labels=None):
+    def __init__(self, dataset_names, meta_groups_files, metagroups_names):
 
         self.labels = np.array([])
         self.samples = pd.DataFrame()
-        for csv_file, csv_label in zip(csv_files, labels):
-            constants.update_dirs(DATASET_NAME_u=csv_label)
-            meta_groups = [json.load(file("groups/temp.json"))]
+        for dataset_name, meta_groups_file, metagroups_name in zip(dataset_names, meta_groups_files, metagroups_names):
+            constants.update_dirs(DATASET_NAME_u=dataset_name)
+            meta_groups = [json.load(file(meta_groups_file))]
             data_normalizaton = "fpkm"
             gene_expression_file_name, phenotype_file_name, survival_file_name, mutation_file_name, mirna_file_name, pval_preprocessing_file_name = build_gdc_params(
-                dataset=csv_label, data_normalizaton=data_normalizaton)
+                dataset=dataset_name, data_normalizaton=data_normalizaton)
 
-            tested_gene_list_file_name =  "mir_total.txt" #  "protein_coding_long.txt"  #
-            total_gene_list_file_name =  "mir_total.txt" #  "protein_coding_long.txt"  #
+            tested_gene_list_file_name = "protein_coding_long.txt"  #
+            total_gene_list_file_name = "protein_coding_long.txt"  #
             filter_expression = None
             data = infra.load_integrated_ge_data(tested_gene_list_file_name=tested_gene_list_file_name,
                                                  total_gene_list_file_name=total_gene_list_file_name,
-                                                 gene_expression_file_name=mirna_file_name,
+                                                 gene_expression_file_name=gene_expression_file_name,
                                                  phenotype_file_name=phenotype_file_name,
                                                  survival_file_name=survival_file_name,
                                                  var_th_index=None, meta_groups=meta_groups,
@@ -36,10 +37,13 @@ class CancerTypesDataset(Dataset):
 
             gene_expression_top_var, gene_expression_top_var_headers_rows, gene_expression_top_var_headers_columns, labels_assignment, survival_dataset = data
 
-            df_new = pd.DataFrame(data=gene_expression_top_var, index=gene_expression_top_var_headers_rows,
-                                  columns=gene_expression_top_var_headers_columns)
-            self.samples = pd.concat([self.samples, df_new], axis=0)
-            self.labels = np.append(self.labels, [csv_label for x in range(df_new.shape[0])])
+            for cur_label in np.unique(labels_assignment):
+                cur_label_name=[cur["_name"] for cur in meta_groups[0] if "_label" in cur and cur["_label"]==cur_label]
+                cur_label_name = "{}, {}".format(metagroups_name, cur_label_name[0] if len(cur_label_name) > 0 else "unknown")
+                df_new = pd.DataFrame(data=gene_expression_top_var[labels_assignment==cur_label], index=gene_expression_top_var_headers_rows[labels_assignment==cur_label],
+                                      columns=gene_expression_top_var_headers_columns)
+                self.samples = pd.concat([self.samples, df_new], axis=0)
+                self.labels = np.append(self.labels, cur_label_name)
 
         var_th_index = 99
         if var_th_index is not None:

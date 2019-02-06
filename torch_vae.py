@@ -6,6 +6,7 @@ import os
 import numpy as np
 import constants
 from cancer_type_dataset import CancerTypesDataset
+import cancer_type_dataset
 import simplejson as json
 from utils.param_builder import build_gdc_params
 
@@ -74,23 +75,11 @@ def loss_function(recon_x, x, mu, logvar):
     return BCE + KLD
 
 
-csv_files = []
-datasets = ['LUSC', 'LUAD', 'MESO', 'HNSC', 'BRCA', 'PRAD', 'SKCM', 'UVM', 'KIRP', 'KICH', 'KIRC', 'GBM', 'LGG', 'STAD',
-            'PAAD']
-for cur_ds in datasets:
-    dataset = cur_ds
-    constants.update_dirs(DATASET_NAME_u=dataset)
-    data_normalizaton = "fpkm"
-    gene_expression_file_name, phenotype_file_name, survival_file_name, mutation_file_name, mirna_file_name, pval_preprocessing_file_name = \
-        build_gdc_params(dataset=dataset, data_normalizaton=data_normalizaton)
-    csv_files.append(os.path.join(constants.DATA_DIR, gene_expression_file_name))
-
-trainset = CancerTypesDataset(csv_files=csv_files, labels=datasets)
+trainset = CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=[x.split("/")[0] for x in cancer_type_dataset.META_GROUPS])
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=10,
-                                          shuffle=True, num_workers=50, pin_memory=True)
-testset = CancerTypesDataset(csv_files=csv_files, labels=datasets)
-testloader = torch.utils.data.DataLoader(trainset, batch_size=10,
-                                         shuffle=True, num_workers=50)
+                                          shuffle=True, num_workers=5, pin_memory=True)
+testset = trainset
+testloader = trainloader
 
 net = Net()
 criterion = nn.BCELoss()
