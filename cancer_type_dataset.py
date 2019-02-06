@@ -8,8 +8,8 @@ import simplejson as json
 from utils.param_builder import build_gdc_params
 
 # CANCER_TYPES=['LUSC', 'LUAD' , 'MESO', 'HNSC', 'BRCA', 'PRAD', 'SKCM', 'UVM', 'KIRP', 'KICH', 'KIRC', 'GBM', 'LGG', 'STAD', 'PAAD']
-CANCER_TYPES=['BRCA', 'COAD']
-META_GROUPS = ["groups/temp.json", "groups/temp.json"]
+CANCER_TYPES=["KIRC", "KIRP", "KICH", "LUSC", "LUAD", "COAD", "BRCA", "UCS", "SARC"]
+META_GROUPS = ["groups/temp.json", "groups/temp.json", "groups/temp.json", "groups/temp.json","groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json"]
 
 class CancerTypesDataset(Dataset):
 
