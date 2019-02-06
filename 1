@@ -7,7 +7,8 @@ import constants
 import simplejson as json
 from utils.param_builder import build_gdc_params
 
-CANCER_TYPES=['LUSC', 'LUAD' , 'MESO', 'HNSC', 'BRCA', 'PRAD', 'SKCM', 'UVM', 'KIRP', 'KICH', 'KIRC', 'GBM', 'LGG', 'STAD', 'PAAD']
+CANCER_TYPES=['LUSC', 'LUAD' , 'MESO', 'HNSC', 'BRCA', 'PRAD', 'SKCM', 'UVM', 'KIRP', 'KICH', 'KIRC', 'GBM', 'LGG',
+            # 'STAD', 'PAAD']
 
 
 class CancerTypesDataset(Dataset):
@@ -23,12 +24,12 @@ class CancerTypesDataset(Dataset):
             gene_expression_file_name, phenotype_file_name, survival_file_name, mutation_file_name, mirna_file_name, pval_preprocessing_file_name = build_gdc_params(
                 dataset=csv_label, data_normalizaton=data_normalizaton)
 
-            tested_gene_list_file_name =  "mir_total.txt" #  "protein_coding_long.txt"  #
-            total_gene_list_file_name =  "mir_total.txt" #  "protein_coding_long.txt"  #
+            tested_gene_list_file_name = "protein_coding_long.txt"  # "mir_total.txt" #
+            total_gene_list_file_name = "protein_coding_long.txt"  # "mir_total.txt" #
             filter_expression = None
             data = infra.load_integrated_ge_data(tested_gene_list_file_name=tested_gene_list_file_name,
                                                  total_gene_list_file_name=total_gene_list_file_name,
-                                                 gene_expression_file_name=mirna_file_name,
+                                                 gene_expression_file_name=gene_expression_file_name,
                                                  phenotype_file_name=phenotype_file_name,
                                                  survival_file_name=survival_file_name,
                                                  var_th_index=None, meta_groups=meta_groups,

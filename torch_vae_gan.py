@@ -8,10 +8,11 @@ import constants
 from cancer_type_dataset import CancerTypesDataset
 import simplejson as json
 from utils.param_builder import build_gdc_params
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
-
 import matplotlib.cm as cm
 import matplotlib.colors as ml_colors
 
@@ -125,7 +126,7 @@ def train_VAE(trainloader, VAE, optimizer):
 
 
     for epoch in range(EPOCHS):  # loop over the dataset multiple times
-
+        print "EPOCH: {}".format(epoch)
         running_loss = 0.0
         for i, data in enumerate(trainloader, 0):
 
@@ -162,7 +163,8 @@ def train_GAN_dis(trainloader, GAN, optimizer, m_decoder, m_discriminator):
 
                 # get the inputs
                 inputs, labels = data
-                labels =[1 for x in labels]
+                inputs=torch.tensor(torch.stack([inputs[a] for a in np.arange(len(inputs)/2)]), dtype=torch.float)
+                labels=torch.tensor(torch.tensor([1 for a in np.arange(len(labels)/2)]), dtype=torch.float)
                 random_inputs=[]
                 random_labels=[]
                 with torch.no_grad():
@@ -174,8 +176,9 @@ def train_GAN_dis(trainloader, GAN, optimizer, m_decoder, m_discriminator):
 
 
                 inputs=torch.cat((inputs, torch.stack(random_inputs)), dim=0)
-                labels=torch.cat((torch.tensor(labels), torch.tensor(random_labels)), dim=0)
-
+                # inputs=torch.tensor(torch.stack(random_inputs), dtype=torch.float)
+                labels=torch.cat((torch.tensor(labels), torch.tensor(random_labels, dtype=torch.float)), dim=0)
+                # labels= torch.tensor(random_labels, dtype=torch.float)
                 # zero the parameter gradients
                 optimizer.zero_grad()
 
@@ -222,7 +225,7 @@ def train_GAN_gen(trainloader, GAN, optimizer):
 
             random_labels=[]
             random_inputs=[]
-            for i in range(inputs.size()[0]*4):
+            for i in range(inputs.size()[0]*2):
                 random_labels.append(1)
                 random_inputs.append(torch.distributions.normal.Normal(loc=0, scale=1).sample(sample_shape=(2,)))
 
@@ -259,8 +262,8 @@ for cur_ds in datasets:
     csv_files.append(os.path.join(constants.DATA_DIR, gene_expression_file_name))
 
 trainset = CancerTypesDataset(csv_files=csv_files, labels=datasets)
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=10,
-                                          shuffle=True, num_workers=4, pin_memory=True)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=100,
+                                          shuffle=True, num_workers=40, pin_memory=True)
 testset = trainset # CancerTypesDataset(csv_files=csv_files, labels=datasets)
 testloader = trainloader # torch.utils.data.DataLoader(trainset, batch_size=10,
                                          # shuffle=True, num_workers=10)
@@ -268,16 +271,16 @@ testloader = trainloader # torch.utils.data.DataLoader(trainset, batch_size=10,
 criterion = nn.BCELoss()
 
 # create your optimizer
-vae_optimizer = optim.Adam(m_VAE.parameters(), lr=0.0001)
-gan_optimizer = optim.Adam(m_GAN.parameters(), lr=0.0001)
+vae_optimizer = optim.Adam(m_VAE.parameters(), lr=0.00001)
+gan_optimizer = optim.Adam(m_GAN.parameters(), lr=0.00001)
 
 
-for meta_epoch in range(100):
+for meta_epoch in range(3000):
 
     print "meta_epoch: {}".format(meta_epoch)
 
     ###########################
-    if meta_epoch % 3 == 0:
+    if meta_epoch % 1 == 0:
         correct = 0
         total = 0
         X = None
@@ -315,16 +318,16 @@ for meta_epoch in range(100):
         ax.legend(handles=patches)
 
         plt.savefig(
-            os.path.join(constants.BASE_PROFILE, "output", "AE_by_samples_{}.png".format(meta_epoch/ 3)))
+            os.path.join(constants.BASE_PROFILE, "output", "AE_by_samples_{}.png".format(meta_epoch)))
 
     ###########################
 
-    if meta_epoch%3==0:
-        train_VAE(trainloader, m_VAE, vae_optimizer)
-    elif meta_epoch%3==1:
-        train_GAN_dis(trainloader, m_GAN, gan_optimizer, decoder, discriminator)
-    else:
-        train_GAN_gen(trainloader, m_GAN, gan_optimizer)
+    # if meta_epoch%3==0:
+    train_VAE(trainloader, m_VAE, vae_optimizer)
+    # elif meta_epoch%3==1:
+    train_GAN_dis(trainloader, m_GAN, gan_optimizer, decoder, discriminator)
+    # else:
+    train_GAN_gen(trainloader, m_GAN, gan_optimizer)
 
     torch.save(encoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "encoder_model"))
     torch.save(decoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "decoder_model"))

@@ -57,7 +57,7 @@ class Net(nn.Module):
     def forward(self, x):
         mu, logvar = self.encode(x)
         z = self.reparameterize(mu, logvar)
-        return self.decode(z), mu, logvar
+        return self.decode(z), z, mu, logvar
 
     # Reconstruction + KL divergence losses summed over all elements and batch
 
@@ -87,10 +87,10 @@ for cur_ds in datasets:
 
 trainset = CancerTypesDataset(csv_files=csv_files, labels=datasets)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=10,
-                                          shuffle=True, num_workers=10, pin_memory=True)
+                                          shuffle=True, num_workers=50, pin_memory=True)
 testset = CancerTypesDataset(csv_files=csv_files, labels=datasets)
 testloader = torch.utils.data.DataLoader(trainset, batch_size=10,
-                                         shuffle=True, num_workers=10)
+                                         shuffle=True, num_workers=50)
 
 net = Net()
 criterion = nn.BCELoss()
@@ -110,7 +110,7 @@ for epoch in range(100000):  # loop over the dataset multiple times
         optimizer.zero_grad()
 
         # forward + backward + optimize
-        outputs, mu, var = net(inputs)
+        outputs, z, mu, var = net(inputs)
 
         loss = loss_function(outputs, inputs, mu, var)
         loss.backward()
@@ -130,31 +130,34 @@ for epoch in range(100000):  # loop over the dataset multiple times
         correct = 0
         total = 0
         X = None
-        X_r = None
+        X_z = None
+        X_mu = None
+        X_var = None
         y = []
 
         with torch.no_grad():
             for data in testloader:
                 features, labels = data
-                X_r = np.append(X_r, features, axis=0) if X is not None else features
                 _, labels = torch.max(labels, 1)
-                outputs, h, var = net(features)
-                X = np.append(X, h, axis=0) if X is not None else h
+                outputs, z, mu, var = net(features)
+                X_z = np.append(X_z, z, axis=0) if X_z is not None else z  
+                X_mu=np.append(X_mu, mu, axis=0) if X_mu is not None else mu
+                X_var=np.append(X_var, var, axis=0) if X_var is not None else var
                 y = np.append(y, labels)
+
+        colormap = cm.jet
+        label_ids_unique = np.unique(y)
+        label_ids = y
 
         n_components = 2
         fig = plt.figure(1, figsize=(20, 20))
         plt.clf()
         if n_components == 3:
             ax = fig.add_subplot(111, projection='3d')
-            ax.scatter(X[:, 0], X[:, 1], X[:, 2], c=y, cmap='jet')
+            ax.scatter(X_z[:, 0], X_z[:, 1], X_z[:, 2], c=y, cmap='jet')
         if n_components == 2:
             ax = fig.add_subplot(111)
-            ax.scatter(X[:, 0], X[:, 1], c=y, cmap='jet')
-
-        colormap = cm.jet
-        label_ids_unique = np.unique(y)
-        label_ids = y
+            ax.scatter(X_z[:, 0], X_z[:, 1], c=y, cmap='jet')
 
         colorlist_unique = [ml_colors.rgb2hex(colormap(a)) for a in
                             label_ids_unique / float(max(label_ids))]
@@ -164,7 +167,47 @@ for epoch in range(100000):  # loop over the dataset multiple times
         ax.legend(handles=patches)
 
         plt.savefig(
-            os.path.join(constants.BASE_PROFILE, "output", "AE_by_samples_{}.png".format(epoch)))
+            os.path.join(constants.BASE_PROFILE, "output", "AE_by_samples_z_{}.png".format(epoch)))
+
+        n_components = 2
+        fig = plt.figure(1, figsize=(20, 20))
+        plt.clf()
+        if n_components == 3:
+            ax = fig.add_subplot(111, projection='3d')
+            ax.scatter(X_mu[:, 0], X_mu[:, 1], X_mu[:, 2], c=y, cmap='jet')
+        if n_components == 2:
+            ax = fig.add_subplot(111)
+            ax.scatter(X_mu[:, 0], X_mu[:, 1], c=y, cmap='jet')
+
+        colorlist_unique = [ml_colors.rgb2hex(colormap(a)) for a in
+                            label_ids_unique / float(max(label_ids))]
+        patches = [Line2D([0], [0], marker='o', color='gray', label=a,
+                          markerfacecolor=c) for a, c in
+                   zip(datasets, colorlist_unique)]
+        ax.legend(handles=patches)
+
+        plt.savefig(
+            os.path.join(constants.BASE_PROFILE, "output", "AE_by_samples_mu_{}.png".format(epoch)))
+
+        n_components = 2
+        fig = plt.figure(1, figsize=(20, 20))
+        plt.clf()
+        if n_components == 3:
+            ax = fig.add_subplot(111, projection='3d')
+            ax.scatter(X_var[:, 0], X_var[:, 1], X_var[:, 2], c=y, cmap='jet')
+        if n_components == 2:
+            ax = fig.add_subplot(111)
+            ax.scatter(X_var[:, 0], X_var[:, 1], c=y, cmap='jet')
+
+        colorlist_unique = [ml_colors.rgb2hex(colormap(a)) for a in
+                            label_ids_unique / float(max(label_ids))]
+        patches = [Line2D([0], [0], marker='o', color='gray', label=a,
+                          markerfacecolor=c) for a, c in
+                   zip(datasets, colorlist_unique)]
+        ax.legend(handles=patches)
+
+        plt.savefig(
+            os.path.join(constants.BASE_PROFILE, "output", "AE_by_samples_logvar_{}.png".format(epoch)))
 
     ###########################
 
@@ -178,8 +221,8 @@ with torch.no_grad():
         features, labels = data
         X_r = np.append(X_r, features, axis=0) if X is not None else features
         _, labels = torch.max(labels, 1)
-        outputs, h = net(features)
-        X = np.append(X, h, axis=0) if X is not None else h
+        outputs, z, mu, var = net(features)
+        X = np.append(X, z, axis=0) if X is not None else z 
         y = np.append(y, labels)
         _, predicted = torch.max(outputs, 1)
         total += labels.size(0)
