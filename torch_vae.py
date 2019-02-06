@@ -74,7 +74,7 @@ def loss_function(recon_x, x, mu, logvar):
 
     return BCE + KLD
 
-
+datasets=cancer_type_dataset.CANCER_TYPES
 trainset = CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=[x.split("/")[0] for x in cancer_type_dataset.META_GROUPS])
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=10,
                                           shuffle=True, num_workers=5, pin_memory=True)

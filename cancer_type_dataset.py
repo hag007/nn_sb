@@ -37,13 +37,14 @@ class CancerTypesDataset(Dataset):
 
             gene_expression_top_var, gene_expression_top_var_headers_rows, gene_expression_top_var_headers_columns, labels_assignment, survival_dataset = data
 
+            labels_assignment=np.array(labels_assignment)[0]
             for cur_label in np.unique(labels_assignment):
-                cur_label_name=[cur["_name"] for cur in meta_groups[0] if "_label" in cur and cur["_label"]==cur_label]
+                cur_label_name=[cur["_name"] for cur in meta_groups[0] if "_label" in cur and int(cur["_label"])==cur_label]
                 cur_label_name = "{}, {}".format(metagroups_name, cur_label_name[0] if len(cur_label_name) > 0 else "unknown")
                 df_new = pd.DataFrame(data=gene_expression_top_var[labels_assignment==cur_label], index=gene_expression_top_var_headers_rows[labels_assignment==cur_label],
                                       columns=gene_expression_top_var_headers_columns)
                 self.samples = pd.concat([self.samples, df_new], axis=0)
-                self.labels = np.append(self.labels, cur_label_name)
+                self.labels = np.append(self.labels, [cur_label_name for x in range(len(df_new.index))])
 
         var_th_index = 99
         if var_th_index is not None:
