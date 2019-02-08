@@ -8,8 +8,8 @@ import simplejson as json
 from utils.param_builder import build_gdc_params
 
 # CANCER_TYPES=['LUSC', 'LUAD' , 'MESO', 'HNSC', 'BRCA', 'PRAD', 'SKCM', 'UVM', 'KIRP', 'KICH', 'KIRC', 'GBM', 'LGG', 'STAD', 'PAAD']
-CANCER_TYPES=["KIRC", "KIRP", "KICH", "LUSC", "LUAD", "COAD", "BRCA", "UCS", "SARC"]
-META_GROUPS = ["groups/temp.json", "groups/temp.json", "groups/temp.json", "groups/temp.json","groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json"]
+CANCER_TYPES=["KIRC", "KIRP", "KICH", "LUSC", "LUAD", "COAD", "BRCA", "CHOL",  "GBM", "PAAD", "STAD", "LIHC", "READ", "PRAD"]
+META_GROUPS = ["groups/temp.json", "groups/temp.json", "groups/temp.json","groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json"]
 
 class CancerTypesDataset(Dataset):
 
@@ -51,7 +51,7 @@ class CancerTypesDataset(Dataset):
                 label_counter+=1
                 self.labels_unique = np.append(self.labels_unique, [cur_label_name])
 
-        var_th_index = 99
+        var_th_index =1999
         if var_th_index is not None:
             print "filtering top vars"
             gene_expression_top_var, gene_expression_top_var_headers_rows, gene_expression_top_var_headers_columns = infra.filter_top_var_genes(

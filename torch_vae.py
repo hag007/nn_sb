@@ -24,24 +24,30 @@ from matplotlib.lines import Line2D
 
 class Net(nn.Module):
 
-    def __init__(self, factor=0.5, n_mito_input_layer=100, n_cancer_types=2, n_latent_vector=2):
+    def __init__(self, factor=0.25, n_mito_input_layer=2000, n_cancer_types=2, n_latent_vector=2):
         super(Net, self).__init__()
         # self.factor = factor
         # self.n_mito_input_layer=n_mito_input_layer
 
         self.fc1 = nn.Linear(n_mito_input_layer, int(n_mito_input_layer * factor))
+        self.fc1_bn = nn.BatchNorm1d(int(n_mito_input_layer * factor))
         self.fc2 = nn.Linear(int(n_mito_input_layer * factor), int(n_mito_input_layer * factor ** 2))
+        self.fc2_bn = nn.BatchNorm1d(int(n_mito_input_layer * factor ** 2))
         self.fc31 = nn.Linear(int(n_mito_input_layer * factor ** 2), n_latent_vector)
+        self.fc31_bn = nn.BatchNorm1d(n_latent_vector)
         self.fc32 = nn.Linear(int(n_mito_input_layer * factor ** 2), n_latent_vector)
+        self.fc32_bn = nn.BatchNorm1d(n_latent_vector)
         self.fc4 = nn.Linear(n_latent_vector, int(n_mito_input_layer * factor ** 2))
+        self.fc4_bn = nn.BatchNorm1d(int(n_mito_input_layer * factor ** 2))
         self.fc5 = nn.Linear(int(n_mito_input_layer * factor ** 2), int(n_mito_input_layer * factor))
+        self.fc5_bn = nn.BatchNorm1d(int(n_mito_input_layer * factor))
         self.fc6 = nn.Linear(int(n_mito_input_layer * factor), n_mito_input_layer)
 
     def encode(self, x):
-        h1 = F.relu(self.fc1(x))
-        h2 = F.relu(self.fc2(h1))
-        h31 = self.fc31(h2)
-        h32 = self.fc32(h2)
+        h1 = F.relu(self.fc1_bn(self.fc1(x)))
+        h2 = F.relu(self.fc2_bn(self.fc2(h1)))
+        h31 = self.fc31_bn(self.fc31(h2))
+        h32 = self.fc32_bn(self.fc32(h2))
         return h31, h32
 
     def reparameterize(self, mu, logvar):
@@ -50,8 +56,8 @@ class Net(nn.Module):
         return eps.mul(std).add_(mu)
 
     def decode(self, z):
-        h4 = F.relu(self.fc4(z))
-        h5 = F.relu(self.fc5(h4))
+        h4 = F.relu(self.fc4_bn(self.fc4(z)))
+        h5 = F.relu(self.fc5_bn(self.fc5(h4)))
         h6 = F.sigmoid(self.fc6(h5))
         return h6
 
@@ -82,12 +88,18 @@ testset = trainset
 testloader = trainloader
 
 net = Net()
+load_model= False # True
+if load_model:
+   PATH="/specific/netapp5/gaga/hagailevi/evaluation/bnet/output/VAE_model"
+   net.load_state_dict(torch.load(PATH))
+   net.eval()
+
 criterion = nn.BCELoss()
 
 # create your optimizer
 optimizer = optim.Adam(net.parameters(), lr=0.00001)
 
-for epoch in range(100000):  # loop over the dataset multiple times
+for epoch in range(0,100000):  # loop over the dataset multiple times
 
     running_loss = 0.0
     for i, data in enumerate(trainloader, 0):
