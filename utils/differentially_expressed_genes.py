@@ -123,9 +123,11 @@ def deg(tested_gene_file_name, total_gene_file_name, gene_expression_file_name, 
     print "about ot analyse: {}".format(tested_gene_file_name)
     # fetch gene expression by gene_id, divided by tumor type11111
     groups_results = load_expression_profile_by_labelling(gene_list_file_name=total_gene_file_name, gene_expression_file_name=gene_expression_file_name, phenotype_file_name=phenotype_file_name, gene_filter_file_name=gene_filter_file_name, tested_gene_path=total_gene_list_path, gene_expression_path=gene_expression_path, phenotype_path=phenotype_path, gene_filter_path=gene_filter_path, groups=groups)
+    
+    print "total # of groups; {}".format(len(groups_results))
     group_0_expression = np.array(groups_results[0]).T
     group_1_expression = np.array(groups_results[1]).T
-
+    print "# patient in groups 1: {}. # of patients in groups #2: {}".format(group_0_expression.shape[1], group_1_expression.shape[1])
     pvals = []
     for  i in range(1,len(group_0_expression)):
         mean_differences = np.average([float(c) for c in group_0_expression[i][1:]]) - np.average([float(c) for c in group_1_expression[i][1:]])
@@ -159,17 +161,25 @@ def deg(tested_gene_file_name, total_gene_file_name, gene_expression_file_name, 
 
 if __name__=="__main__":
 
-    dataset = "LUSC"
+    dataset = "PANCAN"
     constants.update_dirs(CANCER_TYPE_u=dataset)
     data_normalization = "fpkm"
-    tested_gene_file_name = "protein_coding.txt"
-    total_gene_file_name = "protein_coding.txt"
+    tested_gene_file_name = "vae_top_2000_14.txt"
+    total_gene_file_name = "vae_top_2000_14.txt"
     gene_expression_file_name, phenotype_file_name, survival_file_name, mutation_file_name, mirna_file_name, pval_preprocessing_file_name = build_gdc_params(
         dataset=dataset, data_normalizaton=data_normalization)
 
     groups_name = "temp"
     groups = json.load(file("../groups/{}.json".format(groups_name)))
+    datasets=["KIRC", "KIRP", "KICH", "LUSC", "LUAD", "COAD", "BRCA", "CHOL", "GBM", "PAAD", "STAD", "LIHC", "READ", "PRAD"]    
+    for cur_ds in datasets:
+        for cur_group in groups:
+            cur_group["disease_code"] = {
+                          "type": "string",
+                          "value": [cur_ds]
+                     }
+        print groups
+        deg(tested_gene_file_name=tested_gene_file_name, total_gene_file_name=total_gene_file_name,
+           gene_expression_file_name=gene_expression_file_name, phenotype_file_name=phenotype_file_name, groups=groups,
+           groups_name=cur_ds)
 
-    deg(tested_gene_file_name=tested_gene_file_name, total_gene_file_name=total_gene_file_name,
-        gene_expression_file_name=gene_expression_file_name, phenotype_file_name=phenotype_file_name, groups=groups,
-        groups_name=groups_name)

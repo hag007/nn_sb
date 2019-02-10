@@ -1,21 +1,33 @@
 [
     {
       "_label": "1",
-      "_name" : "normal",
+      "_name" : "normal_brca",
       "sample_type.samples": {
         "type": "string",
         "value": [
           "Solid Tissue Normal"
         ]
+      },
+      "disease_code": {
+        "type": "string",
+        "value": [
+          "COAD"
+        ]
       }
     },
      {
        "_label": "2",
-      "_name" : "tumor",
+      "_name" : "normal_kirp",
       "sample_type.samples": {
         "type": "string",
         "value": [
           "Primary Tumor"
+        ]
+      },
+      "disease_code": {
+        "type": "string",
+        "value": [
+          "COAD"
         ]
       }
     }

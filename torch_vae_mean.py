@@ -21,51 +21,12 @@ import matplotlib.colors as ml_colors
 
 from matplotlib.lines import Line2D
 
+import vae_model
+import vae_bn_before_relu_model
+
+
 from scipy.cluster.hierarchy import dendrogram, linkage
 
-class Net(nn.Module):
-
-    def __init__(self, factor=0.25, n_mito_input_layer=2000, n_cancer_types=2, n_latent_vector=2):
-        super(Net, self).__init__()
-        # self.factor = factor
-        # self.n_mito_input_layer=n_mito_input_layer
-
-        self.fc1 = nn.Linear(n_mito_input_layer, int(n_mito_input_layer * factor))
-        self.fc1_bn = nn.BatchNorm1d(int(n_mito_input_layer * factor))
-        self.fc2 = nn.Linear(int(n_mito_input_layer * factor), int(n_mito_input_layer * factor ** 2))
-        self.fc2_bn = nn.BatchNorm1d(int(n_mito_input_layer * factor ** 2))
-        self.fc31 = nn.Linear(int(n_mito_input_layer * factor ** 2), n_latent_vector)
-        self.fc31_bn = nn.BatchNorm1d(n_latent_vector)
-        self.fc32 = nn.Linear(int(n_mito_input_layer * factor ** 2), n_latent_vector)
-        self.fc32_bn = nn.BatchNorm1d(n_latent_vector)
-        self.fc4 = nn.Linear(n_latent_vector, int(n_mito_input_layer * factor ** 2))
-        self.fc4_bn = nn.BatchNorm1d(int(n_mito_input_layer * factor ** 2))
-        self.fc5 = nn.Linear(int(n_mito_input_layer * factor ** 2), int(n_mito_input_layer * factor))
-        self.fc5_bn = nn.BatchNorm1d(int(n_mito_input_layer * factor))
-        self.fc6 = nn.Linear(int(n_mito_input_layer * factor), n_mito_input_layer)
-
-    def encode(self, x):
-        h1 = F.relu(self.fc1_bn(self.fc1(x)))
-        h2 = F.relu(self.fc2_bn(self.fc2(h1)))
-        h31 = self.fc31_bn(self.fc31(h2))
-        h32 = self.fc32_bn(self.fc32(h2))
-        return h31, h32
-
-    def reparameterize(self, mu, logvar):
-        std = torch.exp(0.5 * logvar)
-        eps = torch.randn_like(std)
-        return eps.mul(std).add_(mu)
-
-    def decode(self, z):
-        h4 = F.relu(self.fc4_bn(self.fc4(z)))
-        h5 = F.relu(self.fc5_bn(self.fc5(h4)))
-        h6 = F.sigmoid(self.fc6(h5))
-        return h6
-
-    def forward(self, x):
-        mu, logvar = self.encode(x)
-        z = self.reparameterize(mu, logvar)
-        return self.decode(z), z, mu, logvar
 
     # Reconstruction + KL divergence losses summed over all elements and batch
 
@@ -82,14 +43,15 @@ def loss_function(recon_x, x, mu, logvar):
     return BCE + KLD
 
 datasets=cancer_type_dataset.CANCER_TYPES
-trainset = CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=["{}_{}".format(x.split("/")[1].split(".")[0],i_x) for i_x, x in enumerate(cancer_type_dataset.META_GROUPS)])
+trainset = CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=cancer_type_dataset.CANCER_TYPES)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=10,
                                           shuffle=True, num_workers=5, pin_memory=True)
 testset = trainset
 testloader = trainloader
 
-net = Net()
 criterion = nn.BCELoss()
+
+net = vae_model.Net()
 
 # create your optimizer
 optimizer = optim.Adam(net.parameters(), lr=0.00001)
@@ -104,7 +66,7 @@ X_var = None
 y = []
 
 
-net = Net()
+
 PATH="/home/hag007/Desktop/nn/VAE_model"
 net.load_state_dict(torch.load(PATH))
 net.eval()

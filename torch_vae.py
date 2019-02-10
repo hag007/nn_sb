@@ -18,50 +18,15 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.colors as ml_colors
+import vae_bn_after_relu_model
 
 from matplotlib.lines import Line2D
 
 
-class Net(nn.Module):
 
-    def __init__(self, factor=0.5, n_mito_input_layer=100, n_cancer_types=2, n_latent_vector=2):
-        super(Net, self).__init__()
-        # self.factor = factor
-        # self.n_mito_input_layer=n_mito_input_layer
-
-        self.fc1 = nn.Linear(n_mito_input_layer, int(n_mito_input_layer * factor))
-        self.fc2 = nn.Linear(int(n_mito_input_layer * factor), int(n_mito_input_layer * factor ** 2))
-        self.fc31 = nn.Linear(int(n_mito_input_layer * factor ** 2), n_latent_vector)
-        self.fc32 = nn.Linear(int(n_mito_input_layer * factor ** 2), n_latent_vector)
-        self.fc4 = nn.Linear(n_latent_vector, int(n_mito_input_layer * factor ** 2))
-        self.fc5 = nn.Linear(int(n_mito_input_layer * factor ** 2), int(n_mito_input_layer * factor))
-        self.fc6 = nn.Linear(int(n_mito_input_layer * factor), n_mito_input_layer)
-
-    def encode(self, x):
-        h1 = F.relu(self.fc1(x))
-        h2 = F.relu(self.fc2(h1))
-        h31 = self.fc31(h2)
-        h32 = self.fc32(h2)
-        return h31, h32
-
-    def reparameterize(self, mu, logvar):
-        std = torch.exp(0.5 * logvar)
-        eps = torch.randn_like(std)
-        return eps.mul(std).add_(mu)
-
-    def decode(self, z):
-        h4 = F.relu(self.fc4(z))
-        h5 = F.relu(self.fc5(h4))
-        h6 = F.sigmoid(self.fc6(h5))
-        return h6
-
-    def forward(self, x):
-        mu, logvar = self.encode(x)
-        z = self.reparameterize(mu, logvar)
-        return self.decode(z), z, mu, logvar
-
-    # Reconstruction + KL divergence losses summed over all elements and batch
-
+num_workers=4
+batch_size_train=100
+batch_size_val=batch_size_train/10
 
 def loss_function(recon_x, x, mu, logvar):
     BCE = F.binary_cross_entropy(recon_x, x, reduction='sum')
@@ -75,21 +40,32 @@ def loss_function(recon_x, x, mu, logvar):
     return BCE + KLD
 
 datasets=cancer_type_dataset.CANCER_TYPES
-trainset = CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=["{}".format(x.split("/")[1].split(".")[0],i_x) for i_x, x in enumerate(cancer_type_dataset.META_GROUPS)])
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=10,
-                                          shuffle=True, num_workers=5, pin_memory=True)
-testset = trainset
-testloader = trainloader
+torch_dataset=CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=["{}_{}".format(x.split("/")[1].split(".")[0],i_x) for i_x, x in enumerate(cancer_type_dataset.META_GROUPS)])
+train_dataset, test_dataset = torch.utils.data.random_split(torch_dataset, [torch_dataset.__len__()-torch_dataset.__len__()/10, torch_dataset.__len__()/10])
 
-net = Net()
+trainloader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size_train,
+                                          shuffle=True, num_workers=num_workers, pin_memory=True)
+
+testloader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size_val,
+                                          shuffle=True, num_workers=num_workers, pin_memory=True)
+
+net = vae_bn_after_relu_model.Net()
+load_model= False # True
+if load_model:
+   PATH="/specific/netapp5/gaga/hagailevi/evaluation/bnet/output/VAE_model"
+   net.load_state_dict(torch.load(PATH))
+   net.eval()
+
 criterion = nn.BCELoss()
 
 # create your optimizer
-optimizer = optim.Adam(net.parameters(), lr=0.00001)
+optimizer = optim.Adam(net.parameters(), lr=0.0025)
 
-for epoch in range(100000):  # loop over the dataset multiple times
+for epoch in range(0,100000):  # loop over the dataset multiple times
 
-    running_loss = 0.0
+    train_loss = 0.0
+    val_loss = 0.0
+
     for i, data in enumerate(trainloader, 0):
 
         # get the inputs
@@ -103,19 +79,36 @@ for epoch in range(100000):  # loop over the dataset multiple times
 
         loss = loss_function(outputs, inputs, mu, var)
         loss.backward()
-        running_loss += loss.item()
+        train_loss += loss.item()
         optimizer.step()
 
         # print statistics
-        if i % 100 == 99:  # print every 2000 mini-batches
-            print('[%d, %5d] loss: %.3f' %
-                  (epoch + 1, i + 1, running_loss / 100))
-            running_loss = 0.0
+        if i % 10 == 9:  # print every 2000 mini-batches
+            print('[%d, %5d] train loss: %.3f' %
+                  (epoch + 1, i + 1, train_loss / 100))
+            train_loss = 0.0
 
-    torch.save(net.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model"))
+        torch.save(net.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model"))
+
+    for i, data in enumerate(testloader, 0):
+        with torch.no_grad():
+            # get the inputs
+            inputs, labels = data
+
+            # forward + backward + optimize
+            outputs, z, mu, var = net(inputs)
+
+            loss = loss_function(outputs, inputs, mu, var)
+            val_loss += loss.item()
+
+    # print statistics
+    print('[%d, %5d] val loss: %.3f' %
+          (epoch + 1, i + 1, val_loss / 100))
+    val_loss = 0.0
+
     ###########################
 
-    if epoch % 10 == 0:
+    if epoch % 100== 0:
         correct = 0
         total = 0
         X = None
@@ -129,7 +122,7 @@ for epoch in range(100000):  # loop over the dataset multiple times
                 features, labels = data
                 _, labels = torch.max(labels, 1)
                 outputs, z, mu, var = net(features)
-                X_z = np.append(X_z, z, axis=0) if X_z is not None else z  
+                X_z = np.append(X_z, z, axis=0) if X_z is not None else z
                 X_mu=np.append(X_mu, mu, axis=0) if X_mu is not None else mu
                 X_var=np.append(X_var, var, axis=0) if X_var is not None else var
                 y = np.append(y, labels)
@@ -152,7 +145,7 @@ for epoch in range(100000):  # loop over the dataset multiple times
                             label_ids_unique / float(max(label_ids))]
         patches = [Line2D([0], [0], marker='o', color='gray', label=a,
                           markerfacecolor=c) for a, c in
-                   zip(trainset.get_labels_unique(), colorlist_unique)]
+                   zip(torch_dataset.get_labels_unique(), colorlist_unique)]
         ax.legend(handles=patches)
 
         plt.savefig(
@@ -172,7 +165,7 @@ for epoch in range(100000):  # loop over the dataset multiple times
                             label_ids_unique / float(max(label_ids))]
         patches = [Line2D([0], [0], marker='o', color='gray', label=a,
                           markerfacecolor=c) for a, c in
-                   zip(trainset.get_labels_unique(), colorlist_unique)]
+                   zip(torch_dataset.get_labels_unique(), colorlist_unique)]
         ax.legend(handles=patches)
 
         plt.savefig(
@@ -192,7 +185,7 @@ for epoch in range(100000):  # loop over the dataset multiple times
                             label_ids_unique / float(max(label_ids))]
         patches = [Line2D([0], [0], marker='o', color='gray', label=a,
                           markerfacecolor=c) for a, c in
-                   zip(trainset.get_labels_unique(), colorlist_unique)]
+                   zip(torch_dataset.get_labels_unique(), colorlist_unique)]
         ax.legend(handles=patches)
 
         plt.savefig(
@@ -211,7 +204,7 @@ with torch.no_grad():
         X_r = np.append(X_r, features, axis=0) if X is not None else features
         _, labels = torch.max(labels, 1)
         outputs, z, mu, var = net(features)
-        X = np.append(X, z, axis=0) if X is not None else z 
+        X = np.append(X, z, axis=0) if X is not None else z
         y = np.append(y, labels)
         _, predicted = torch.max(outputs, 1)
         total += labels.size(0)
