@@ -8,8 +8,8 @@ import simplejson as json
 from utils.param_builder import build_gdc_params
 
 # CANCER_TYPES=['LUSC', 'LUAD' , 'MESO', 'HNSC', 'BRCA', 'PRAD', 'SKCM', 'UVM', 'KIRP', 'KICH', 'KIRC', 'GBM', 'LGG', 'STAD', 'PAAD']
-CANCER_TYPES=['BRCA', 'COAD']
-META_GROUPS = ["groups/temp.json", "groups/temp.json"]
+CANCER_TYPES=["KIRC", "KIRP", "KICH", "LUSC", "LUAD", "COAD", "BRCA", "CHOL", "GBM", "PAAD", "STAD", "LIHC", "READ", "PRAD"]
+META_GROUPS = ["groups/temp.json", "groups/temp.json", "groups/temp.json", "groups/temp.json", "groups/temp.json", "groups/temp.json", "groups/temp.json", "groups/temp.json", "groups/temp.json", "groups/temp.json", "groups/temp.json", "groups/temp.json", "groups/temp.json", "groups/temp.json"]
 
 class CancerTypesDataset(Dataset):
 
@@ -42,7 +42,7 @@ class CancerTypesDataset(Dataset):
             labels_assignment=np.array(labels_assignment)[0]
             for cur_label in np.unique(labels_assignment):
                 cur_label_name=[cur["_name"] for cur in meta_groups[0] if "_label" in cur and int(cur["_label"])==cur_label]
-                cur_label_name = "{}, {}".format(metagroups_name, cur_label_name[0] if len(cur_label_name) > 0 else "unknown")
+                cur_label_name = "{}, {}".format(dataset_name, cur_label_name[0] if len(cur_label_name) > 0 else "unknown")
                 print cur_label_name
                 df_new = pd.DataFrame(data=gene_expression_top_var[labels_assignment==cur_label], index=gene_expression_top_var_headers_rows[labels_assignment==cur_label],
                                       columns=gene_expression_top_var_headers_columns)
@@ -51,7 +51,7 @@ class CancerTypesDataset(Dataset):
                 label_counter+=1
                 self.labels_unique = np.append(self.labels_unique, [cur_label_name])
 
-        var_th_index = 99
+        var_th_index = 1999
         if var_th_index is not None:
             print "filtering top vars"
             gene_expression_top_var, gene_expression_top_var_headers_rows, gene_expression_top_var_headers_columns = infra.filter_top_var_genes(

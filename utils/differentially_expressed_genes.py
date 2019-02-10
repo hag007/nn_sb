@@ -1,10 +1,12 @@
 import scipy.special
-
+import sys
+sys.path.insert(0, '../')
 import matplotlib.pyplot as plt
 from matplotlib import style
 style.use("ggplot")
 import scipy
 from scipy.stats import hypergeom
+import simplejson as json
 from statsmodels.sandbox.stats.multicomp import fdrcorrection0
 import logging
 sh = logging.StreamHandler()
@@ -15,6 +17,7 @@ from infra import *
 import math
 MIN_FC_VAL = 1
 import time
+from utils.param_builder import build_gdc_params
 ############################ (2) significance expression and proportion differntiations #############################
 
 
@@ -120,15 +123,10 @@ def deg(tested_gene_file_name, total_gene_file_name, gene_expression_file_name, 
     print "about ot analyse: {}".format(tested_gene_file_name)
     # fetch gene expression by gene_id, divided by tumor type11111
     groups_results = load_expression_profile_by_labelling(gene_list_file_name=total_gene_file_name, gene_expression_file_name=gene_expression_file_name, phenotype_file_name=phenotype_file_name, gene_filter_file_name=gene_filter_file_name, tested_gene_path=total_gene_list_path, gene_expression_path=gene_expression_path, phenotype_path=phenotype_path, gene_filter_path=gene_filter_path, groups=groups)
-    group_0_expression = groups_results[0]
-    group_1_expression = groups_results[1]
-    group_0_expression = np.rot90(np.flip(group_0_expression, 1), k=-1, axes=(1,0))
-    group_1_expression = np.rot90(np.flip(group_1_expression, 1), k=-1, axes=(1, 0))
-
-    # test pval for significance differentiation between label values (primar vs metastatic)
+    group_0_expression = np.array(groups_results[0]).T
+    group_1_expression = np.array(groups_results[1]).T
 
     pvals = []
-    gene_symbols = []
     for  i in range(1,len(group_0_expression)):
         mean_differences = np.average([float(c) for c in group_0_expression[i][1:]]) - np.average([float(c) for c in group_1_expression[i][1:]])
 
@@ -145,8 +143,8 @@ def deg(tested_gene_file_name, total_gene_file_name, gene_expression_file_name, 
                 direction = "upregulated"
             pvals.append((group_0_expression[i][0], direction, mean_differences, cur_pval, mean_foldchange))
 
-    pvals.sort(key=lambda x: (x[1], x[3]), reverse=False)
-    fdr_results = fdrcorrection0([x[3] for x in pvals], alpha=0.05, method='indep', is_sorted=False)
+    pvals.sort(key=lambda x: (x[3]), reverse=False) # x[1],
+    fdr_results = fdrcorrection0([x[3] for x in pvals], alpha=0.005, method='indep', is_sorted=False)
     pvals = [(cur_pval[0],cur_pval[1],cur_pval[2],cur_pval[3], fdr_results[1][i], cur_pval[4]) for i, cur_pval in enumerate(pvals)]
     true_counter = len([cur for cur in fdr_results[0] if cur == True])
     print "true hypothesis: {}/{}".format(true_counter, np.size(fdr_results[0]))
@@ -157,3 +155,21 @@ def deg(tested_gene_file_name, total_gene_file_name, gene_expression_file_name, 
             output+="{}\t{}\t{}\t{}\t{}\t{}\n".format(*cur_pval)
         f.write(output)
         print "pval saved to file"
+
+
+if __name__=="__main__":
+
+    dataset = "LUSC"
+    constants.update_dirs(CANCER_TYPE_u=dataset)
+    data_normalization = "fpkm"
+    tested_gene_file_name = "protein_coding.txt"
+    total_gene_file_name = "protein_coding.txt"
+    gene_expression_file_name, phenotype_file_name, survival_file_name, mutation_file_name, mirna_file_name, pval_preprocessing_file_name = build_gdc_params(
+        dataset=dataset, data_normalizaton=data_normalization)
+
+    groups_name = "temp"
+    groups = json.load(file("../groups/{}.json".format(groups_name)))
+
+    deg(tested_gene_file_name=tested_gene_file_name, total_gene_file_name=total_gene_file_name,
+        gene_expression_file_name=gene_expression_file_name, phenotype_file_name=phenotype_file_name, groups=groups,
+        groups_name=groups_name)

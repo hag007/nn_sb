@@ -7,6 +7,12 @@
         "value": [
           "Solid Tissue Normal"
         ]
+      },
+      "sample_type.samples": {
+        "type": "string",
+        "value": [
+          "Solid Tissue Normal"
+        ]
       }
     },
      {
