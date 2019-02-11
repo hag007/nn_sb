@@ -24,9 +24,9 @@ from matplotlib.lines import Line2D
 
 
 
-num_workers=4
+num_workers=25
 batch_size_train=100
-batch_size_val=batch_size_train/10
+batch_size_val=10
 
 def loss_function(recon_x, x, mu, logvar):
     BCE = F.binary_cross_entropy(recon_x, x, reduction='sum')
@@ -41,7 +41,9 @@ def loss_function(recon_x, x, mu, logvar):
 
 datasets=cancer_type_dataset.CANCER_TYPES
 torch_dataset=CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=["{}_{}".format(x.split("/")[1].split(".")[0],i_x) for i_x, x in enumerate(cancer_type_dataset.META_GROUPS)])
-train_dataset, test_dataset = torch.utils.data.random_split(torch_dataset, [torch_dataset.__len__()-torch_dataset.__len__()/10, torch_dataset.__len__()/10])
+train_dataset,test_dataset = torch.utils.data.random_split(torch_dataset, [torch_dataset.__len__()-torch_dataset.__len__()/100, torch_dataset.__len__()/100])
+
+print "train: {}, test: {}".format(len(train_dataset), len(test_dataset))
 
 trainloader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size_train,
                                           shuffle=True, num_workers=num_workers, pin_memory=True)
@@ -49,9 +51,9 @@ trainloader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size_t
 testloader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size_val,
                                           shuffle=True, num_workers=num_workers, pin_memory=True)
 
-net = vae_bn_after_relu_flex_model.Net()
-load_model= False # True
-if load_model:
+net = vae_bn_after_relu_flex_model.Net(n_reduction_layers=7 ,factor=0.5)
+load_model=True # False
+if load_model and os.path.exists(os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model")):
    PATH="/specific/netapp5/gaga/hagailevi/evaluation/bnet/output/VAE_model"
    net.load_state_dict(torch.load(PATH))
    net.eval()
@@ -59,9 +61,9 @@ if load_model:
 criterion = nn.BCELoss()
 
 # create your optimizer
-optimizer = optim.Adam(net.parameters(), lr=0.00001)
+optimizer = optim.Adam(net.parameters(), lr=0.0001)
 
-for epoch in range(0,100000):  # loop over the dataset multiple times
+for epoch in range(0, 100000):  # loop over the dataset multiple times
 
     train_loss = 0.0
     val_loss = 0.0
@@ -94,21 +96,22 @@ for epoch in range(0,100000):  # loop over the dataset multiple times
         with torch.no_grad():
             # get the inputs
             inputs, labels = data
-
+    
             # forward + backward + optimize
             outputs, z, mu, var = net(inputs)
-
+    
             loss = loss_function(outputs, inputs, mu, var)
             val_loss += loss.item()
-
+    
     # print statistics
+    
     print('[%d, %5d] val loss: %.3f' %
           (epoch + 1, i + 1, val_loss / 100))
     val_loss = 0.0
 
     ###########################
 
-    if epoch % 100== 0:
+    if epoch % 100==0: 
         correct = 0
         total = 0
         X = None
@@ -118,7 +121,7 @@ for epoch in range(0,100000):  # loop over the dataset multiple times
         y = []
 
         with torch.no_grad():
-            for data in testloader:
+            for i, data in enumerate(testloader, 0):
                 features, labels = data
                 _, labels = torch.max(labels, 1)
                 outputs, z, mu, var = net(features)
@@ -127,6 +130,7 @@ for epoch in range(0,100000):  # loop over the dataset multiple times
                 X_var=np.append(X_var, var, axis=0) if X_var is not None else var
                 y = np.append(y, labels)
 
+        print "len samples: {}".format(len(X_mu))
         colormap = cm.jet
         label_ids_unique = np.unique(y)
         label_ids = y
