@@ -137,7 +137,7 @@ for epoch in range(1000):  # loop over the dataset multiple times
     #            zip(labels, colorlist_unique)]
     # ax.legend(handles=patches)
 
-    plt.savefig(
+        plt.savefig(
         os.path.join(constants.BASE_PROFILE, "output", "AE_by_samples_{}.png".format(epoch)))
 
     ###########################

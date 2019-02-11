@@ -1,11 +1,12 @@
 import torch
 import torch.nn as nn
+import cancer_type_dataset
 from torch.nn import functional as F
 
 
 class Net(nn.Module):
 
-    def __init__(self, factor=0.25, n_mito_input_layer=2000, n_cancer_types=2, n_latent_vector=2):
+    def __init__(self, factor=0.25, n_mito_input_layer=cancer_type_dataset.n_input_layer, n_cancer_types=2, n_latent_vector=2):
         super(Net, self).__init__()
         # self.factor = factor
         # self.n_mito_input_layer=n_mito_input_layer

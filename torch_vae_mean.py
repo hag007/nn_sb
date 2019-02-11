@@ -22,7 +22,7 @@ import matplotlib.colors as ml_colors
 from matplotlib.lines import Line2D
 
 import vae_model
-import vae_bn_before_relu_model
+import vae_bn_after_relu_model
 
 
 from scipy.cluster.hierarchy import dendrogram, linkage
@@ -51,7 +51,7 @@ testloader = trainloader
 
 criterion = nn.BCELoss()
 
-net = vae_model.Net()
+net = vae_bn_after_relu_model.Net()
 
 # create your optimizer
 optimizer = optim.Adam(net.parameters(), lr=0.00001)

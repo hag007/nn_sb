@@ -17,6 +17,7 @@ from infra import *
 import math
 MIN_FC_VAL = 1
 import time
+import pandas as pd
 from utils.param_builder import build_gdc_params
 ############################ (2) significance expression and proportion differntiations #############################
 
@@ -153,21 +154,17 @@ def deg(tested_gene_file_name, total_gene_file_name, gene_expression_file_name, 
     # sort gene_id-pval pairs by pval
     with file(os.path.join(constants.OUTPUT_DIR, "deg_{}_{}_{}.txt".format(constants.CANCER_TYPE, groups_name, time.time())), "w+") as f:
         output = ""
+        df_deg=pd.DataFrame()
         for cur_pval in pvals:
+            df_deg=df_deg.append({"id" : pvals[0], "direction" : pvals[1], "mean_differences" : pvals[2], "pval" : pvals[3], "foldchange" : pvals[4]}, ignore_index=True)
             output+="{}\t{}\t{}\t{}\t{}\t{}\n".format(*cur_pval)
         f.write(output)
         print "pval saved to file"
+        return df_deg
 
 
 if __name__=="__main__":
 
-    dataset = "PANCAN"
-    constants.update_dirs(CANCER_TYPE_u=dataset)
-    data_normalization = "fpkm"
-    tested_gene_file_name = "vae_top_2000_14.txt"
-    total_gene_file_name = "vae_top_2000_14.txt"
-    gene_expression_file_name, phenotype_file_name, survival_file_name, mutation_file_name, mirna_file_name, pval_preprocessing_file_name = build_gdc_params(
-        dataset=dataset, data_normalizaton=data_normalization)
 
     groups_name = "temp"
     groups = json.load(file("../groups/{}.json".format(groups_name)))
@@ -178,8 +175,22 @@ if __name__=="__main__":
                           "type": "string",
                           "value": [cur_ds]
                      }
+
+        dataset = cur_ds
+        constants.update_dirs(CANCER_TYPE_u=dataset)
+        data_normalization = "fpkm"
+        tested_gene_file_name = "protein_coding.txt"
+        total_gene_file_name = "protein_coding.txt"
+        gene_expression_file_name, phenotype_file_name, survival_file_name, mutation_file_name, mirna_file_name, pval_preprocessing_file_name = build_gdc_params(
+            dataset=dataset, data_normalizaton=data_normalization)
+
         print groups
-        deg(tested_gene_file_name=tested_gene_file_name, total_gene_file_name=total_gene_file_name,
+        df_deg=deg(tested_gene_file_name=tested_gene_file_name, total_gene_file_name=total_gene_file_name,
            gene_expression_file_name=gene_expression_file_name, phenotype_file_name=phenotype_file_name, groups=groups,
            groups_name=cur_ds)
+
+        ids=[]
+        ids=np.append(df_deg.loc[:,"id"].values,ids)
+
+    print "\n".join(list(set(list(ids))))
 

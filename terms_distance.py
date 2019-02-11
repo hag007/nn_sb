@@ -53,7 +53,7 @@ def calc_similarity(mat_adj, i_x, i_y, x, y, x_score, y_score, norm):
     key="{}_{}".format(i_x,i_y)
     key_inv="{}_{}".format(i_y,i_x)
     if mat_adj[key] != -2: return
-    mat_adj[key] = semsim.SemSim(x, y) * (norm-np.abs(x_score-y_score))/norm# , ResnikSemSim(ontology,ac))
+    mat_adj[key] = semsim.SemSim(x, y) # * (norm-np.abs(x_score-y_score))/norm# , ResnikSemSim(ontology,ac))
     # print mat_adj[key]
     if np.isnan(mat_adj[key]):
         mat_adj[key] = -1

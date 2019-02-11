@@ -18,7 +18,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.colors as ml_colors
-import vae_bn_after_relu_model
+import vae_bn_after_relu_flex_model
 
 from matplotlib.lines import Line2D
 
@@ -49,7 +49,7 @@ trainloader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size_t
 testloader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size_val,
                                           shuffle=True, num_workers=num_workers, pin_memory=True)
 
-net = vae_bn_after_relu_model.Net()
+net = vae_bn_after_relu_flex_model.Net()
 load_model= False # True
 if load_model:
    PATH="/specific/netapp5/gaga/hagailevi/evaluation/bnet/output/VAE_model"
@@ -59,7 +59,7 @@ if load_model:
 criterion = nn.BCELoss()
 
 # create your optimizer
-optimizer = optim.Adam(net.parameters(), lr=0.0025)
+optimizer = optim.Adam(net.parameters(), lr=0.00001)
 
 for epoch in range(0,100000):  # loop over the dataset multiple times
 
