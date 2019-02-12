@@ -6,105 +6,28 @@ import os
 import numpy as np
 import constants
 from cancer_type_dataset import CancerTypesDataset
+import cancer_type_dataset
 import simplejson as json
 from utils.param_builder import build_gdc_params
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
+
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
+import matplotlib
+
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.colors as ml_colors
+import vae_gan_bn_after_relu_flex_model
 
 from matplotlib.lines import Line2D
 
-from cancer_type_dataset import CANCER_TYPES
-
-EPOCHS=10
-
-class Encoder(nn.Module):
-
-    def __init__(self, factor = 0.5, n_mito_input_layer=100, n_cancer_types=2, n_latent_vector=2):
-        super(Encoder, self).__init__()
-        # self.factor = factor
-        # self.n_mito_input_layer=n_mito_input_layer
-
-        self.fc1 = nn.Linear(n_mito_input_layer, int(n_mito_input_layer*factor))
-        self.fc2 = nn.Linear(int(n_mito_input_layer*factor), int(n_mito_input_layer*factor**2))
-        self.fc31 = nn.Linear(int(n_mito_input_layer*factor**2), n_latent_vector)
-        self.fc32 = nn.Linear(int(n_mito_input_layer * factor ** 2), n_latent_vector)
-
-    def encode(self, x):
-        h_en1 = F.relu(self.fc1(x))
-        h_en2 = F.relu(self.fc2(h_en1))
-        h_en31 = self.fc31(h_en2)
-        h_en32 = self.fc32(h_en2)
-
-        return h_en31, h_en32
-
-    def reparameterize(self, mu, logvar):
-        std = torch.exp(0.5 * logvar)
-        eps = torch.randn_like(std)
-
-        return eps.mul(std).add_(mu)
 
 
-    def forward(self, x):
-        mu, logvar = self.encode(x)
-        z = self.reparameterize(mu, logvar)
-        return z, mu, logvar
+num_workers=25
+batch_size_train=100
+batch_size_val=10
 
-
-class Decoder(nn.Module):
-
-    def __init__(self, factor = 0.5, n_mito_input_layer=100, n_cancer_types=2, n_latent_vector=2):
-        super(Decoder, self).__init__()
-
-        self.fc_dec1 = nn.Linear(n_latent_vector, int(n_mito_input_layer * factor ** 2))
-        self.fc_dec2 = nn.Linear(int(n_mito_input_layer*factor**2), int(n_mito_input_layer*factor))
-        self.fc_dec3 = nn.Linear(int(n_mito_input_layer*factor), n_mito_input_layer)
-
-
-    def decode(self, z):
-        h_dec1 = F.relu(self.fc_dec1(z))
-        h_dec2 = F.relu(self.fc_dec2(h_dec1))
-        out_dec = F.sigmoid(self.fc_dec3(h_dec2))
-
-        return out_dec
-
-
-    def forward(self, input):
-        z, mu, logvar = input
-        decoded=self.decode(z)
-        return decoded ,mu, logvar
-
-
-class Discriminator(nn.Module):
-
-    def __init__(self, factor = 0.5, n_mito_input_layer=100, n_cancer_types=2, n_latent_vector=2):
-        super(Discriminator, self).__init__()
-        # self.factor = factor
-        # self.n_mito_input_layer=n_mito_input_layer
-
-        self.fc_dis1 = nn.Linear(n_mito_input_layer, int(n_mito_input_layer*factor))
-        self.fc_dis2 = nn.Linear(int(n_mito_input_layer*factor), int(n_mito_input_layer*factor**2))
-        self.fc_dis3 = nn.Linear(int(n_mito_input_layer*factor**2), 1)
-
-
-    def discriminator(self, x_hat):
-        h_dis1 = F.relu(self.fc_dis1(x_hat))
-        h_dis2 = F.relu(self.fc_dis2(h_dis1))
-        out_dis = F.sigmoid(self.fc_dis3(h_dis2))
-
-        return out_dis
-
-    def forward(self, input):
-        x_hat, _1, _2 = input
-        dis_prediction=self.discriminator(x_hat)
-        return dis_prediction
-
-
-# Reconstruction + KL divergence losses summed over all elements and batch
 def loss_function(recon_x, x, mu, logvar):
     BCE = F.binary_cross_entropy(recon_x, x, reduction='sum')
 
@@ -117,274 +40,202 @@ def loss_function(recon_x, x, mu, logvar):
     return BCE + KLD
 
 
-def train_VAE(trainloader, VAE, optimizer):
+def backprop_vae(m_VAE, encoder, decoder, optimizer, n_epoches, trainloader, testloader):
 
-    for k, v in VAE.state_dict().iteritems():
-        if k.startswith("_"): continue
+    for epoch in range(n_epoches):
+        train_loss=0
+        val_loss=0
+        for i, data in enumerate(trainloader, 0):
 
+            # get the inputs
+            inputs, labels = data
+
+            # zero the parameter gradients
+            optimizer.zero_grad()
+
+            # forward + backward + optimize
+            outputs, z, mu, var = m_VAE(inputs)
+
+            loss = loss_function(outputs, inputs, mu, var)
+            loss.backward()
+            train_loss += loss.item()
+            optimizer.step()
+
+            # print statistics
+            if i % 10 == 9:  # print every 2000 mini-batches
+                print('[%d, %5d] vae train loss: %.3f' %
+                      (epoch + 1, i + 1, train_loss / 100))
+                train_loss = 0.0
+
+        torch.save(encoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_EN_model"))
+        torch.save(decoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_DE_model"))
+
+        for i, data in enumerate(testloader, 0):
+            with torch.no_grad():
+                # get the inputs
+                inputs, labels = data
+
+                # forward + backward + optimize
+                outputs, z, mu, var = m_VAE(inputs)
+
+                loss = loss_function(outputs, inputs, mu, var)
+                val_loss += loss.item()
+
+        # print statistics
+
+        print('[%d, %5d] vae val loss: %.3f' %
+              (epoch + 1, i + 1, val_loss / 100))
+        val_loss = 0.0
+
+
+def backprop_dis(m_VAE, m_discriminator, optimizer, n_epoches, trainloader):
+
+    batch_accuracies = []
+    for epoch in range(n_epoches):  # loop over the dataset multiple times
+
+        running_loss = 0.0
+        for i, data in enumerate(trainloader, 0):
+
+            inputs, labels = data
+            real_inputs = torch.tensor(torch.stack([inputs[a] for a in np.arange(len(inputs) / 2)]),
+                                  dtype=torch.float)
+            real_labels = torch.tensor(torch.tensor([1 for a in np.arange(len(labels) / 2)]), dtype=torch.float)
+
+            dummy_inputs= torch.tensor(torch.stack([inputs[a] for a in np.arange(len(inputs) / 2, len(inputs))]),
+                                       dtype=torch.float)
+            dummy_labels = torch.tensor(torch.tensor([0 for a in np.arange(len(labels) / 2, len(labels))]), dtype=torch.float)
+
+            random_inputs, _1, _2, _3 = m_VAE(dummy_inputs)
+
+            inputs = torch.cat((real_inputs, random_inputs), dim=0)
+            labels = torch.cat((torch.tensor(real_labels), torch.tensor(dummy_labels, dtype=torch.float)), dim=0)
+
+            optimizer.zero_grad()
+
+            # forward + backward + optimize
+            outputs, _1, _2, _3, _4 = m_discriminator([inputs, None, None, None])
+
+            loss = F.binary_cross_entropy(outputs.view(-1, ), torch.tensor(labels, dtype=torch.float),
+                                          reduction='sum')
+            loss.backward()
+            running_loss += loss.item()
+            optimizer.step()
+
+            correct = 0
+            total = 0
+            y = []
+            with torch.no_grad():
+                y_pred, _1, _2, _3, _4 = m_discriminator([inputs, None, None, None])
+                y_pred = torch.round(y_pred).view(-1)
+                y = torch.tensor(labels, dtype=torch.float)
+                total += labels.size(0)
+                correct += (y_pred == y).sum().item()
+                batch_accuracies.append(100 * correct / total)
+
+    print('Accuracy of the network on  test batch: {} %'.format(
+        round(np.mean(np.array(batch_accuracies)), 2)))
+
+
+def backprop_gen(m_VAE, m_GAN, m_discriminator, optimizer, n_epoches, trainloader):
+
+    for k, v in m_GAN.state_dict().iteritems():
+            if k.startswith("_"): continue
+
+            if "_dis" in k:
+                v.requires_grad = False
+            elif ("_enc" in k or "_dec" in k) and "Float" in torch.typename(v):
+                v.requires_grad = True
+
+    for epoch in range(n_epoches):
+        running_loss = 0.0
+        for i, data in enumerate(trainloader, 0):
+
+            # get the inputs
+            inputs, labels = data
+
+            random_inputs, z, mu, var = m_VAE(inputs)
+            random_labels = torch.tensor([1 for x in range(labels.size()[0])], dtype=torch.float)
+
+            # zero the parameter gradients
+            optimizer.zero_grad()
+
+            # forward + backward + optimize
+            outputs, _1, _2, _3, _4 = m_discriminator([random_inputs, None, None, None])
+
+            loss = F.binary_cross_entropy(outputs.view(-1, ), torch.tensor(random_labels, dtype=torch.float),
+                                          reduction='sum')
+            loss.backward()
+            running_loss += loss.item()
+            optimizer.step()
+
+            # print statistics
+            if epoch == len(list(trainloader))-1:  # print every 2000 mini-batches
+                print('[%d, %5d] gen train loss: %.3f' %
+                      (epoch + 1, i + 1, running_loss / 100))
+                running_loss = 0.0
+
+    for k, v in m_GAN.state_dict().iteritems():
+        if k.startswith("_") or "Float" not in torch.typename(v): continue
         v.requires_grad = True
 
 
-    for epoch in range(EPOCHS):  # loop over the dataset multiple times
-        print "EPOCH: {}".format(epoch)
-        running_loss = 0.0
-        for i, data in enumerate(trainloader, 0):
 
-            # get the inputs
-            inputs, labels = data
+datasets=cancer_type_dataset.CANCER_TYPES
+torch_dataset=CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=["{}".format(x) for i_x, x in enumerate(cancer_type_dataset.CANCER_TYPES)])
+train_dataset,test_dataset = torch.utils.data.random_split(torch_dataset, [torch_dataset.__len__()-torch_dataset.__len__()/100, torch_dataset.__len__()/100])
 
-            # zero the parameter gradients
-            optimizer.zero_grad()
+print "train: {}, test: {}".format(len(train_dataset), len(test_dataset))
 
-            # forward + backward + optimize
-            outputs, mu, logvar = VAE(inputs)
+trainloader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size_train,
+                                          shuffle=True, num_workers=num_workers, pin_memory=True)
 
-            loss = loss_function(outputs, inputs, mu, logvar)
-            loss.backward()
-            running_loss += loss.item()
-            optimizer.step()
+testloader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size_val,
+                                          shuffle=True, num_workers=num_workers, pin_memory=True)
 
 
-def train_GAN_dis(trainloader, GAN, optimizer, m_decoder, m_discriminator):
+encoder=vae_gan_bn_after_relu_flex_model.Encoder()
+decoder=vae_gan_bn_after_relu_flex_model.Decoder()
+discriminator=vae_gan_bn_after_relu_flex_model.Discriminator()
 
-        for k, v in GAN.state_dict().iteritems():
-            if k.startswith("_"): continue
+model_base_folder=constants.OUTPUT_GLOBAL_DIR
+PATH_DISCRIMINATOR= model_base_folder+"GAN_DIS_model"# os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model")
+PATH_ENCODER= model_base_folder+"GAN_ENC_model"
+PATH_DECODER= model_base_folder+"GAN_DEC_model"
+load_model=True # False
+if load_model and os.path.exists(PATH_DISCRIMINATOR):
+    encoder.load_state_dict(torch.load(PATH_ENCODER))
+    encoder.eval()
+    decoder.load_state_dict(torch.load(PATH_ENCODER))
+    decoder.eval()
+    discriminator.load_state_dict(torch.load(PATH_ENCODER))
+    discriminator.eval()
 
-            if "_dec" in k:
-                v.requires_grad = False
-            else:
-                v.requires_grad = True
-
-        batch_accuracies=[]
-        for epoch in range(EPOCHS):  # loop over the dataset multiple times
-
-            running_loss = 0.0
-            for i, data in enumerate(trainloader, 0):
-
-                # get the inputs
-                inputs, labels = data
-                inputs=torch.tensor(torch.stack([inputs[a] for a in np.arange(len(inputs)/2)]), dtype=torch.float)
-                labels=torch.tensor(torch.tensor([1 for a in np.arange(len(labels)/2)]), dtype=torch.float)
-                random_inputs=[]
-                random_labels=[]
-                with torch.no_grad():
-                    for input in inputs:
-
-                        random_labels.append(0)
-                        outputs, _1, _2=m_decoder([torch.distributions.normal.Normal(loc=0,scale=1).sample(sample_shape=(2,)), None, None])
-                        random_inputs.append(outputs)
-
-
-                inputs=torch.cat((inputs, torch.stack(random_inputs)), dim=0)
-                # inputs=torch.tensor(torch.stack(random_inputs), dtype=torch.float)
-                labels=torch.cat((torch.tensor(labels), torch.tensor(random_labels, dtype=torch.float)), dim=0)
-                # labels= torch.tensor(random_labels, dtype=torch.float)
-                # zero the parameter gradients
-                optimizer.zero_grad()
-
-                # forward + backward + optimize
-                outputs = m_discriminator([inputs,None,None])
-
-                loss = F.binary_cross_entropy(outputs.view(-1,), torch.tensor(labels, dtype=torch.float), reduction='sum')
-                loss.backward()
-                running_loss += loss.item()
-                optimizer.step()
-
-                if epoch==EPOCHS-1:
-                    correct = 0
-                    total = 0
-                    y = []
-                    with torch.no_grad():
-                        y_pred=m_discriminator([inputs,None,None])
-                        y_pred=torch.round(y_pred).view(-1)
-                        y = torch.tensor(labels,dtype=torch.float)
-                        total += labels.size(0)
-                        correct += (y_pred == y).sum().item()
-                        batch_accuracies.append(100 * correct / total)
-
-        print('Accuracy of the network on  test batch: {} %'.format(
-            round(np.mean(np.array(batch_accuracies)),2)))
-
-
-def train_GAN_gen(trainloader, GAN, optimizer):
-
-    for k, v in GAN.state_dict().iteritems():
-        if k.startswith("_"): continue
-        if "_dis" in k:
-            v.requires_grad = False
-        else:
-            v.requires_grad = True
-
-    for epoch in range(EPOCHS):  # loop over the dataset multiple times
-
-        running_loss = 0.0
-        for i, data in enumerate(trainloader, 0):
-
-            # get the inputs
-            inputs, labels = data
-
-            random_labels=[]
-            random_inputs=[]
-            for i in range(inputs.size()[0]*2):
-                random_labels.append(1)
-                random_inputs.append(torch.distributions.normal.Normal(loc=0, scale=1).sample(sample_shape=(2,)))
-
-            # zero the parameter gradients
-            optimizer.zero_grad()
-
-            # forward + backward + optimize
-            outputs = GAN([torch.stack(random_inputs), None, None])
-
-            loss = F.binary_cross_entropy(outputs.view(-1, ), torch.tensor(random_labels, dtype=torch.float), reduction='sum')
-            loss.backward()
-            running_loss += loss.item()
-            optimizer.step()
-
-
-
-encoder=Encoder()
-decoder=Decoder()
-discriminator=Discriminator()
 
 m_VAE = nn.Sequential(encoder,decoder)
 m_GAN = nn.Sequential(decoder,discriminator)
 m_FULL = nn.Sequential(encoder,decoder,discriminator)
 
-csv_files = []
-datasets = CANCER_TYPES
-
-for cur_ds in datasets:
-    dataset = cur_ds
-    constants.update_dirs(DATASET_NAME_u=dataset)
-    data_normalizaton = "fpkm"
-    gene_expression_file_name, phenotype_file_name, survival_file_name, mutation_file_name, mirna_file_name, pval_preprocessing_file_name = \
-        build_gdc_params(dataset=dataset, data_normalizaton=data_normalizaton)
-    csv_files.append(os.path.join(constants.DATA_DIR, gene_expression_file_name))
-
-trainset = CancerTypesDataset(csv_files=csv_files, labels=datasets)
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=100,
-                                          shuffle=True, num_workers=40, pin_memory=True)
-testset = trainset # CancerTypesDataset(csv_files=csv_files, labels=datasets)
-testloader = trainloader # torch.utils.data.DataLoader(trainset, batch_size=10,
-                                         # shuffle=True, num_workers=10)
-
-criterion = nn.BCELoss()
 
 # create your optimizer
-vae_optimizer = optim.Adam(m_VAE.parameters(), lr=0.00001)
-gan_optimizer = optim.Adam(m_GAN.parameters(), lr=0.00001)
+lr=0.001
+optimizer_dis = optim.Adam(discriminator.parameters(), lr=lr)
+optimizer_en = optim.Adam(encoder.parameters(), lr=lr)
+optimizer_de = optim.Adam(decoder.parameters(), lr=lr)
+optimizer_vae = optim.Adam(m_VAE.parameters(), lr=lr)
+optimizer_gan = optim.Adam(m_GAN.parameters(), lr=lr)
+
+n_epoches=5
+for meta_epoch in range(0, 1000):  # loop over the dataset multiple times
+
+        print "start backprop_vae.."
+        backprop_vae(m_VAE, encoder, decoder, optimizer_vae, n_epoches, trainloader, testloader)
+        if meta_epoch > 0:
+            print "start backprop_gen.."
+            backprop_gen(m_VAE, m_GAN, discriminator, optimizer_gan, n_epoches * 2, trainloader)
+            print "start backprop_dis.."
+            backprop_dis(m_VAE, discriminator, optimizer_dis, n_epoches, trainloader)
 
 
-for meta_epoch in range(3000):
-
-    print "meta_epoch: {}".format(meta_epoch)
-
-    ###########################
-    if meta_epoch % 1 == 0:
-        correct = 0
-        total = 0
-        X = None
-        X_r = None
-        y = []
-
-        with torch.no_grad():
-            for data in testloader:
-                features, labels = data
-                X_r = np.append(X_r, features, axis=0) if X is not None else features
-                _, labels = torch.max(labels, 1)
-                outputs, h, var = m_VAE(features)
-                X = np.append(X, h, axis=0) if X is not None else h
-                y = np.append(y, labels)
-
-        n_components = 2
-        fig = plt.figure(1, figsize=(20, 20))
-        plt.clf()
-        if n_components == 3:
-            ax = fig.add_subplot(111, projection='3d')
-            ax.scatter(X[:, 0], X[:, 1], X[:, 2], c=y, cmap='jet')
-        if n_components == 2:
-            ax = fig.add_subplot(111)
-            ax.scatter(X[:, 0], X[:, 1], c=y, cmap='jet')
-
-        colormap = cm.jet
-        label_ids_unique = np.unique(y)
-        label_ids = y
-
-        colorlist_unique = [ml_colors.rgb2hex(colormap(a)) for a in
-                            label_ids_unique / float(max(label_ids))]
-        patches = [Line2D([0], [0], marker='o', color='gray', label=a,
-                          markerfacecolor=c) for a, c in
-                   zip(datasets, colorlist_unique)]
-        ax.legend(handles=patches)
-
-        plt.savefig(
-            os.path.join(constants.BASE_PROFILE, "output", "AE_by_samples_{}.png".format(meta_epoch)))
-
-    ###########################
-
-    # if meta_epoch%3==0:
-    train_VAE(trainloader, m_VAE, vae_optimizer)
-    # elif meta_epoch%3==1:
-    train_GAN_dis(trainloader, m_GAN, gan_optimizer, decoder, discriminator)
-    # else:
-    train_GAN_gen(trainloader, m_GAN, gan_optimizer)
-
-    torch.save(encoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "encoder_model"))
-    torch.save(decoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "decoder_model"))
-    torch.save(discriminator.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "discriminator_model"))
-
-
-
-
-#
-# n_components=2
-# X = PCA(n_components=n_components).fit_transform(X_r)
-# fig = plt.figure(1, figsize=(20, 20))
-# plt.clf()
-# if n_components == 3:
-#     ax = fig.add_subplot(111, projection='3d')
-#     ax.scatter(X[:, 0], X[:, 1], X[:, 2], c=y, cmap='jet')
-# if n_components == 2:
-#     ax = fig.add_subplot(111)
-#     ax.scatter(X[:, 0], X[:, 1], c=y, cmap='jet')
-#
-# colormap = cm.jet
-# label_ids_unique = np.unique(y)
-# label_ids = y
-#
-# colorlist_unique = [ml_colors.rgb2hex(colormap(a)) for a in
-#                     label_ids_unique / float(max(label_ids))]
-# patches = [Line2D([0], [0], marker='o', color='gray', label=a,
-#                   markerfacecolor=c) for a, c in
-#            zip(datasets, colorlist_unique)]
-# ax.legend(handles=patches)
-#
-# plt.savefig(
-#     os.path.join(constants.BASE_PROFILE, "output", "PCA_by_samples.png").format(constants.CANCER_TYPE))
-#
-#
-#
-# n_components=2
-# X = TSNE(n_components=n_components, metric="correlation", perplexity=30.0).fit_transform(X_r)
-# fig = plt.figure(1, figsize=(20, 20))
-# plt.clf()
-# if n_components == 3:
-#     ax = fig.add_subplot(111, projection='3d')
-#     ax.scatter(X[:, 0], X[:, 1], X[:, 2], c=y, cmap='jet')
-# if n_components == 2:
-#     ax = fig.add_subplot(111)
-#     ax.scatter(X[:, 0], X[:, 1], c=y, cmap='jet')
-#
-# colormap = cm.jet
-# label_ids_unique = np.unique(y)
-# label_ids = y
-#
-# colorlist_unique = [ml_colors.rgb2hex(colormap(a)) for a in
-#                     label_ids_unique / float(max(label_ids))]
-# patches = [Line2D([0], [0], marker='o', color='gray', label=a,
-#                   markerfacecolor=c) for a, c in
-#            zip(datasets, colorlist_unique)]
-# ax.legend(handles=patches)
-#
-# plt.savefig(
-#     os.path.join(constants.BASE_PROFILE, "output", "TSNE_by_samples.png").format(constants.CANCER_TYPE))
+        torch.save(encoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_ENC_model"))
+        torch.save(decoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_DEC_model"))
+        torch.save(discriminator.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_DIS_model"))

@@ -152,7 +152,7 @@ def deg(tested_gene_file_name, total_gene_file_name, gene_expression_file_name, 
     true_counter = len([cur for cur in fdr_results[0] if cur == True])
     print "true hypothesis: {}/{}".format(true_counter, np.size(fdr_results[0]))
     # sort gene_id-pval pairs by pval
-    with file(os.path.join(constants.OUTPUT_DIR, "deg_{}_{}_{}.txt".format(constants.CANCER_TYPE, groups_name, time.time())), "w+") as f:
+    with file(os.path.join(constants.OUTPUT_GLOBAL_DIR, "deg_{}_{}_{}.txt".format(constants.CANCER_TYPE, groups_name, time.time())), "w+") as f:
         output = ""
         df_deg=pd.DataFrame()
         for cur_pval in pvals:

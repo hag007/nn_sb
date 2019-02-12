@@ -22,7 +22,7 @@ import matplotlib.colors as ml_colors
 from matplotlib.lines import Line2D
 
 import vae_model
-import vae_bn_after_relu_model
+import vae_bn_after_relu_flex_model
 
 
 from scipy.cluster.hierarchy import dendrogram, linkage
@@ -51,7 +51,7 @@ testloader = trainloader
 
 criterion = nn.BCELoss()
 
-net = vae_bn_after_relu_model.Net()
+net = vae_bn_after_relu_flex_model.Net(n_reduction_layers=2, factor=0.5, n_latent_vector=100)
 
 # create your optimizer
 optimizer = optim.Adam(net.parameters(), lr=0.00001)
@@ -64,7 +64,6 @@ X_z = None
 X_mu = None
 X_var = None
 y = []
-
 
 
 PATH="/home/hag007/Desktop/nn/VAE_model"
@@ -85,7 +84,7 @@ with torch.no_grad():
         y = np.append(y, labels)
 
 
-# X_mu = PCA(n_components=2).fit_transform(X_mu)
+# X_mu = TSNE(n_components=2).fit_transform(X_mu)
 
 label_ids_unique = np.unique(y)
 label_ids = [trainset.get_labels_unique()[int(a)] for a in y]
@@ -158,17 +157,16 @@ if n_components == 2:
                     bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
                     arrowprops=dict(facecolor='black', shrink=0.05, width=2, headwidth=3, headlength=2))
 
-        if True or (k!="KICH" and k!="PRAD") :
-            filtered_tumor_only_vectors_mu_values.append(v)
-            filtered_tumor_only_vectors_mu_keys.append(k)
+        filtered_tumor_only_vectors_mu_values.append(v)
+        filtered_tumor_only_vectors_mu_keys.append(k)
     plt.savefig(
         os.path.join(constants.BASE_PROFILE, "output", "mean_sub_by_samples_mu.png"))
 
     # convert the redundant n*n square matrix form into a condensed nC2 array
 
-    linked = linkage(filtered_tumor_only_vectors_mu_values, 'single')
+    linked = linkage(filtered_tumor_only_vectors_mu_values, 'average')
 
-    plt.figure(figsize=(10, 7))
+    plt.figure(figsize=(13, 7))
     dendrogram(linked,
                orientation='top',
                labels=filtered_tumor_only_vectors_mu_keys,
@@ -206,6 +204,9 @@ if n_components == 2:
     fig = plt.figure(1, figsize=(10, 10))
     plt.clf()
     ax = fig.add_subplot(111)
+    normal_vectors_mu_values = []
+    normal_vectors_mu_keys = []
+
     for k,v in samples_mu_mean_dict.iteritems():
         if "normal" in k:
             ax.scatter(v[0], v[1])
@@ -213,8 +214,24 @@ if n_components == 2:
                     xy=(v[0], v[1]), xytext=(-20, 20), textcoords='offset points',
                     bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
                     arrowprops=dict(facecolor='black', shrink=0.05, width=2, headwidth=3, headlength=2))
+
+            normal_vectors_mu_values.append(v)
+            normal_vectors_mu_keys.append(k)
+
     plt.savefig(
         os.path.join(constants.BASE_PROFILE, "output", "mean_normal_by_samples_mu.png"))
+
+    linked = linkage(normal_vectors_mu_values, 'single')
+
+    plt.figure(figsize=(13, 7))
+    dendrogram(linked,
+               orientation='top',
+               labels=[x.split(',')[0] for x in normal_vectors_mu_keys],
+               distance_sort='descending',
+               show_leaf_counts=True)
+
+    plt.savefig(os.path.join(constants.OUTPUT_GLOBAL_DIR, "mean_normal_by_samples_mu_hierarchical.png"))
+
 
     fig = plt.figure(1, figsize=(10, 10))
     plt.clf()
@@ -243,9 +260,13 @@ if n_components == 2:
     plt.savefig(
         os.path.join(constants.BASE_PROFILE, "output", "mean_tumor_by_samples_z.png"))
 
+
+
     fig = plt.figure(1, figsize=(10, 10))
     plt.clf()
     ax = fig.add_subplot(111)
+    tumor_vectors_mu_values=[]
+    tumor_vectors_mu_keys=[]
     for k,v in samples_mu_mean_dict.iteritems():
         if "tumor" in k:
             ax.scatter(v[0], v[1])
@@ -253,40 +274,54 @@ if n_components == 2:
                     xy=(v[0], v[1]), xytext=(-20, 20), textcoords='offset points',
                     bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
                     arrowprops=dict(facecolor='black', shrink=0.05, width=2, headwidth=3, headlength=2))
+            tumor_vectors_mu_values.append(v)
+            tumor_vectors_mu_keys.append(k)
 
-    COAD_new=(tumor_only_vectors_mu["LUAD"][0]+samples_mu_mean_dict["COAD, normal"][0], tumor_only_vectors_mu["LUAD"][1]+samples_mu_mean_dict["COAD, normal"][1])
-    LUAD_new =(tumor_only_vectors_mu["COAD"][0] + samples_mu_mean_dict["LUAD, normal"][0], tumor_only_vectors_mu["COAD"][1]+samples_mu_mean_dict["LUAD, normal"][1])
 
-    BRCA_new = (tumor_only_vectors_mu["KIRP"][0] + samples_mu_mean_dict["BRCA, normal"][0], tumor_only_vectors_mu["KIRP"][1] + samples_mu_mean_dict["BRCA, normal"][1])
-    KIRP_new = (tumor_only_vectors_mu["BRCA"][0] + samples_mu_mean_dict["KIRP, normal"][0], tumor_only_vectors_mu["BRCA"][1] + samples_mu_mean_dict["KIRP, normal"][1])
-
-    ax.scatter(*COAD_new)
-    ax.scatter(*LUAD_new)
-
-    ax.scatter(*BRCA_new)
-    ax.scatter(*KIRP_new)
-
-    ax.annotate("COAD_new",
-                xy=COAD_new, xytext=(-20, 20), textcoords='offset points',
-                bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
-                arrowprops=dict(facecolor='black', shrink=0.05, width=2, headwidth=3, headlength=2))
-    ax.annotate("LUAD_new",
-                xy=LUAD_new, xytext=(-20, 20), textcoords='offset points',
-                bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
-                arrowprops=dict(facecolor='black', shrink=0.05, width=2, headwidth=3, headlength=2))
-
-    ax.annotate("BRCA_new",
-                xy=BRCA_new, xytext=(-20, 20), textcoords='offset points',
-                bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
-                arrowprops=dict(facecolor='black', shrink=0.05, width=2, headwidth=3, headlength=2))
-    ax.annotate("KIRP_new",
-                xy=KIRP_new, xytext=(-20, 20), textcoords='offset points',
-                bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
-                arrowprops=dict(facecolor='black', shrink=0.05, width=2, headwidth=3, headlength=2))
-
+    # COAD_new=(tumor_only_vectors_mu["LUAD"][0]+samples_mu_mean_dict["COAD, normal"][0], tumor_only_vectors_mu["LUAD"][1]+samples_mu_mean_dict["COAD, normal"][1])
+    # LUAD_new =(tumor_only_vectors_mu["COAD"][0] + samples_mu_mean_dict["LUAD, normal"][0], tumor_only_vectors_mu["COAD"][1]+samples_mu_mean_dict["LUAD, normal"][1])
+    #
+    # BRCA_new = (tumor_only_vectors_mu["KIRP"][0] + samples_mu_mean_dict["BRCA, normal"][0], tumor_only_vectors_mu["KIRP"][1] + samples_mu_mean_dict["BRCA, normal"][1])
+    # KIRP_new = (tumor_only_vectors_mu["BRCA"][0] + samples_mu_mean_dict["KIRP, normal"][0], tumor_only_vectors_mu["BRCA"][1] + samples_mu_mean_dict["KIRP, normal"][1])
+    #
+    # ax.scatter(*COAD_new)
+    # ax.scatter(*LUAD_new)
+    #
+    # ax.scatter(*BRCA_new)
+    # ax.scatter(*KIRP_new)
+    #
+    # ax.annotate("COAD_new",
+    #             xy=COAD_new, xytext=(-20, 20), textcoords='offset points',
+    #             bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
+    #             arrowprops=dict(facecolor='black', shrink=0.05, width=2, headwidth=3, headlength=2))
+    # ax.annotate("LUAD_new",
+    #             xy=LUAD_new, xytext=(-20, 20), textcoords='offset points',
+    #             bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
+    #             arrowprops=dict(facecolor='black', shrink=0.05, width=2, headwidth=3, headlength=2))
+    #
+    # ax.annotate("BRCA_new",
+    #             xy=BRCA_new, xytext=(-20, 20), textcoords='offset points',
+    #             bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
+    #             arrowprops=dict(facecolor='black', shrink=0.05, width=2, headwidth=3, headlength=2))
+    # ax.annotate("KIRP_new",
+    #             xy=KIRP_new, xytext=(-20, 20), textcoords='offset points',
+    #             bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
+    #             arrowprops=dict(facecolor='black', shrink=0.05, width=2, headwidth=3, headlength=2))
+    #
 
     plt.savefig(
         os.path.join(constants.BASE_PROFILE, "output", "mean_tumor_by_samples_mu.png"))
+
+    linked = linkage(tumor_vectors_mu_values, 'single')
+
+    plt.figure(figsize=(13, 7))
+    dendrogram(linked,
+               orientation='top',
+               labels=[x.split(',')[0] for x in tumor_vectors_mu_keys],
+               distance_sort='descending',
+               show_leaf_counts=True)
+
+    plt.savefig(os.path.join(constants.OUTPUT_GLOBAL_DIR, "mean_tumor_by_samples_mu_hierarchical.png"))
 
     fig = plt.figure(1, figsize=(10, 10))
     plt.clf()

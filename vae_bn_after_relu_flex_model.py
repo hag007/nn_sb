@@ -24,9 +24,11 @@ class Net(nn.Module):
         self.fc_d_l = nn.Linear(n_latent_vector, int(n_mito_input_layer * factor ** n_reduction_layers))
         self.fc_bn_d_l = nn.BatchNorm1d(int(n_mito_input_layer * factor ** n_reduction_layers))
 
-        for cur in np.arange(n_reduction_layers, 0, -1):
+        for cur in np.arange(n_reduction_layers, 1, -1):
             setattr(self, "fc_d"+str(cur), nn.Linear(int(n_mito_input_layer* factor ** cur), int(n_mito_input_layer * factor ** (cur-1))))
             setattr(self, "fc_bn_d"+str(cur), nn.BatchNorm1d(int(n_mito_input_layer * factor ** (cur-1))))
+        setattr(self, "fc_d1",
+                nn.Linear(int(n_mito_input_layer * factor), int(n_mito_input_layer)))
 
 
     def encode(self, x):

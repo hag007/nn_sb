@@ -8,7 +8,11 @@ from scipy.cluster.hierarchy import dendrogram, linkage
 from matplotlib import pyplot as plt
 
 
-distance_matrix=pd.read_csv(os.path.join(constants.OUTPUT_GLOBAL_DIR, "cancer_type_go_distance.tsv"),sep='\t', index_col=0).dropna(axis=0)
+distance_matrix=pd.read_csv(os.path.join(constants.OUTPUT_GLOBAL_DIR, "cancer_type_go_distance.tsv"),sep='\t', index_col=0)
+
+distance_matrix+=1
+for cur in distance_matrix.index:
+    distance_matrix.loc[cur,cur]=0
 
 
 files=distance_matrix.index.values # np.append(distance_matrix.index.values,["coad.csv"])

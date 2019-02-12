@@ -8,10 +8,10 @@ import simplejson as json
 from utils.param_builder import build_gdc_params
 
 # CANCER_TYPES=['LUSC', 'LUAD' , 'MESO', 'HNSC', 'BRCA', 'PRAD', 'SKCM', 'UVM', 'KIRP', 'KICH', 'KIRC', 'GBM', 'LGG', 'STAD', 'PAAD']
-CANCER_TYPES=["KIRC", "KIRP", "KICH", "LUSC", "LUAD", "COAD", "BRCA", "CHOL",  "GBM", "PAAD", "STAD", "LIHC", "READ", "PRAD"]
-META_GROUPS = ["groups/temp.json", "groups/temp.json", "groups/temp.json","groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json"]
+CANCER_TYPES=["KICH", "KIRP"]#, "KICH", "LUSC", "LUAD", "COAD", "BRCA", "STAD", "LIHC", "READ", "PRAD", "BLCA", "ESCA", "HNSC", "THCA", "UCEC"]
+META_GROUPS = ["groups/temp.json", "groups/temp.json"]#, "groups/temp.json","groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json"]
 
-n_input_layer=5000
+n_input_layer=2000
 
 
 class CancerTypesDataset(Dataset):
@@ -45,10 +45,12 @@ class CancerTypesDataset(Dataset):
             labels_assignment=np.array(labels_assignment)[0]
             for cur_label in np.unique(labels_assignment):
                 cur_label_name=[cur["_name"] for cur in meta_groups[0] if "_label" in cur and int(cur["_label"])==cur_label]
-                cur_label_name = "{}, {}".format(metagroups_name, cur_label_name[0] if len(cur_label_name) > 0 else "unknown")
-                print cur_label_name
+
                 df_new = pd.DataFrame(data=gene_expression_top_var[labels_assignment==cur_label], index=gene_expression_top_var_headers_rows[labels_assignment==cur_label],
                                       columns=gene_expression_top_var_headers_columns)
+                cur_label_name = "{}, {}".format(metagroups_name,
+                                                 cur_label_name[0] if len(cur_label_name) > 0 else "unknown")
+                print cur_label_name + " : {}".format(len(df_new.index))
                 self.samples = pd.concat([self.samples, df_new], axis=0)
                 self.labels = np.append(self.labels, [cur_label_name for x in range(len(df_new.index))])
                 label_counter+=1

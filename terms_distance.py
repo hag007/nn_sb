@@ -59,7 +59,7 @@ def calc_similarity(mat_adj, i_x, i_y, x, y, x_score, y_score, norm):
         mat_adj[key] = -1
     mat_adj[key_inv] = mat_adj[key]
 
-def main(base_folder="/home/hag007/Downloads/top_2000_14", pf=5):
+def main(base_folder="/home/hag007/Downloads/top_20000_14", pf=5):
 
     go_terms_tables={}
     go_terms = {}
@@ -69,7 +69,7 @@ def main(base_folder="/home/hag007/Downloads/top_2000_14", pf=5):
         norm=max(-np.log10(go_terms_tables[cur[3:]]["P-value"].min()),norm)
 
     for k,v in go_terms_tables.iteritems():
-        go_terms[k]=v[v["B"]<=500][v["B"]>=10] #
+            go_terms[k]=v[v["FDR q-value"]<=0.05][v["B"]<=500][v["B"]>=5] #
 
     df_summary=pd.DataFrame()
     for cur_x in go_terms.keys():
@@ -94,21 +94,21 @@ def main(base_folder="/home/hag007/Downloads/top_2000_14", pf=5):
                 p = multiprocessing.Pool(pf)
                 p.map(func_star,params)
 
-                # adj_sum = sum(
-                #     [adj["{}_{}".format(x, y)] for x in range(len(go_terms[cur_x])) for y in range(len(go_terms[cur_y]))
-                #      if adj["{}_{}".format(x, y)] != -1])
-                # adj_count = float(len(
-                #     [adj["{}_{}".format(x, y)] for x in range(len(go_terms[cur_x])) for y in range(len(go_terms[cur_y]))
-                #      if adj["{}_{}".format(x, y)] != -1]))
+                adj_sum = sum(
+                    [adj["{}_{}".format(x, y)] for x in range(len(go_terms[cur_x])) for y in range(len(go_terms[cur_y]))
+                     if adj["{}_{}".format(x, y)] != -1])
+                adj_count = float(len(
+                    [adj["{}_{}".format(x, y)] for x in range(len(go_terms[cur_x])) for y in range(len(go_terms[cur_y]))
+                     if adj["{}_{}".format(x, y)] != -1]))
 
-                adj_sum_x_max=[[adj["{}_{}".format(x,y)] for y in range(len(go_terms[cur_y])) if adj["{}_{}".format(x,y)]!=-1 ] for x in range(len(go_terms[cur_x]))]
-                adj_sum_x_max=[max(x) for x in adj_sum_x_max]
-                adj_sum_y_max = [[adj["{}_{}".format(x, y)] for x in range(len(go_terms[cur_x])) if adj["{}_{}".format(x, y)] != -1] for y in range(len(go_terms[cur_y]))]
-                adj_sum_y_max = [max(x) for x in adj_sum_y_max]
-
-                adj_sum_max=adj_sum_x_max+adj_sum_y_max
-                adj_sum=sum(adj_sum_max) # - len(set(go_terms[cur_x]).intersection(go_terms[cur_y]))
-                adj_count= len(list(np.append(go_terms[cur_x], go_terms[cur_y])))
+                # adj_sum_x_max=[[adj["{}_{}".format(x,y)] for y in range(len(go_terms[cur_y])) if adj["{}_{}".format(x,y)]!=-1 ] for x in range(len(go_terms[cur_x]))]
+                # adj_sum_x_max=[max(x) for x in adj_sum_x_max]
+                # adj_sum_y_max = [[adj["{}_{}".format(x, y)] for x in range(len(go_terms[cur_x])) if adj["{}_{}".format(x, y)] != -1] for y in range(len(go_terms[cur_y]))]
+                # adj_sum_y_max = [max(x) for x in adj_sum_y_max]
+                #
+                # adj_sum_max=adj_sum_x_max+adj_sum_y_max
+                # adj_sum=sum(adj_sum_max) # - len(set(go_terms[cur_x]).intersection(go_terms[cur_y]))
+                # adj_count= len(list(np.append(go_terms[cur_x], go_terms[cur_y])))
 
                 print "adj_sum: ",adj_sum
                 print "adj_count: ",adj_count
