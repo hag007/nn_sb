@@ -47,7 +47,7 @@ print "\n#################################"
 print "# Annotation corpus successfully loaded."
 print "#################################\n"
 
-semsim = SetSemSim(ontology, ac, TSS="SimICNP", MSS="BMA")# GSESAMESemSim(ontology, ac)  # maxSemSim(ontology, ac) #
+semsim = SetSemSim(ontology, ac, TSS="SimGIC", MSS="BMA")# GSESAMESemSim(ontology, ac)  # maxSemSim(ontology, ac) #
 
 def calc_similarity(mat_adj, i_x, i_y, x, y, x_score, y_score, norm):
     key="{}_{}".format(i_x,i_y)

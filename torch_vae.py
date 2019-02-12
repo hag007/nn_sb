@@ -37,10 +37,10 @@ def loss_function(recon_x, x, mu, logvar):
     # 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
     KLD = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
 
-    return BCE + KLD
+    return BCE +  0.1*KLD
 
 datasets=cancer_type_dataset.CANCER_TYPES
-torch_dataset=CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=["{}_{}".format(x,i_x) for i_x, x in enumerate(cancer_type_dataset.CANCER_TYPES)])
+torch_dataset=CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=["{}_{}".format(x.split("/")[1].split(".")[0],i_x) for i_x, x in enumerate(cancer_type_dataset.META_GROUPS)])
 train_dataset,test_dataset = torch.utils.data.random_split(torch_dataset, [torch_dataset.__len__()-torch_dataset.__len__()/100, torch_dataset.__len__()/100])
 
 print "train: {}, test: {}".format(len(train_dataset), len(test_dataset))
@@ -51,65 +51,65 @@ trainloader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size_t
 testloader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size_val,
                                           shuffle=True, num_workers=num_workers, pin_memory=True)
 
-net = vae_bn_after_relu_flex_model.Net(n_reduction_layers=3 ,factor=0.25)
-PATH= "/home/hag007/Desktop/nn/VAE_model"# os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model")
+net = vae_bn_after_relu_flex_model.Net(n_reduction_layers=2 ,factor=0.5,n_latent_vector=100 )
 load_model=True # False
-if load_model and os.path.exists(PATH):
+if load_model and os.path.exists(os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model")):
+   PATH="/specific/netapp5/gaga/hagailevi/evaluation/bnet/output/VAE_model"
    net.load_state_dict(torch.load(PATH))
    net.eval()
 
 criterion = nn.BCELoss()
 
 # create your optimizer
-optimizer = optim.Adam(net.parameters(), lr=0.0001)
+optimizer = optim.Adam(net.parameters(), lr=0.001)
 
-for epoch in range(0, 1):  # loop over the dataset multiple times
+for epoch in range(0, 100000):  # loop over the dataset multiple times
 
-    # train_loss = 0.0
-    # val_loss = 0.0
-    #
-    # for i, data in enumerate(trainloader, 0):
-    #
-    #     # get the inputs
-    #     inputs, labels = data
-    #
-    #     # zero the parameter gradients
-    #     optimizer.zero_grad()
-    #
-    #     # forward + backward + optimize
-    #     outputs, z, mu, var = net(inputs)
-    #
-    #     loss = loss_function(outputs, inputs, mu, var)
-    #     loss.backward()
-    #     train_loss += loss.item()
-    #     optimizer.step()
-    #
-    #     # print statistics
-    #     if i % 10 == 9:  # print every 2000 mini-batches
-    #         print('[%d, %5d] train loss: %.3f' %
-    #               (epoch + 1, i + 1, train_loss / 100))
-    #         train_loss = 0.0
-    #
-    #     torch.save(net.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model"))
-    #
-    # for i, data in enumerate(testloader, 0):
-    #     with torch.no_grad():
-    #         # get the inputs
-    #         inputs, labels = data
-    #
-    #         # forward + backward + optimize
-    #         outputs, z, mu, var = net(inputs)
-    #
-    #         loss = loss_function(outputs, inputs, mu, var)
-    #         val_loss += loss.item()
-    #
-    # # print statistics
-    #
-    # print('[%d, %5d] val loss: %.3f' %
-    #       (epoch + 1, i + 1, val_loss / 100))
-    # val_loss = 0.0
-    #
-    # ###########################
+    train_loss = 0.0
+    val_loss = 0.0
+
+    for i, data in enumerate(trainloader, 0):
+
+        # get the inputs
+        inputs, labels = data
+
+        # zero the parameter gradients
+        optimizer.zero_grad()
+
+        # forward + backward + optimize
+        outputs, z, mu, var = net(inputs)
+
+        loss = loss_function(outputs, inputs, mu, var)
+        loss.backward()
+        train_loss += loss.item()
+        optimizer.step()
+
+        # print statistics
+        if i % 10 == 9:  # print every 2000 mini-batches
+            print('[%d, %5d] train loss: %.3f' %
+                  (epoch + 1, i + 1, train_loss / 100))
+            train_loss = 0.0
+
+    torch.save(net.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model"))
+
+    for i, data in enumerate(testloader, 0):
+        with torch.no_grad():
+            # get the inputs
+            inputs, labels = data
+    
+            # forward + backward + optimize
+            outputs, z, mu, var = net(inputs)
+    
+            loss = loss_function(outputs, inputs, mu, var)
+            val_loss += loss.item()
+    
+    # print statistics
+    
+    print('[%d, %5d] val loss: %.3f' %
+          (epoch + 1, i + 1, val_loss / 100))
+    val_loss = 0.0
+
+    ###########################
 
     if epoch % 100==0: 
         correct = 0
@@ -121,7 +121,7 @@ for epoch in range(0, 1):  # loop over the dataset multiple times
         y = []
 
         with torch.no_grad():
-            for i, data in enumerate(trainloader, 0):
+            for i, data in enumerate(testloader, 0):
                 features, labels = data
                 _, labels = torch.max(labels, 1)
                 outputs, z, mu, var = net(features)

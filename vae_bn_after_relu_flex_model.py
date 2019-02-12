@@ -27,9 +27,7 @@ class Net(nn.Module):
         for cur in np.arange(n_reduction_layers, 1, -1):
             setattr(self, "fc_d"+str(cur), nn.Linear(int(n_mito_input_layer* factor ** cur), int(n_mito_input_layer * factor ** (cur-1))))
             setattr(self, "fc_bn_d"+str(cur), nn.BatchNorm1d(int(n_mito_input_layer * factor ** (cur-1))))
-        setattr(self, "fc_d1",
-                nn.Linear(int(n_mito_input_layer * factor), int(n_mito_input_layer)))
-
+        self.fc_d1=nn.Linear(int(n_mito_input_layer * factor), int(n_mito_input_layer))
 
     def encode(self, x):
         h=x
