@@ -8,10 +8,10 @@ import simplejson as json
 from utils.param_builder import build_gdc_params
 
 # CANCER_TYPES=['LUSC', 'LUAD' , 'MESO', 'HNSC', 'BRCA', 'PRAD', 'SKCM', 'UVM', 'KIRP', 'KICH', 'KIRC', 'GBM', 'LGG', 'STAD', 'PAAD']
-CANCER_TYPES=["KIRC", "KIRP", "KICH", "LUSC", "LUAD", "COAD", "BRCA", "CHOL",  "GBM", "PAAD", "STAD", "LIHC", "READ", "PRAD"]
-META_GROUPS = ["groups/temp.json", "groups/temp.json", "groups/temp.json","groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json"]
+CANCER_TYPES=["KIRC", "KIRP", "KICH", "LUSC", "LUAD", "COAD", "BRCA", "STAD", "LIHC", "READ", "PRAD", "BLCA", "ESCA", "HNSC", "THCA", "UCEC"]
+META_GROUPS = ["groups/temp.json", "groups/temp.json", "groups/temp.json","groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json", "groups/temp.json"]
 
-n_input_layer=5000
+n_input_layer=2000
 
 
 class CancerTypesDataset(Dataset):
