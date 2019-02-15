@@ -5,20 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9e55475e-0c21-4595-b296-132938523ae1" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/fcn_bn_after_relu_flex_model.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/torch_fcn.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/torch_vae_gan_old.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vae_gan_bn_after_relu_flex_model.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/plot_vae.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/torch_gan_mean.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cancer_type_dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/cancer_type_dataset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/env/config/conf.json" beforeDir="false" afterPath="$PROJECT_DIR$/env/config/conf.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/plot_hierarchical_by_distance.py" beforeDir="false" afterPath="$PROJECT_DIR$/plot_hierarchical_by_distance.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/terms_distance.py" beforeDir="false" afterPath="$PROJECT_DIR$/terms_distance.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/torch_vae.py" beforeDir="false" afterPath="$PROJECT_DIR$/torch_vae.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/torch_vae_gan.py" beforeDir="false" afterPath="$PROJECT_DIR$/torch_vae_gan.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/torch_vae_mean.py" beforeDir="false" afterPath="$PROJECT_DIR$/torch_vae_mean.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/differentially_expressed_genes.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/differentially_expressed_genes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vae_bn_after_relu_flex_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/vae_bn_after_relu_flex_model.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -32,13 +22,25 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="cancer_type_dataset.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="cancer_type_dataset.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/cancer_type_dataset.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="171">
-              <caret line="10" column="18" selection-start-line="10" selection-start-column="18" selection-end-line="10" selection-end-column="18" />
+            <state relative-caret-position="361">
+              <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="torch_vae_mean.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/torch_vae_mean.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="65">
+              <caret line="167" lean-forward="true" selection-start-line="167" selection-end-line="167" />
+              <folding>
+                <element signature="e#0#12#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -47,8 +49,8 @@
       <file leaf-file-name="functional.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/torch/nn/functional.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="183">
-              <caret line="2018" selection-start-line="2018" selection-end-line="2018" />
+            <state relative-caret-position="611">
+              <caret line="2159" column="32" lean-forward="true" selection-start-line="2159" selection-start-column="32" selection-end-line="2159" selection-end-column="32" />
             </state>
           </provider>
         </entry>
@@ -56,8 +58,8 @@
       <file leaf-file-name="vae_gan_bn_after_relu_flex_model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vae_gan_bn_after_relu_flex_model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="647">
-              <caret line="120" lean-forward="true" selection-start-line="120" selection-end-line="120" />
+            <state relative-caret-position="855">
+              <caret line="45" column="4" selection-start-line="45" selection-start-column="4" selection-end-line="45" selection-end-column="4" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -65,20 +67,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dataloader.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/torch/utils/data/dataloader.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="512">
-              <caret line="273" selection-start-line="273" selection-end-line="273" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="torch_vae_gan.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="torch_vae_gan.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/torch_vae_gan.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="381">
-              <caret line="171" column="28" selection-start-line="171" selection-start-column="28" selection-end-line="171" selection-end-column="28" />
+            <state relative-caret-position="211">
+              <caret line="31" column="17" selection-start-line="31" selection-start-column="17" selection-end-line="31" selection-end-column="17" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -86,20 +79,29 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="infra.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/infra.py">
+      <file leaf-file-name="torch_gan_mean.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/torch_gan_mean.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="183">
-              <caret line="376" selection-start-line="376" selection-end-line="376" />
+            <state relative-caret-position="359">
+              <caret line="201" column="41" lean-forward="true" selection-start-line="201" selection-start-column="41" selection-end-line="201" selection-end-column="41" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="torch_vae_gan_old.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/torch_vae_gan_old.py">
+      <file leaf-file-name="serialization.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/torch/serialization.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="400">
-              <caret line="156" lean-forward="true" selection-start-line="149" selection-start-column="9" selection-end-line="156" />
+            <state relative-caret-position="125">
+              <caret line="364" selection-start-line="364" selection-end-line="364" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="torch_vae.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/torch_vae.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="655">
+              <caret line="132" column="24" lean-forward="true" selection-start-line="132" selection-start-column="24" selection-end-line="132" selection-end-column="24" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -107,11 +109,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="forking.py" pinned="false" current-in-tab="false">
-        <entry file="file:///usr/lib/python2.7/multiprocessing/forking.py">
+      <file leaf-file-name="plot_vae.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/plot_vae.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="191">
-              <caret line="134" selection-start-line="134" selection-end-line="134" />
+            <state relative-caret-position="190">
+              <caret line="24" lean-forward="true" selection-start-line="24" selection-end-line="24" />
             </state>
           </provider>
         </entry>
@@ -119,20 +121,8 @@
       <file leaf-file-name="module.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/torch/nn/modules/module.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="234">
-              <caret line="488" selection-start-line="488" selection-end-line="488" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="vae_bn_after_relu_model.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/vae_bn_after_relu_model.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="601">
-              <caret line="48" column="44" lean-forward="true" selection-start-line="45" selection-start-column="3" selection-end-line="48" selection-end-column="44" />
-              <folding>
-                <element signature="e#0#12#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="116">
+              <caret line="768" selection-start-line="768" selection-end-line="768" />
             </state>
           </provider>
         </entry>
@@ -148,18 +138,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>vae_bn_after_relu_model</find>
-      <find>vae_bn_after_relu_model`</find>
-      <find>loss_function</find>
-      <find>BCE</find>
-      <find>loss</find>
-      <find>compl</find>
-      <find>single</find>
-      <find>singl</find>
-      <find>flex</find>
-      <find>fc_bn_d_l_mu</find>
-      <find>vae_bn_after_relu_flex_model</find>
-      <find>5000</find>
       <find>12</find>
       <find>output</find>
       <find>gsem</find>
@@ -176,12 +154,25 @@
       <find>Decoder</find>
       <find>starts</find>
       <find>backprop_vae</find>
-      <find>UCEC</find>
       <find>gen train loss</find>
+      <find>save</find>
+      <find>vae_gan_bn_after_relu_flex_model</find>
+      <find>UCEC</find>
+      <find>SAVE</find>
+      <find>'single'</find>
+      <find>bina</find>
+      <find>ctyp</find>
+      <find>ctype</find>
+      <find>backwa</find>
+      <find>loss_func</find>
+      <find>back</find>
+      <find>Float</find>
+      <find>cross</find>
     </findStrings>
     <replaceStrings>
       <replace>(18, 10)</replace>
       <replace>(13, 10)</replace>
+      <replace>ctype</replace>
       <replace>(13, 7)</replace>
     </replaceStrings>
   </component>
@@ -232,16 +223,17 @@
         <option value="$PROJECT_DIR$/torch_fcn.py" />
         <option value="$PROJECT_DIR$/torch_vae_mean.py" />
         <option value="$PROJECT_DIR$/torch_vae_gan_old.py" />
-        <option value="$PROJECT_DIR$/vae_gan_bn_after_relu_flex_model.py" />
         <option value="$PROJECT_DIR$/cancer_type_dataset.py" />
+        <option value="$PROJECT_DIR$/vae_gan_bn_after_relu_flex_model.py" />
+        <option value="$PROJECT_DIR$/torch_gan_mean.py" />
         <option value="$PROJECT_DIR$/torch_vae_gan.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="1985" />
+  <component name="ProjectFrameBounds" extendedState="4">
+    <option name="x" value="680" />
     <option name="y" value="24" />
-    <option name="width" value="1855" />
+    <option name="width" value="1240" />
     <option name="height" value="1056" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -292,7 +284,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.torch_vae_gan">
+  <component name="RunManager" selected="Python.torch_gan_mean">
     <configuration name="cancer_type_dataset" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="pytorch" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -329,7 +321,7 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <configuration name="terms_distance" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="torch_gan_mean" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="pytorch" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -341,7 +333,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/terms_distance.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/torch_gan_mean.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -385,18 +377,18 @@
     </configuration>
     <list>
       <item itemvalue="Python.torch_vae_mean" />
-      <item itemvalue="Python.terms_distance" />
       <item itemvalue="Python.plot_hierarchical_by_distance" />
       <item itemvalue="Python.cancer_type_dataset" />
       <item itemvalue="Python.torch_vae_gan" />
+      <item itemvalue="Python.torch_gan_mean" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.torch_gan_mean" />
         <item itemvalue="Python.torch_vae_gan" />
         <item itemvalue="Python.torch_vae_mean" />
         <item itemvalue="Python.cancer_type_dataset" />
         <item itemvalue="Python.plot_hierarchical_by_distance" />
-        <item itemvalue="Python.terms_distance" />
       </list>
     </recent_temporary>
   </component>
@@ -419,20 +411,20 @@
     </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1985" y="24" width="1855" height="1056" extended-state="0" />
+    <frame x="680" y="24" width="1240" height="1056" extended-state="4" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49894738" visible="true" weight="0.31644204" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49894738" visible="true" weight="0.11612903" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32991803" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.3516129" side_tool="true" visible="true" weight="0.24050634" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49909255" weight="0.32911393" />
       <window_info anchor="bottom" id="Version Control" order="9" />
       <window_info anchor="bottom" id="Python Console" order="7" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.27742615" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6483871" visible="true" weight="0.24050634" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.32991803" />
       <window_info id="Favorites" order="2" sideWeight="0.5010526" side_tool="true" weight="0.24959569" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.36181435" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49973047" weight="0.26331967" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -563,14 +555,19 @@
           <option name="timeStamp" value="253" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/torch_vae_gan.py</url>
-          <line>172</line>
-          <option name="timeStamp" value="268" />
+          <url>file://$PROJECT_DIR$/torch_gan_mean.py</url>
+          <line>63</line>
+          <option name="timeStamp" value="276" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/torch_vae_gan.py</url>
-          <line>171</line>
-          <option name="timeStamp" value="274" />
+          <line>199</line>
+          <option name="timeStamp" value="277" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/torch_gan_mean.py</url>
+          <line>76</line>
+          <option name="timeStamp" value="278" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
@@ -583,7 +580,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="275" />
+      <option name="time" value="281" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
@@ -714,84 +711,53 @@
     </expressions>
     <expressions id="evaluateExpression">
       <expression>
-        <expression-string>&quot;Float&quot; in torch.typename(v)</expression-string>
+        <expression-string>m_VAE</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>torch.typename(v)</expression-string>
+        <expression-string>constants.OUTPUT_GLOBAL_DIR</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>v.requires_grad = True</expression-string>
+        <expression-string>m_VAE(features)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>k</expression-string>
+        <expression-string>m_VAE.train(False)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>v</expression-string>
+        <expression-string>encoder.train(False)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>m_GAN.state_dict()</expression-string>
+        <expression-string>encoder(features[0].unsqueeze(0))</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>np.load(os.path.join(cache_path,&quot;data.npy&quot;))</expression-string>
+        <expression-string>encoder(features.unsqueeze(0))</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>loss.item()</expression-string>
+        <expression-string>encoder(features.unsqueeze(0), )</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>labels.size()</expression-string>
+        <expression-string>encoder(features, is_training=False)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/utils/pca.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="259">
-          <caret line="51" column="104" selection-start-line="51" selection-start-column="104" selection-end-line="51" selection-end-column="104" />
-          <folding>
-            <element signature="e#1#52#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharmCE2018.1/system/python_stubs/1681512473/__builtin__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="89">
-          <caret line="1858" column="8" selection-start-line="1858" selection-start-column="8" selection-end-line="1858" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/groups/additional_metastases_after_traetment_liver_vs_all.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-285" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/groups/additional_metastases_after_traetment_skcm.json">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -959,16 +925,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/torch_vae.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="554">
-          <caret line="45" column="73" lean-forward="true" selection-start-line="45" selection-start-column="73" selection-end-line="45" selection-end-column="73" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/utils/differentially_expressed_genes.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="298">
@@ -1027,16 +983,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/torch_vae_mean.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="86">
-          <caret line="165" lean-forward="true" selection-start-line="165" selection-end-line="165" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/vae_bn_after_relu_flex_model.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="114">
@@ -1067,61 +1013,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/torch/nn/modules/module.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="488" selection-start-line="488" selection-end-line="488" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vae_gan_bn_after_relu_flex_model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="647">
-          <caret line="120" lean-forward="true" selection-start-line="120" selection-end-line="120" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/torch/nn/functional.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
-          <caret line="2018" selection-start-line="2018" selection-end-line="2018" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/torch/utils/data/dataloader.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="512">
           <caret line="273" selection-start-line="273" selection-end-line="273" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/lib/python2.7/multiprocessing/forking.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="191">
-          <caret line="134" selection-start-line="134" selection-end-line="134" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/torch_vae_gan_old.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="156" lean-forward="true" selection-start-line="149" selection-start-column="9" selection-end-line="156" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/cancer_type_dataset.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="171">
-          <caret line="10" column="18" selection-start-line="10" selection-start-column="18" selection-end-line="10" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1132,12 +1027,111 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/torch_vae_gan.py">
+    <entry file="file:///usr/lib/python2.7/multiprocessing/forking.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="381">
-          <caret line="171" column="28" selection-start-line="171" selection-start-column="28" selection-end-line="171" selection-end-column="28" />
+        <state relative-caret-position="58">
+          <caret line="127" selection-start-line="127" selection-end-line="127" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/constants.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="32" selection-start-line="32" selection-end-line="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/torch_vae_gan_old.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="913">
+          <caret line="156" lean-forward="true" selection-start-line="149" selection-start-column="9" selection-end-line="156" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vae_gan_bn_after_relu_flex_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="855">
+          <caret line="45" column="4" selection-start-line="45" selection-start-column="4" selection-end-line="45" selection-end-column="4" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/torch/serialization.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="125">
+          <caret line="364" selection-start-line="364" selection-end-line="364" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/torch/nn/modules/module.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="116">
+          <caret line="768" selection-start-line="768" selection-end-line="768" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/plot_vae.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="24" lean-forward="true" selection-start-line="24" selection-end-line="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/torch_vae.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="655">
+          <caret line="132" column="24" lean-forward="true" selection-start-line="132" selection-start-column="24" selection-end-line="132" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/torch_gan_mean.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="359">
+          <caret line="201" column="41" lean-forward="true" selection-start-line="201" selection-start-column="41" selection-end-line="201" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/torch_vae_mean.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="65">
+          <caret line="167" lean-forward="true" selection-start-line="167" selection-end-line="167" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/torch_vae_gan.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="211">
+          <caret line="31" column="17" selection-start-line="31" selection-start-column="17" selection-end-line="31" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/local/lib/python2.7/site-packages/torch/nn/functional.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="611">
+          <caret line="2159" column="32" lean-forward="true" selection-start-line="2159" selection-start-column="32" selection-end-line="2159" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cancer_type_dataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="361">
+          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>

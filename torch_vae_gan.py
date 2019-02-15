@@ -18,7 +18,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.colors as ml_colors
-import vae_gan_bn_after_relu_flex_model
+import vae_gan_bn_after_relu_flex_model, vae_bn_after_relu_flex_model
 
 from matplotlib.lines import Line2D
 
@@ -29,7 +29,7 @@ batch_size_train=100
 batch_size_val=10
 
 def loss_function(recon_x, x, mu, logvar):
-    BCE = F.binary_cross_entropy(recon_x, x, reduction='sum')
+    BCE = F.mse_loss()# binary_cross_entropy(recon_x, x, reduction='sum')
 
     # see Appendix B from VAE paper:
     # Kingma and Welling. Auto-Encoding Variational Bayes. ICLR, 2014
@@ -40,7 +40,7 @@ def loss_function(recon_x, x, mu, logvar):
     return BCE + KLD
 
 
-def backprop_vae(m_VAE, encoder, decoder, optimizer, n_epoches, trainloader, testloader):
+def backprop_vae(m_VAE, optimizer, n_epoches, trainloader, testloader):
 
     for epoch in range(n_epoches):
         train_loss=0
@@ -66,9 +66,6 @@ def backprop_vae(m_VAE, encoder, decoder, optimizer, n_epoches, trainloader, tes
                 print('[%d, %5d] vae train loss: %.3f' %
                       (epoch + 1, i + 1, train_loss / 100))
                 train_loss = 0.0
-
-        torch.save(encoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_EN_model"))
-        torch.save(decoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_DE_model"))
 
         for i, data in enumerate(testloader, 0):
             with torch.no_grad():
@@ -115,7 +112,7 @@ def backprop_dis(m_VAE, m_discriminator, optimizer, n_epoches, trainloader):
             # forward + backward + optimize
             outputs, _1, _2, _3, _4 = m_discriminator([inputs, None, None, None])
 
-            loss = F.binary_cross_entropy(outputs.view(-1, ), torch.tensor(labels, dtype=torch.float),
+            loss = F.mse_loss(outputs.view(-1, ), torch.tensor(labels, dtype=torch.float),
                                           reduction='sum')
             loss.backward()
             running_loss += loss.item()
@@ -148,6 +145,7 @@ def backprop_gen(m_VAE, m_GAN, m_discriminator, optimizer, n_epoches, trainloade
 
     for epoch in range(n_epoches):
         running_loss = 0.0
+        print "cur epoch: {}".format(epoch)
         for i, data in enumerate(trainloader, 0):
 
             # get the inputs
@@ -162,17 +160,16 @@ def backprop_gen(m_VAE, m_GAN, m_discriminator, optimizer, n_epoches, trainloade
             # forward + backward + optimize
             outputs, _1, _2, _3, _4 = m_discriminator([random_inputs, None, None, None])
 
-            loss = F.binary_cross_entropy(outputs.view(-1, ), torch.tensor(random_labels, dtype=torch.float),
+            loss = F.mse_loss(outputs.view(-1, ), torch.tensor(random_labels, dtype=torch.float),
                                           reduction='sum')
             loss.backward()
             running_loss += loss.item()
             optimizer.step()
 
-            # print statistics
-            if epoch == len(list(trainloader))-1:  # print every 2000 mini-batches
-                print('[%d, %5d] gen train loss: %.3f' %
-                      (epoch + 1, i + 1, running_loss / 100))
-                running_loss = 0.0
+        # print statistics
+        print('[%d, %5d] gen train loss: %.3f' %
+              (epoch + 1, i + 1, running_loss / 100))
+
 
     for k, v in m_GAN.state_dict().iteritems():
         if k.startswith("_") or "Float" not in torch.typename(v): continue
@@ -193,49 +190,64 @@ testloader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size_val
                                           shuffle=True, num_workers=num_workers, pin_memory=True)
 
 
-encoder=vae_gan_bn_after_relu_flex_model.Encoder()
-decoder=vae_gan_bn_after_relu_flex_model.Decoder()
-discriminator=vae_gan_bn_after_relu_flex_model.Discriminator()
+encoder=vae_gan_bn_after_relu_flex_model.Encoder(n_latent_vector=100)
+decoder=vae_gan_bn_after_relu_flex_model.Decoder(n_latent_vector=100)
+discriminator=vae_gan_bn_after_relu_flex_model.Discriminator(n_latent_vector=100)
+vae_old=vae_bn_after_relu_flex_model.Net(n_latent_vector=100)
+
 
 model_base_folder=constants.OUTPUT_GLOBAL_DIR
-PATH_DISCRIMINATOR= model_base_folder+"GAN_DIS_model"# os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model")
-PATH_ENCODER= model_base_folder+"GAN_ENC_model"
-PATH_DECODER= model_base_folder+"GAN_DEC_model"
-load_model=True # False
-if load_model and os.path.exists(PATH_DISCRIMINATOR):
+PATH_DISCRIMINATOR= os.path.join(model_base_folder,"GAN_DIS_model") # os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model")
+PATH_ENCODER= os.path.join(model_base_folder,"GAN_ENC_model")
+PATH_DECODER= os.path.join(model_base_folder,"GAN_DEC_model")
+load_model=False # False
+if load_model and os.path.exists(PATH_ENCODER):
     encoder.load_state_dict(torch.load(PATH_ENCODER))
     encoder.eval()
-    decoder.load_state_dict(torch.load(PATH_ENCODER))
+    decoder.load_state_dict(torch.load(PATH_DECODER))
     decoder.eval()
-    discriminator.load_state_dict(torch.load(PATH_ENCODER))
-    discriminator.eval()
+    # discriminator.load_state_dict(torch.load(PATH_DISCRIMINATOR))
+    # discriminator.eval()
 
 
 m_VAE = nn.Sequential(encoder,decoder)
-m_GAN = nn.Sequential(decoder,discriminator)
-m_FULL = nn.Sequential(encoder,decoder,discriminator)
+vae_old.load_state_dict(torch.load(PATH_ENCODER))
+
+
+# m_GAN = nn.Sequential(decoder,discriminator)
+# m_FULL = nn.Sequential(encoder,decoder,discriminator)
 
 
 # create your optimizer
 lr=0.001
-optimizer_dis = optim.Adam(discriminator.parameters(), lr=lr)
+# optimizer_dis = optim.Adam(discriminator.parameters(), lr=lr)
 optimizer_en = optim.Adam(encoder.parameters(), lr=lr)
 optimizer_de = optim.Adam(decoder.parameters(), lr=lr)
 optimizer_vae = optim.Adam(m_VAE.parameters(), lr=lr)
-optimizer_gan = optim.Adam(m_GAN.parameters(), lr=lr)
+optimizer_vae_old = optim.Adam(vae_old.parameters(), lr=lr)
+# optimizer_gan = optim.Adam(m_GAN.parameters(), lr=lr)
 
-n_epoches=5
+
+
+
+n_epoches=10
 for meta_epoch in range(0, 1000):  # loop over the dataset multiple times
 
         print "start backprop_vae.."
-        backprop_vae(m_VAE, encoder, decoder, optimizer_vae, n_epoches, trainloader, testloader)
-        if meta_epoch > 0:
-            print "start backprop_gen.."
-            backprop_gen(m_VAE, m_GAN, discriminator, optimizer_gan, n_epoches * 2, trainloader)
-            print "start backprop_dis.."
-            backprop_dis(m_VAE, discriminator, optimizer_dis, n_epoches, trainloader)
+        backprop_vae(m_VAE, optimizer_vae, n_epoches, trainloader, testloader)
 
+        backprop_vae(vae_old, optimizer_vae_old, n_epoches, trainloader, testloader)
+
+
+        # # if meta_epoch > 0:
+        # print "start backprop_gen.."
+        # backprop_gen(m_VAE, m_GAN, discriminator, optimizer_gan, n_epoches * 2, trainloader)
+        # print "start backprop_dis.."
+        # backprop_dis(m_VAE, discriminator, optimizer_dis, n_epoches, trainloader)
 
         torch.save(encoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_ENC_model"))
         torch.save(decoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_DEC_model"))
-        torch.save(discriminator.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_DIS_model"))
+        torch.save(m_VAE.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "m_VAE_model"))
+        torch.save(vae_old.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "m_VAE_old_model"))
+
+        # torch.save(discriminator.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_DIS_model"))
