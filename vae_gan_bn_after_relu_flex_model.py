@@ -112,10 +112,10 @@ class Discriminator(nn.Module):
 
         out_dis = F.sigmoid(self.fc_out(l))
 
-        return out_dis
+        return out_dis, l
 
     def forward(self, input):
         x_hat, _1, _2, _3 = input
-        dis_prediction=self.discriminator(x_hat)
-        return dis_prediction, x_hat, _1, _2, _3
+        dis_prediction, l =self.discriminator(x_hat)
+        return dis_prediction, x_hat, _1, _2, _3, l
 
