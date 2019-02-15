@@ -65,8 +65,8 @@ if load_model and os.path.exists(PATH_ENCODER):
     encoder.eval()
     decoder.load_state_dict(torch.load(PATH_DECODER))
     decoder.eval()
-    # discriminator.load_state_dict(torch.load(PATH_ENCODER))
-    # discriminator.eval()
+    discriminator.load_state_dict(torch.load(PATH_DISCRIMINATOR))
+    discriminator.eval()
 
 
 # vae_old_model=vae_bn_after_relu_flex_model.Net(n_latent_vector=100)
@@ -74,6 +74,8 @@ if load_model and os.path.exists(PATH_ENCODER):
 # vae_old_model.eval()
 
 m_VAE = nn.Sequential(encoder,decoder)
+m_GAN = nn.Sequential(decoder,discriminator)
+m_FULL = nn.Sequential(encoder,decoder,discriminator)
 # m_VAE.load_state_dict(torch.load(model_base_folder+"m_VAE_model"))
 # m_VAE.eval()
 
@@ -93,14 +95,14 @@ X_mu = None
 X_var = None
 y = []
 epoch="inf"
-m_VAE.train(False)
+m_FULL.train(False)
 with torch.no_grad():
     for i in range(trainset.__len__()):
         features, labels = trainset.__getitem__(i)
         features=torch.stack([features])
         labels=torch.stack([labels])
         _, labels = torch.max(labels, 1)
-        outputs, z, mu, var = m_VAE(features)
+        aut, x_hat, z, mu, var, l = m_FULL(features)
         X_z = np.append(X_z, z, axis=0) if X_z is not None else z
         # mu=features.numpy()
         X_mu= np.append(X_mu, mu, axis=0) if X_mu is not None else mu
