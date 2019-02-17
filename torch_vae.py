@@ -37,7 +37,7 @@ def loss_function(recon_x, x, mu, logvar):
     # 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
     KLD = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
 
-    return BCE +  0.1*KLD
+    return BCE + 0.1*KLD
 
 datasets=cancer_type_dataset.CANCER_TYPES
 torch_dataset=CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=["{}_{}".format(x.split("/")[1].split(".")[0],i_x) for i_x, x in enumerate(cancer_type_dataset.META_GROUPS)])
@@ -53,7 +53,7 @@ testloader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size_val
 
 net = vae_bn_after_relu_flex_model.Net(n_reduction_layers=2 ,factor=0.5,n_latent_vector=100 )
 load_model=True # False
-if load_model and os.path.exists(os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model")):
+if load_model and os.path.exists(os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_mod el")):
    PATH="/specific/netapp5/gaga/hagailevi/evaluation/bnet/output/VAE_model"
    net.load_state_dict(torch.load(PATH))
    net.eval()

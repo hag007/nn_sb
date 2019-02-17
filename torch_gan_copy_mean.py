@@ -102,7 +102,16 @@ with torch.no_grad():
         features=torch.stack([features])
         labels=torch.stack([labels])
         _, labels = torch.max(labels, 1)
-        aut, x_hat, z, mu, var, l = m_FULL(features)
+        result=m_FULL(features)
+        mu, var=encoder.encode(features)
+        z = encoder(features)
+        decoded = decoder(z)
+
+        if len(result) == 2:
+            auth, l = m_FULL(features)
+        else:
+            auth, l, decoded, z, mu, var = m_FULL(features)
+
         X_z = np.append(X_z, z, axis=0) if X_z is not None else z
         # mu=features.numpy()
         X_mu= np.append(X_mu, mu, axis=0) if X_mu is not None else mu

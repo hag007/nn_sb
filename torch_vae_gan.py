@@ -27,14 +27,14 @@ from matplotlib.lines import Line2D
 num_workers=25
 batch_size_train=100
 batch_size_val=10
-REDUCTION='mean'
-GAMMA=15
-ALPHA=0.1
+REDUCTION='sum'
+GAMMA=1
+ALPHA=0.5
 
 
 def get_encoder_loss(m_VAEGAN, inputs, KLD_ratio):
     z, mu, var = m_VAEGAN.vae.encoder(inputs)
-    ll_loss = get_ll_dis_loss(m_VAEGAN, inputs)
+    ll_loss = get_rec_loss(m_VAEGAN, inputs)
     prior_loss = get_prior_loss(mu, var, KLD_ratio)
 
     return ll_loss + prior_loss
@@ -43,19 +43,27 @@ def get_encoder_loss(m_VAEGAN, inputs, KLD_ratio):
 def get_ll_dis_loss(m_VAEGAN, inputs):
 
     auth_decoded, l_decoded, _1, _2, _3, _4, = m_VAEGAN(inputs)
-    auth_real, l_real, _1, _2, _3, _4 = m_VAEGAN(inputs)
 
-    return ((auth_decoded - auth_real.detach()) ** 2).mean()
+    with torch.no_grad:
+        auth_real, l_real, _1, _2, _3, _4 = m_VAEGAN(inputs)
+
+    return ((auth_decoded - auth_real.detach()) ** 2).sum()
+
+def get_rec_loss(m_VAEGAN, inputs):
+
+    decoded, z, mu, logvar = m_VAEGAN.vae(inputs)
+
+    return ((decoded - inputs) ** 2).sum()
 
 
 def get_prior_loss(mu, logvar, KLD_ratio):
 
     KLD = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
 
-    return KLD*KLD_ratio
+    return KLD # *KLD_ratio
 
 
-def backprop_encoder(m_VAEGAN, optimizer, n_epoches, trainloader, testloader, KLD_ratio):
+def backprop_encoder(m_VAEGAN, optimizers, n_epoches, trainloader, testloader, KLD_ratio):
 
      for epoch in range(n_epoches):
         train_loss=0
@@ -63,12 +71,12 @@ def backprop_encoder(m_VAEGAN, optimizer, n_epoches, trainloader, testloader, KL
         for i, data in enumerate(trainloader, 0):
 
             inputs, labels = data
-            optimizer.zero_grad()
+            [optimizer.zero_grad() for optimizer in optimizers]
 
             loss=get_encoder_loss(m_VAEGAN, inputs, KLD_ratio)
             loss.backward()
             train_loss += loss.item()
-            optimizer.step()
+            [optimizer.step() for optimizer in optimizers]
 
             if i % 10 == 9:
                 print('[%d, %5d] vae train loss: %.3f' %
@@ -115,10 +123,10 @@ def backprop_dis(m_VAEGAN, optimizer, n_epoches, trainloader):
             inputs = torch.cat((real_inputs, decoded_inputs,random_inputs), dim=0)
             labels = torch.cat((real_labels, decoded_labels, random_labels), dim=0)
 
-            optimizer.zero_grad()
-
             auth, l = m_VAEGAN.discriminator.discriminate(inputs)
 
+
+            optimizer.zero_grad()
             loss = torch.nn.BCELoss(reduction=REDUCTION)(auth.view(-1, ), torch.tensor(labels, dtype=torch.float))
             loss.backward()
             running_loss += loss.item()
@@ -169,13 +177,10 @@ def backprop_gen(m_VAEGAN, optimizer, n_epoches, trainloader):
             inputs = torch.cat((real_inputs, decoded_inputs,random_inputs), dim=0)
             labels = torch.cat((real_labels, decoded_labels, random_labels), dim=0)
 
-            # zero the parameter gradients
-            optimizer.zero_grad()
-
-            # forward + backward + optimize
             auth, l = m_VAEGAN.discriminator.discriminate(inputs)
 
-            # print outputs 
+            optimizer.zero_grad()
+
             loss = torch.nn.BCELoss(reduction=REDUCTION)(auth.view(-1, ), labels) + GAMMA*get_ll_dis_loss(m_VAEGAN, inputs)
           
             loss.backward()
@@ -255,7 +260,7 @@ def main():
             gen_loss=100
 
             print "start backprop_vae.."
-            backprop_encoder(m_VAEGAN, o_encoder, n_epoches, trainloader, testloader, min(meta_epoch / 100.0, 1.0))
+            backprop_encoder(m_VAEGAN, [o_encoder, o_decoder], n_epoches, trainloader, testloader, min(meta_epoch / 100.0, 1.0))
 
             # while gen_loss > 0.1:
             print "start backprop_gen.."

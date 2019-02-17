@@ -6,8 +6,6 @@ import numpy as np
 
 
 
-
-
 class Encoder(nn.Module):
 
     def __init__(self, factor=0.5, n_mito_input_layer=cancer_type_dataset.n_input_layer, n_cancer_types=2, n_latent_vector=2, n_reduction_layers=2):
