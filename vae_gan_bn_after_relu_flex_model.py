@@ -108,10 +108,10 @@ class Discriminator(nn.Module):
         for cur in np.arange(1, self.n_reduction_layers + 1):
             h = getattr(self, "fc_bn_dis" + str(cur))(F.relu(getattr(self, "fc_dis" + str(cur))(h)))
 
-        l = getattr(self, "fc_bn_dis_l")(F.relu(getattr(self, "fc_dis_l")(h)))
+        l = F.sigmoid(getattr(self, "fc_dis_l")(h))
 
 
-        out_dis = F.sigmoid(self.fc_out(l))
+        out_dis = F.sigmoid(self.fc_out(getattr(self, "fc_bn_dis_l")(l)))
 
         return out_dis, l
 

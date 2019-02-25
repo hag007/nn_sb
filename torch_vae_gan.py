@@ -28,32 +28,34 @@ num_workers=25
 batch_size_train=100
 batch_size_val=10
 REDUCTION='sum'
-GAMMA=1
-ALPHA=0.5
-
+GAMMA=15
+ALPHA=0.1
+BETA=5
 
 def get_encoder_loss(m_VAEGAN, inputs, KLD_ratio):
     z, mu, var = m_VAEGAN.vae.encoder(inputs)
-    ll_loss = get_rec_loss(m_VAEGAN, inputs)
+    ll_loss = get_ll_dis_loss(m_VAEGAN, inputs)
     prior_loss = get_prior_loss(mu, var, KLD_ratio)
 
     return ll_loss + prior_loss
 
 
 def get_ll_dis_loss(m_VAEGAN, inputs):
-
+	
     auth_decoded, l_decoded, _1, _2, _3, _4, = m_VAEGAN(inputs)
 
-    with torch.no_grad:
-        auth_real, l_real, _1, _2, _3, _4 = m_VAEGAN(inputs)
+    # with torch.no_grad:
+    auth_real, l_real, _1, _2, _3, _4 = m_VAEGAN(inputs)
 
-    return ((auth_decoded - auth_real.detach()) ** 2).sum()
+    BCE = F.binary_cross_entropy(l_decoded, l_real.detach(),  reduction='sum')
+    return BCE
 
 def get_rec_loss(m_VAEGAN, inputs):
 
     decoded, z, mu, logvar = m_VAEGAN.vae(inputs)
-
-    return ((decoded - inputs) ** 2).sum()
+    BCE = F.binary_cross_entropy(decoded, inputs, reduction='sum')
+    # BCE = ((decoded - inputs) ** 2).sum() 
+    return BCE
 
 
 def get_prior_loss(mu, logvar, KLD_ratio):
@@ -72,8 +74,12 @@ def backprop_encoder(m_VAEGAN, optimizers, n_epoches, trainloader, testloader, K
 
             inputs, labels = data
             [optimizer.zero_grad() for optimizer in optimizers]
-
-            loss=get_encoder_loss(m_VAEGAN, inputs, KLD_ratio)
+     
+            z, mu, var = m_VAEGAN.vae.encoder(inputs)
+            ll_loss = get_ll_dis_loss(m_VAEGAN, inputs)
+            prior_loss = get_prior_loss(mu, var, KLD_ratio)
+            loss=BETA*ll_loss + prior_loss
+          
             loss.backward()
             train_loss += loss.item()
             [optimizer.step() for optimizer in optimizers]
@@ -127,7 +133,7 @@ def backprop_dis(m_VAEGAN, optimizer, n_epoches, trainloader):
 
 
             optimizer.zero_grad()
-            loss = torch.nn.BCELoss(reduction=REDUCTION)(auth.view(-1, ), torch.tensor(labels, dtype=torch.float))
+            loss = torch.nn.BCELoss(reduction=REDUCTION)(auth.view(-1, ), labels)
             loss.backward()
             running_loss += loss.item()
             optimizer.step()
@@ -260,7 +266,7 @@ def main():
             gen_loss=100
 
             print "start backprop_vae.."
-            backprop_encoder(m_VAEGAN, [o_encoder, o_decoder], n_epoches, trainloader, testloader, min(meta_epoch / 100.0, 1.0))
+            backprop_encoder(m_VAEGAN, [o_encoder], n_epoches, trainloader, testloader, min(meta_epoch / 100.0, 1.0))
 
             # while gen_loss > 0.1:
             print "start backprop_gen.."

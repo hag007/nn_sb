@@ -1,7 +1,6 @@
 import re
 import gzip
 import shutil
-import wget
 from download_resources import download
 from utils.ensembl2entrez import ensembl2entrez_convertor
 from matplotlib import style

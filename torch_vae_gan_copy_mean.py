@@ -28,21 +28,13 @@ import vaegan_copy_model
 from scipy.cluster.hierarchy import dendrogram, linkage
 from sklearn.cluster import KMeans
 
-    # Reconstruction + KL divergence losses summed over all elements and batch
-
-
 def loss_function(recon_x, x, mu, logvar):
     BCE = F.binary_cross_entropy(recon_x, x, reduction='sum')
-
-    # see Appendix B from VAE paper:
-    # Kingma and Welling. Auto-Encoding Variational Bayes. ICLR, 2014
-    # https://arxiv.org/abs/1312.6114
-    # 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
     KLD = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
 
     return BCE + KLD
 
-ctype='average' #'average'
+ctype='weighted' #'average'
 
 datasets=cancer_type_dataset.CANCER_TYPES
 trainset = CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=cancer_type_dataset.CANCER_TYPES)
@@ -50,16 +42,16 @@ trainloader = torch.utils.data.DataLoader(trainset, batch_size=10,
                                           shuffle=True, num_workers=5, pin_memory=True)
 testset = trainset
 testloader = trainloader
-n_latent_vector=100
+n_latent_vector=2
 encoder=vaegan_copy_model.Encoder(n_latent_vector=n_latent_vector)
 decoder=vaegan_copy_model.Decoder(n_latent_vector=n_latent_vector)
 discriminator=vaegan_copy_model.Discriminator(n_latent_vector=n_latent_vector)
 
 model_base_folder="/home/hag007/Desktop/nn/"
-PATH_DISCRIMINATOR= model_base_folder+"GAN_DIS_mdl"# os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model")
+PATH_DISCRIMINATOR= model_base_folder+"GAN_DIS_mdl"
 PATH_ENCODER= model_base_folder+"GAN_ENC_mdl"
 PATH_DECODER= model_base_folder+"GAN_DEC_mdl"
-load_model=True # False
+load_model=True
 if load_model and os.path.exists(PATH_ENCODER):
     encoder.load_state_dict(torch.load(PATH_ENCODER))
     encoder.eval()
@@ -69,23 +61,9 @@ if load_model and os.path.exists(PATH_ENCODER):
     discriminator.eval()
 
 
-# vae_old_model=vae_bn_after_relu_flex_model.Net(n_latent_vector=100)
-# vae_old_model.load_state_dict(torch.load(model_base_folder+"m_VAE_old_model"))
-# vae_old_model.eval()
-
 m_VAE = nn.Sequential(encoder,decoder)
 m_GAN = nn.Sequential(decoder,discriminator)
 m_FULL = nn.Sequential(encoder,decoder,discriminator)
-# m_VAE.load_state_dict(torch.load(model_base_folder+"m_VAE_model"))
-# m_VAE.eval()
-
-# m_VAE=vae_old_model
-
-# m_VAE=vae_old_model
-
-
-# m_GAN = nn.Sequential(decoder,discriminator)
-# m_FULL = nn.Sequential(encoder,decoder,discriminator)
 
 correct = 0
 total = 0
@@ -119,7 +97,7 @@ with torch.no_grad():
         y = np.append(y, labels)
 
 
-# X_mu = TSNE(n_components=2).fit_transform(X_mu)
+# X_mu = PCA(n_components=100).fit_transform(X_mu)
 
 label_ids_unique = np.unique(y)
 label_ids = [trainset.get_labels_unique()[int(a)] for a in y]
@@ -158,11 +136,17 @@ tumor_only_vectors_z={}
 tumor_only_vectors_mu={}
 tumor_only_vectors_var={}
 for cur in metagroups_names:
-    normal_key="{}, {}".format(cur, "normal")
+    normal_key = "{}, {}".format(cur, "normal")
     tumor_key = "{}, {}".format(cur, "tumor")
-    tumor_only_vectors_z[cur]=np.subtract(samples_z_mean_dict[tumor_key], samples_z_mean_dict[normal_key])
-    tumor_only_vectors_mu[cur] =np.subtract(samples_mu_mean_dict[tumor_key], samples_mu_mean_dict[normal_key])
-    tumor_only_vectors_var[cur] =np.subtract(samples_var_mean_dict[tumor_key], samples_var_mean_dict[normal_key])
+    tumor_s_key = "{}, {}".format(cur, "tumor_s")
+    tumor_a_key = "{}, {}".format(cur, "tumor_a")
+    tumor_keys=[tumor_key, tumor_a_key, tumor_s_key]
+
+    for cur_tumor_key in tumor_keys:
+        if cur_tumor_key in samples_z_mean_dict:
+            tumor_only_vectors_z[cur_tumor_key]=np.subtract(samples_z_mean_dict[cur_tumor_key], samples_z_mean_dict[normal_key])
+            tumor_only_vectors_mu[cur_tumor_key] =np.subtract(samples_mu_mean_dict[cur_tumor_key], samples_mu_mean_dict[normal_key])
+            tumor_only_vectors_var[cur_tumor_key] =np.subtract(samples_var_mean_dict[cur_tumor_key], samples_var_mean_dict[normal_key])
 
 
 n_components = 2
@@ -207,8 +191,8 @@ if n_components == 2:
                orientation='top',
                labels=filtered_tumor_only_vectors_mu_keys,
                distance_sort='descending',
-               show_leaf_counts=True)
-
+               show_leaf_counts=True, leaf_rotation=75)
+    plt.tight_layout()
     plt.savefig(os.path.join(constants.OUTPUT_GLOBAL_DIR, "mean_sub_by_samples_mu_hierarchical.png"))
 
     fig = plt.figure(1, figsize=(10, 10))
@@ -229,9 +213,6 @@ if n_components == 2:
     for i, cur in enumerate(kmeans.labels_):
         kmean_dict[cur].append(filtered_tumor_only_vectors_mu_keys[i])
     print kmean_dict
-
-
-
 
 
     fig = plt.figure(1, figsize=(10, 10))
@@ -274,8 +255,9 @@ if n_components == 2:
                orientation='top',
                labels=[x.split(',')[0] for x in normal_vectors_mu_keys],
                distance_sort='descending',
-               show_leaf_counts=True)
+               show_leaf_counts=True, leaf_rotation=75)
 
+    plt.tight_layout()
     plt.savefig(os.path.join(constants.OUTPUT_GLOBAL_DIR, "mean_normal_by_samples_mu_hierarchical.png"))
 
 
@@ -323,38 +305,6 @@ if n_components == 2:
             tumor_vectors_mu_values.append(v)
             tumor_vectors_mu_keys.append(k)
 
-
-    # COAD_new=(tumor_only_vectors_mu["LUAD"][0]+samples_mu_mean_dict["COAD, normal"][0], tumor_only_vectors_mu["LUAD"][1]+samples_mu_mean_dict["COAD, normal"][1])
-    # LUAD_new =(tumor_only_vectors_mu["COAD"][0] + samples_mu_mean_dict["LUAD, normal"][0], tumor_only_vectors_mu["COAD"][1]+samples_mu_mean_dict["LUAD, normal"][1])
-    #
-    # BRCA_new = (tumor_only_vectors_mu["KIRP"][0] + samples_mu_mean_dict["BRCA, normal"][0], tumor_only_vectors_mu["KIRP"][1] + samples_mu_mean_dict["BRCA, normal"][1])
-    # KIRP_new = (tumor_only_vectors_mu["BRCA"][0] + samples_mu_mean_dict["KIRP, normal"][0], tumor_only_vectors_mu["BRCA"][1] + samples_mu_mean_dict["KIRP, normal"][1])
-    #
-    # ax.scatter(*COAD_new)
-    # ax.scatter(*LUAD_new)
-    #
-    # ax.scatter(*BRCA_new)
-    # ax.scatter(*KIRP_new)
-    #
-    # ax.annotate("COAD_new",
-    #             xy=COAD_new, xytext=(-20, 20), textcoords='offset points',
-    #             bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
-    #             arrowprops=dict(facecolor='black', shrink=0.05, width=2, headwidth=3, headlength=2))
-    # ax.annotate("LUAD_new",
-    #             xy=LUAD_new, xytext=(-20, 20), textcoords='offset points',
-    #             bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
-    #             arrowprops=dict(facecolor='black', shrink=0.05, width=2, headwidth=3, headlength=2))
-    #
-    # ax.annotate("BRCA_new",
-    #             xy=BRCA_new, xytext=(-20, 20), textcoords='offset points',
-    #             bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
-    #             arrowprops=dict(facecolor='black', shrink=0.05, width=2, headwidth=3, headlength=2))
-    # ax.annotate("KIRP_new",
-    #             xy=KIRP_new, xytext=(-20, 20), textcoords='offset points',
-    #             bbox=dict(boxstyle='round,pad=0.5', fc='yellow', alpha=0.5),
-    #             arrowprops=dict(facecolor='black', shrink=0.05, width=2, headwidth=3, headlength=2))
-    #
-
     plt.savefig(
         os.path.join(constants.BASE_PROFILE, "output", "mean_tumor_by_samples_mu.png"))
 
@@ -365,8 +315,8 @@ if n_components == 2:
                orientation='top',
                labels=[x.split(',')[0] for x in tumor_vectors_mu_keys],
                distance_sort='descending',
-               show_leaf_counts=True)
-
+               show_leaf_counts=True, leaf_rotation=75)
+    plt.tight_layout()
     plt.savefig(os.path.join(constants.OUTPUT_GLOBAL_DIR, "mean_tumor_by_samples_mu_hierarchical.png"))
 
     fig = plt.figure(1, figsize=(10, 10))

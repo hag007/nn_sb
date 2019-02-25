@@ -51,7 +51,7 @@ testloader = trainloader
 
 criterion = nn.BCELoss()
 
-net = vae_bn_after_relu_flex_model.Net(n_reduction_layers=2, factor=0.5, n_latent_vector=100)
+net = vae_bn_after_relu_flex_model.Net(n_reduction_layers=2, factor=0.5, n_latent_vector=2)
 
 # create your optimizer
 optimizer = optim.Adam(net.parameters(), lr=0.00001)
