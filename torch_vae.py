@@ -37,7 +37,7 @@ def loss_function(recon_x, x, mu, logvar):
     # 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
     KLD = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
 
-    return BCE +  0.1*KLD
+    return BCE + KLD
 
 datasets=cancer_type_dataset.CANCER_TYPES
 torch_dataset=CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=["{}_{}".format(x.split("/")[1].split(".")[0],i_x) for i_x, x in enumerate(cancer_type_dataset.META_GROUPS)])
@@ -51,7 +51,7 @@ trainloader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size_t
 testloader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size_val,
                                           shuffle=True, num_workers=num_workers, pin_memory=True)
 
-net = vae_bn_after_relu_flex_model.Net(n_reduction_layers=2 ,factor=0.5,n_latent_vector=100 )
+net = vae_bn_after_relu_flex_model.Net(n_reduction_layers=2 ,factor=0.5,n_latent_vector=2 )
 load_model=True # False
 if load_model and os.path.exists(os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model")):
    PATH="/specific/netapp5/gaga/hagailevi/evaluation/bnet/output/VAE_model"
@@ -61,8 +61,11 @@ if load_model and os.path.exists(os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_
 criterion = nn.BCELoss()
 
 # create your optimizer
-optimizer = optim.Adam(net.parameters(), lr=0.001)
+optimizer = optim.Adam(net.parameters(), lr=0.0005)
 
+
+min_epoch=-1
+min_val_loss=10000000
 for epoch in range(0, 100000):  # loop over the dataset multiple times
 
     train_loss = 0.0
@@ -90,8 +93,7 @@ for epoch in range(0, 100000):  # loop over the dataset multiple times
                   (epoch + 1, i + 1, train_loss / 100))
             train_loss = 0.0
 
-    torch.save(net.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model"))
-
+   
     for i, data in enumerate(testloader, 0):
         with torch.no_grad():
             # get the inputs
@@ -103,6 +105,11 @@ for epoch in range(0, 100000):  # loop over the dataset multiple times
             loss = loss_function(outputs, inputs, mu, var)
             val_loss += loss.item()
     
+    if val_loss/100 < min_val_loss:
+       min_val_loss=val_loss/100
+       min_epoch=epoch
+       torch.save(net.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model"))
+    print "min epoch: {}, min val: {}".format(min_epoch, min_val_loss) 
     # print statistics
     
     print('[%d, %5d] val loss: %.3f' %

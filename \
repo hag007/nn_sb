@@ -165,12 +165,12 @@ class Discriminator(nn.Module):
 
 # define constant 
 max_epochs = 100000
-lr = 3e-4
+lr = 0.001 
 
 beta = 5
-alpha = 1
+alpha = 0.1
 gamma = 5
-delta = 1 
+delta = 5
 n_latent_vector=2
 G = VAE_GAN_Generator(n_latent_vector=n_latent_vector)
 D = Discriminator(n_latent_vector=n_latent_vector)
@@ -181,6 +181,7 @@ criterion
 opt_enc = optim.Adam(G.encoder.parameters(), lr=lr)
 opt_dec = optim.Adam(G.decoder.parameters(), lr=lr)
 opt_dis = optim.Adam(D.parameters(), lr=lr * alpha)
+opt_vae = optim.Adam(G.parameters(), lr=lr)
 
 fixed_noise = Variable(torch.randn(batch_size_train, n_latent_vector))
 data, _ = next(iter(trainloader))
@@ -190,7 +191,7 @@ min_val_epoch=-1
 
 for epoch in range(max_epochs):
     train_loss=0
-    val_loss=0
+    val_loss=1000000
     print "cur epoch: {}".format(epoch)
     D_real_list, D_rec_enc_list, D_rec_noise_list, D_list = [], [], [], []
     g_loss_list, rec_loss_list, prior_loss_list = [], [], []
@@ -203,61 +204,20 @@ for epoch in range(max_epochs):
         # print (data.size())
         datav = Variable(data)
         mean, logvar, rec_enc = G(datav)
-        # print ("The size of rec_enc:", rec_enc.size())
 
-        noisev = Variable(torch.randn(batch_size, n_latent_vector))
-        rec_noise = G.decoder(noisev)
 
-        # train discriminator
-        output, l = D(datav)
-        errD_real = criterion(output, ones_label)
-        D_real_list.append(output.data.mean())
-        output, l = D(rec_enc)
-        errD_rec_enc = criterion(output, zeros_label)
-        D_rec_enc_list.append(output.data.mean())
-        output, l = D(rec_noise)
-        errD_rec_noise = criterion(output, zeros_label)
-        D_rec_noise_list.append(output.data.mean())
+        similarity_rec_enc =  rec_enc # l_rec
+        similarity_data =  datav # l_real
 
-        dis_img_loss = errD_real + errD_rec_enc + errD_rec_noise
-        # print ("print (dis_img_loss)", dis_img_loss)
-        D_list.append(dis_img_loss.data.mean())
-        opt_dis.zero_grad()
-        dis_img_loss.backward(retain_graph=True)
-        opt_dis.step()
-
-        # train decoder
-        output, l_real = D(datav)
-        errD_real = criterion(output, ones_label)
-        output, l_rec = D(rec_enc)
-        errD_rec_enc = criterion(output, zeros_label)
-        output, l = D(rec_noise)
-        errD_rec_noise = criterion(output, zeros_label)
-
-        similarity_rec_enc = rec_enc # l_rec
-        similarity_data = datav # l_real
-
-        dis_img_loss = errD_real + errD_rec_enc + errD_rec_noise
-        # print (dis_img_loss)
-        gen_img_loss = - dis_img_loss
-
-        g_loss_list.append(gen_img_loss.data.mean())
         rec_loss = nn.BCELoss(reduction='sum')(similarity_rec_enc, similarity_data.detach())
-        rec_loss_list.append(rec_loss.data.mean())
-        err_dec = gamma * rec_loss + gen_img_loss
-   
-        opt_dec.zero_grad()
-        err_dec.backward(retain_graph=True)
-        opt_dec.step()
-        
+                
         # train encoder
         prior_loss = 1 + logvar - mean.pow(2) - logvar.exp()
-        prior_loss = (-0.5 * torch.sum(prior_loss)) # / torch.numel(mean.data)
-        # print (prior_loss, mean, std)
-        prior_loss_list.append(prior_loss.data.mean())
-        err_enc = prior_loss + beta * rec_loss
+        prior_loss = (-0.5 * torch.sum(prior_loss)) 
+        
+        err_enc = prior_loss + rec_loss 
 
-        train_loss+=prior_loss.item() + rec_loss.item() 
+        train_loss+=err_enc.item() 
         # print statistics
         
         if i % 10 == 9:  # print every 2000 mini-batches
@@ -265,59 +225,20 @@ for epoch in range(max_epochs):
                   (epoch + 1, i + 1, train_loss / 100)) 
             train_loss = 0.0
 
-        opt_enc.zero_grad()
+        opt_vae.zero_grad()
         err_enc.backward()
-        opt_enc.step()
 
-    for i, data in enumerate(testloader, 0):
-        with torch.no_grad():
-            # get the inputs
-            inputs, labels = data
-    
-            # forward + backward + optimize
-            mean, logvar, rec_enc = G(datav)    
-            
-            prior_loss = 1 + logvar - mean.pow(2) - logvar.exp()
-            prior_loss = (-0.5 * torch.sum(prior_loss)) #  
-        
+        opt_vae.step()       
 
-            similarity_rec_enc = rec_enc # l_rec
-            similarity_data = datav # l_real
-
-            
-            rec_loss = nn.BCELoss(reduction='sum')(similarity_rec_enc, similarity_data.detach())
-            loss = prior_loss + rec_loss
-            val_loss += loss.item()
-    
-    # print statistics
-    
-    print('[%d, %5d] val loss: %.3f' %
-          (epoch + 1, i + 1, val_loss / 100))
-    
- 
-    samples = G.decoder(fixed_noise)
-
-    localtime = time.asctime(time.localtime(time.time()))
-    print (localtime)
-    print ('[%d/%d]: D_real:%.4f, D_enc:%.4f, D_noise:%.4f, Loss_D:%.4f, Loss_G:%.4f, rec_loss:%.4f, prior_loss:%.4f'
-           % (epoch,
-              max_epochs,
-              np.mean(D_real_list),
-              np.mean(D_rec_enc_list),
-              np.mean(D_rec_noise_list),
-              np.mean(D_list),
-              np.mean(g_loss_list),
-              np.mean(rec_loss_list),
-              np.mean(prior_loss_list)))
-
-    model_base_folder=constants.OUTPUT_GLOBAL_DIR
-    PATH_DISCRIMINATOR= os.path.join(model_base_folder,"GAN_DIS_mdl") # os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model")
-    PATH_ENCODER= os.path.join(model_base_folder,"GAN_ENC_mdl")
-    PATH_DECODER= os.path.join(model_base_folder,"GAN_DEC_mdl")
-    if min_val > val_loss/100:
-        min_val=val_loss/100
-        min_val_epoch=epoch
-        torch.save(G.encoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_ENC_mdl"))
-        torch.save(G.decoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_DEC_mdl"))
-        torch.save(D.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_DIS_mdl"))
-    print "min_val epoch: {}, min_val: {}".format(min_val_epoch, min_val)
+        model_base_folder=constants.OUTPUT_GLOBAL_DIR
+        PATH_DISCRIMINATOR= os.path.join(model_base_folder,"GAN_DIS_mdl") # os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model")
+        PATH_ENCODER= os.path.join(model_base_folder,"GAN_ENC_mdl")
+        PATH_DECODER= os.path.join(model_base_folder,"GAN_DEC_mdl")
+        if min_val > val_loss/100:
+            min_val=val_loss/100
+            min_val_epoch=epoch
+            torch.save(G.encoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_ENC_mdl"))
+            torch.save(G.decoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_DEC_mdl"))
+            torch.save(D.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_DIS_mdl"))
+        print "min_val epoch: {}, min_val: {}".format(min_val_epoch, min_val)
+   

@@ -168,9 +168,9 @@ max_epochs = 100000
 lr = 3e-4
 
 beta = 5
-alpha = 1
+alpha = 0.1
 gamma = 5
-delta = 1 
+delta = 5
 n_latent_vector=2
 G = VAE_GAN_Generator(n_latent_vector=n_latent_vector)
 D = Discriminator(n_latent_vector=n_latent_vector)
@@ -190,7 +190,7 @@ min_val_epoch=-1
 
 for epoch in range(max_epochs):
     train_loss=0
-    val_loss=0
+    val_loss=1000000
     print "cur epoch: {}".format(epoch)
     D_real_list, D_rec_enc_list, D_rec_noise_list, D_list = [], [], [], []
     g_loss_list, rec_loss_list, prior_loss_list = [], [], []
@@ -219,7 +219,7 @@ for epoch in range(max_epochs):
         errD_rec_noise = criterion(output, zeros_label)
         D_rec_noise_list.append(output.data.mean())
 
-        dis_img_loss = errD_real + errD_rec_enc + errD_rec_noise
+        dis_img_loss = delta*(errD_real + errD_rec_enc + errD_rec_noise)/3.0
         # print ("print (dis_img_loss)", dis_img_loss)
         D_list.append(dis_img_loss.data.mean())
         opt_dis.zero_grad()
@@ -234,8 +234,8 @@ for epoch in range(max_epochs):
         output, l = D(rec_noise)
         errD_rec_noise = criterion(output, zeros_label)
 
-        similarity_rec_enc = rec_enc # l_rec
-        similarity_data = datav # l_real
+        similarity_rec_enc =  l_rec
+        similarity_data =  l_real
 
         dis_img_loss = errD_real + errD_rec_enc + errD_rec_noise
         # print (dis_img_loss)
@@ -244,7 +244,7 @@ for epoch in range(max_epochs):
         g_loss_list.append(gen_img_loss.data.mean())
         rec_loss = nn.BCELoss(reduction='sum')(similarity_rec_enc, similarity_data.detach())
         rec_loss_list.append(rec_loss.data.mean())
-        err_dec = gamma * rec_loss + gen_img_loss
+        err_dec = (gamma * rec_loss)/100.0 + (gen_img_loss/3.0)*delta
    
         opt_dec.zero_grad()
         err_dec.backward(retain_graph=True)
@@ -255,7 +255,7 @@ for epoch in range(max_epochs):
         prior_loss = (-0.5 * torch.sum(prior_loss)) # / torch.numel(mean.data)
         # print (prior_loss, mean, std)
         prior_loss_list.append(prior_loss.data.mean())
-        err_enc = prior_loss + beta * rec_loss
+        err_enc = (prior_loss + beta * rec_loss)/100.0
 
         train_loss+=prior_loss.item() + rec_loss.item() 
         # print statistics
@@ -311,9 +311,9 @@ for epoch in range(max_epochs):
               np.mean(prior_loss_list)))
 
     model_base_folder=constants.OUTPUT_GLOBAL_DIR
-    PATH_DISCRIMINATOR= os.path.join(model_base_folder,"GAN_DIS_mdl") # os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model")
-    PATH_ENCODER= os.path.join(model_base_folder,"GAN_ENC_mdl")
-    PATH_DECODER= os.path.join(model_base_folder,"GAN_DEC_mdl")
+    PATH_DISCRIMINATOR= os.path.join(model_base_folder,"GAN_DIS_l_mdl") # os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model")
+    PATH_ENCODER= os.path.join(model_base_folder,"GAN_ENC_l_mdl")
+    PATH_DECODER= os.path.join(model_base_folder,"GAN_DEC_l_mdl")
     if min_val > val_loss/100:
         min_val=val_loss/100
         min_val_epoch=epoch
