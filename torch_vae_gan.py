@@ -5,8 +5,8 @@ import torch.optim as optim
 import os
 import numpy as np
 import constants
-from cancer_type_dataset import CancerTypesDataset
-import cancer_type_dataset
+from torch_dataset_cancer import CancerTypesDataset
+import torch_dataset_cancer
 import simplejson as json
 from utils.param_builder import build_gdc_params
 
@@ -212,7 +212,7 @@ def main():
     load_model=args.load_model=='true'
     n_latent_vector=int(args.n_latent_vector)
 
-    torch_dataset=CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=["{}".format(x) for i_x, x in enumerate(cancer_type_dataset.CANCER_TYPES)])
+    torch_dataset=CancerTypesDataset(dataset_names=torch_dataset_cancer.CANCER_TYPES, meta_groups_files=torch_dataset_cancer.META_GROUPS, metagroups_names=["{}".format(x) for i_x, x in enumerate(torch_dataset_cancer.CANCER_TYPES)])
     train_dataset,test_dataset = torch.utils.data.random_split(torch_dataset, [torch_dataset.__len__()-torch_dataset.__len__()/100, torch_dataset.__len__()/100])
 
     print "n_train samples: {}, n_test samples: {}".format(len(train_dataset), len(test_dataset))

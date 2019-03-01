@@ -8,7 +8,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data.dataset import Dataset
 from torch.autograd import Variable
-import cancer_type_dataset
+import torch_dataset_cancer
 from torch.nn import functional as F
 import constants
 
@@ -17,6 +17,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.colors as ml_colors
+import torch_vae_gan_copy_model
 
 from matplotlib.lines import Line2D
 
@@ -27,159 +28,18 @@ batch_size_train=100
 batch_size_val=10
 num_workers=25
 
-datasets=cancer_type_dataset.CANCER_TYPES
-torch_dataset=cancer_type_dataset.CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=["{}".format(x,i_x) for i_x, x in enumerate(cancer_type_dataset.CANCER_TYPES)])
-# train_dataset,test_dataset = torch.utils.data.random_split(torch_dataset, [torch_dataset.__len__()-torch_dataset.__len__()/100, torch_dataset.__len__()/100])
-
-
-class Encoder(nn.Module):
-    def __init__(self, factor=0.5, n_mito_input_layer=cancer_type_dataset.n_input_layer, n_cancer_types=2,
-                 n_latent_vector=100, n_reduction_layers=2):
-        super(Encoder, self).__init__()
-        self.n_reduction_layers = n_reduction_layers
-        self.n_latent_vector = n_latent_vector
-
-        for cur in np.arange(1, n_reduction_layers + 1):
-            setattr(self, "fc_enc" + str(cur),
-                    nn.Linear(int(n_mito_input_layer * factor ** (cur - 1)), int(n_mito_input_layer * factor ** cur)))
-            setattr(self, "fc_bn_enc" + str(cur), nn.BatchNorm1d(int(n_mito_input_layer * factor ** cur)))
-
-        self.fc_enc_l_mu = nn.Linear(int(n_mito_input_layer * factor ** n_reduction_layers), n_latent_vector)
-        self.fc_bn_enc_l_mu = nn.BatchNorm1d(n_latent_vector)
-        self.fc_enc_l_var = nn.Linear(int(n_mito_input_layer * factor ** n_reduction_layers), n_latent_vector)
-        self.fc_bn_enc_l_var = nn.BatchNorm1d(n_latent_vector)
-
-    def encode(self, x):
-        h = x
-        for cur in np.arange(1, self.n_reduction_layers + 1):
-            h = getattr(self, "fc_bn_enc" + str(cur))(F.relu(getattr(self, "fc_enc" + str(cur))(h)))
-
-        l_mu = getattr(self, "fc_bn_enc_l_mu")(F.relu(getattr(self, "fc_enc_l_mu")(h)))
-        l_var = getattr(self, "fc_bn_enc_l_var")(F.relu(getattr(self, "fc_enc_l_var")(h)))
-
-        return l_mu, l_var
-
-    def reparameterize(self, mu, logvar):
-        std = torch.exp(0.5 * logvar)
-        eps = torch.randn_like(std)
-
-        return eps.mul(std).add_(mu)
-
-    def forward(self, x):
-        mu, logvar = self.encode(x)
-        z = self.reparameterize(mu, logvar)
-        return z
-
-
-class Decoder(nn.Module):
-
-    def __init__(self, factor=0.5, n_mito_input_layer=cancer_type_dataset.n_input_layer, n_cancer_types=2,
-                 n_latent_vector=100, n_reduction_layers=2):
-        super(Decoder, self).__init__()
-        self.n_reduction_layers = n_reduction_layers
-        self.n_latent_vector = n_latent_vector
-
-        self.fc_dec_l = nn.Linear(n_latent_vector, int(n_mito_input_layer * factor ** n_reduction_layers))
-        self.fc_bn_dec_l = nn.BatchNorm1d(int(n_mito_input_layer * factor ** n_reduction_layers))
-
-        for cur in np.arange(n_reduction_layers, 1, -1):
-            setattr(self, "fc_dec" + str(cur),
-                    nn.Linear(int(n_mito_input_layer * factor ** cur), int(n_mito_input_layer * factor ** (cur - 1))))
-            setattr(self, "fc_bn_dec" + str(cur), nn.BatchNorm1d(int(n_mito_input_layer * factor ** (cur - 1))))
-        setattr(self, "fc_dec1",
-                nn.Linear(int(n_mito_input_layer * factor), int(n_mito_input_layer)))
-
-    def decode(self, z):
-
-        h = getattr(self, "fc_bn_dec_l")(F.relu(getattr(self, "fc_dec_l")(z)))
-        for cur in np.arange(self.n_reduction_layers, 1, -1):
-            h = getattr(self, "fc_bn_dec" + str(cur))(F.relu(getattr(self, "fc_dec" + str(cur))(h)))
-
-        h = F.sigmoid(getattr(self, "fc_dec1")(h))
-
-        return h
-
-    def forward(self, input):
-        z = input
-
-        decoded = self.decode(z)
-        return decoded
-
-
-class VAE_GAN_Generator(nn.Module):
-    def __init__(self, factor=0.5, n_mito_input_layer=cancer_type_dataset.n_input_layer, n_cancer_types=2,
-                 n_latent_vector=100, n_reduction_layers=2):
-        super(VAE_GAN_Generator, self).__init__()
-        self.n_reduction_layers = n_reduction_layers
-        self.n_latent_vector = n_latent_vector
-
-        self.encoder = Encoder(factor=0.5, n_mito_input_layer=cancer_type_dataset.n_input_layer, n_cancer_types=2,
-                               n_latent_vector=100, n_reduction_layers=2)
-        self.decoder = Decoder(factor=0.5, n_mito_input_layer=cancer_type_dataset.n_input_layer, n_cancer_types=2,
-                               n_latent_vector=100, n_reduction_layers=2)
-
-    def forward(self, x):
-        z, mu, logvar = self.encoder(x)
-        rec_images = self.decoder(z)
-
-        return mu, logvar, rec_images
-
-
-class Discriminator(nn.Module):
-
-    def __init__(self, factor=0.5, n_mito_input_layer=cancer_type_dataset.n_input_layer, n_cancer_types=2,
-                 n_latent_vector=100, n_reduction_layers=2):
-        super(Discriminator, self).__init__()
-        # self.factor = factor
-        # self.n_mito_input_layer=n_mito_input_layer
-        self.n_reduction_layers = n_reduction_layers
-        self.n_latent_vector = n_latent_vector
-
-        for cur in np.arange(1, n_reduction_layers + 1):
-            setattr(self, "fc_dis" + str(cur),
-                    nn.Linear(int(n_mito_input_layer * factor ** (cur - 1)), int(n_mito_input_layer * factor ** cur)))
-            setattr(self, "fc_bn_dis" + str(cur), nn.BatchNorm1d(int(n_mito_input_layer * factor ** cur)))
-
-        self.fc_dis_l = nn.Linear(int(n_mito_input_layer * factor ** n_reduction_layers), n_latent_vector)
-        self.fc_bn_dis_l = nn.BatchNorm1d(n_latent_vector)
-        self.fc_out = nn.Linear(int(n_latent_vector), 1)
-
-    def discriminate(self, x_hat):
-
-        h = x_hat
-        for cur in np.arange(1, self.n_reduction_layers + 1):
-            h = getattr(self, "fc_bn_dis" + str(cur))(F.relu(getattr(self, "fc_dis" + str(cur))(h)))
-
-        l = F.sigmoid(getattr(self, "fc_dis_l")(h))
-
-        out_dis = F.sigmoid(self.fc_out(getattr(self, "fc_bn_dis_l")(l)))
-
-        return out_dis, l
-
-    def forward(self, input):
-        encoded = input
-        dis_prediction, l = self.discriminate(encoded)
-        return dis_prediction, l
-
-    def similarity(self, x):
-        batch_size = x.size()[0]
-        outputs, features = self.discriminate(x)
-        return features
-
-
 ctype='average' #'average'
 
-datasets=cancer_type_dataset.CANCER_TYPES
-trainset = cancer_type_dataset.CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=cancer_type_dataset.CANCER_TYPES)
+datasets=torch_dataset_cancer.CANCER_TYPES
+trainset = torch_dataset_cancer.CancerTypesDataset(dataset_names=torch_dataset_cancer.CANCER_TYPES, meta_groups_files=torch_dataset_cancer.META_GROUPS, metagroups_names=torch_dataset_cancer.CANCER_TYPES)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=10,
                                           shuffle=True, num_workers=5, pin_memory=True)
 testset = trainset
 testloader = trainloader
 n_latent_vector=2
-encoder=Encoder(n_latent_vector=n_latent_vector)
-decoder=Decoder(n_latent_vector=n_latent_vector)
-discriminator=Discriminator(n_latent_vector=n_latent_vector)
-
+encoder=torch_vae_gan_copy_model.Encoder(n_latent_vector=n_latent_vector)
+decoder=torch_vae_gan_copy_model.Decoder(n_latent_vector=n_latent_vector)
+discriminator=torch_vae_gan_copy_model.Discriminator(n_latent_vector=n_latent_vector)
 
 
 correct = 0
@@ -188,13 +48,14 @@ X = None
 X_z = None
 X_mu = None
 X_var = None
+X_survival = None
 y = []
 
 model_base_folder="/home/hag007/Desktop/nn/"
 PATH_DISCRIMINATOR= model_base_folder+"GAN_DIS_mdl"# os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model")
 PATH_ENCODER= model_base_folder+"GAN_ENC_mdl"
 PATH_DECODER= model_base_folder+"GAN_DEC_mdl"
-load_model=True # False
+load_model=True
 if load_model and os.path.exists(PATH_ENCODER):
     encoder.load_state_dict(torch.load(PATH_ENCODER))
     encoder.eval()
@@ -207,23 +68,26 @@ m_VAE = nn.Sequential(encoder,decoder)
 m_GAN = nn.Sequential(decoder,discriminator)
 m_FULL = nn.Sequential(encoder,decoder,discriminator)
 
+
 with torch.no_grad():
-    for i, data in enumerate(trainloader, 0):
-        features, labels = data
-        _, labels = torch.max(labels, 1)
-        result = m_FULL(features)
+    for i in range(trainset.__len__()):
+        try:
+            features, label = trainset.__getitem__(i) # get_full_item(i)
+            # if survival.iloc[3] == '0': continue
+        except:
+            continue
+        features=torch.stack([features])
+        label=torch.stack([label])
         mu, var = encoder.encode(features)
         z = encoder(features)
-        decoded = decoder(z)
 
-        if len(result) == 2:
-            auth, l = m_FULL(features)
-        else:
-            auth, l, decoded, z, mu, var = m_FULL(features)
         X_z = np.append(X_z, z, axis=0) if X_z is not None else z
         X_mu=np.append(X_mu, mu, axis=0) if X_mu is not None else mu
         X_var=np.append(X_var, var, axis=0) if X_var is not None else var
-        y = np.append(y, labels)
+        # X_survival = np.append(X_survival, [survival.iloc[4]], axis=0) if X_survival is not None else [survival.iloc[4]]
+        y = np.append(y, torch.argmax(label).numpy())
+
+# X_survival=X_survival.astype(np.int)
 
 print "len samples: {}".format(len(X_mu))
 colormap = cm.jet
@@ -244,7 +108,7 @@ colorlist_unique = [ml_colors.rgb2hex(colormap(a)) for a in
                     label_ids_unique / float(max(label_ids))]
 patches = [Line2D([0], [0], marker='o', color='gray', label=a,
                   markerfacecolor=c) for a, c in
-           zip(torch_dataset.get_labels_unique(), colorlist_unique)]
+           zip(trainset.get_labels_unique(), colorlist_unique)]
 ax.legend(handles=patches)
 
 plt.savefig(
@@ -258,13 +122,24 @@ if n_components == 3:
     ax.scatter(X_mu[:, 0], X_mu[:, 1], X_mu[:, 2], c=y, cmap='jet')
 if n_components == 2:
     ax = fig.add_subplot(111)
+    # ax.scatter(X_mu[:, 0], X_mu[:, 1], c=X_survival, cmap='jet', vmin=np.percentile(X_survival,20), vmax=np.percentile(X_survival,80))
     ax.scatter(X_mu[:, 0], X_mu[:, 1], c=y, cmap='jet')
+
+reduced_dict={}
+for x1, x2, y_i in zip(X_mu[:, 0], X_mu[:, 1],y):
+    if y_i not in reduced_dict:
+        reduced_dict[y_i]=[]
+
+    reduced_dict[y_i].append([x1, x2])
+
+for k, v in reduced_dict.iteritems():
+    print trainset.get_labels_unique()[int(k)], np.var(np.array(reduced_dict[k]), axis=0), np.linalg.norm(np.var(np.array(reduced_dict[k]), axis=0)), np.array(reduced_dict[k]).shape[0]
 
 colorlist_unique = [ml_colors.rgb2hex(colormap(a)) for a in
                     label_ids_unique / float(max(label_ids))]
 patches = [Line2D([0], [0], marker='o', color='gray', label=a,
                   markerfacecolor=c) for a, c in
-           zip(torch_dataset.get_labels_unique(), colorlist_unique)]
+           zip(trainset.get_labels_unique(), colorlist_unique)]
 ax.legend(handles=patches)
 
 plt.savefig(
@@ -284,7 +159,7 @@ colorlist_unique = [ml_colors.rgb2hex(colormap(a)) for a in
                     label_ids_unique / float(max(label_ids))]
 patches = [Line2D([0], [0], marker='o', color='gray', label=a,
                   markerfacecolor=c) for a, c in
-           zip(torch_dataset.get_labels_unique(), colorlist_unique)]
+           zip(trainset.get_labels_unique(), colorlist_unique)]
 ax.legend(handles=patches)
 
 plt.savefig(

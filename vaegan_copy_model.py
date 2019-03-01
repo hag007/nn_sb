@@ -8,7 +8,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data.dataset import Dataset
 from torch.autograd import Variable
-import cancer_type_dataset
+import torch_dataset_cancer
 from torch.nn import functional as F
 import constants
 
@@ -16,11 +16,11 @@ batch_size_train = 100
 batch_size_val = 10
 num_workers = 25
 
-datasets = cancer_type_dataset.CANCER_TYPES
-torch_dataset = cancer_type_dataset.CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES,
-                                                       meta_groups_files=cancer_type_dataset.META_GROUPS,
-                                                       metagroups_names=["{}_{}".format(x, i_x) for i_x, x in
-                                                                         enumerate(cancer_type_dataset.CANCER_TYPES)])
+datasets = torch_dataset_cancer.CANCER_TYPES
+torch_dataset = torch_dataset_cancer.CancerTypesDataset(dataset_names=torch_dataset_cancer.CANCER_TYPES,
+                                                        meta_groups_files=torch_dataset_cancer.META_GROUPS,
+                                                        metagroups_names=["{}_{}".format(x, i_x) for i_x, x in
+                                                                          enumerate(torch_dataset_cancer.CANCER_TYPES)])
 train_dataset, test_dataset = torch.utils.data.random_split(torch_dataset,
                                                             [torch_dataset.__len__() - torch_dataset.__len__() / 100,
                                                              torch_dataset.__len__() / 100])
@@ -33,7 +33,7 @@ testloader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size_val
 
 
 class Encoder(nn.Module):
-    def __init__(self, factor=0.5, n_mito_input_layer=cancer_type_dataset.n_input_layer, n_cancer_types=2,
+    def __init__(self, factor=0.5, n_mito_input_layer=torch_dataset_cancer.n_input_layer, n_cancer_types=2,
                  n_latent_vector=100, n_reduction_layers=2):
         super(Encoder, self).__init__()
         self.n_reduction_layers = n_reduction_layers
@@ -73,7 +73,7 @@ class Encoder(nn.Module):
 
 class Decoder(nn.Module):
 
-    def __init__(self, factor=0.5, n_mito_input_layer=cancer_type_dataset.n_input_layer, n_cancer_types=2,
+    def __init__(self, factor=0.5, n_mito_input_layer=torch_dataset_cancer.n_input_layer, n_cancer_types=2,
                  n_latent_vector=100, n_reduction_layers=2):
         super(Decoder, self).__init__()
         self.n_reduction_layers = n_reduction_layers
@@ -108,15 +108,15 @@ class Decoder(nn.Module):
 
 
 class VAE_GAN_Generator(nn.Module):
-    def __init__(self, factor=0.5, n_mito_input_layer=cancer_type_dataset.n_input_layer, n_cancer_types=2,
+    def __init__(self, factor=0.5, n_mito_input_layer=torch_dataset_cancer.n_input_layer, n_cancer_types=2,
                  n_latent_vector=100, n_reduction_layers=2):
         super(VAE_GAN_Generator, self).__init__()
         self.n_reduction_layers = n_reduction_layers
         self.n_latent_vector = n_latent_vector
 
-        self.encoder = Encoder(factor=0.5, n_mito_input_layer=cancer_type_dataset.n_input_layer, n_cancer_types=2,
+        self.encoder = Encoder(factor=0.5, n_mito_input_layer=torch_dataset_cancer.n_input_layer, n_cancer_types=2,
                                n_latent_vector=100, n_reduction_layers=2)
-        self.decoder = Decoder(factor=0.5, n_mito_input_layer=cancer_type_dataset.n_input_layer, n_cancer_types=2,
+        self.decoder = Decoder(factor=0.5, n_mito_input_layer=torch_dataset_cancer.n_input_layer, n_cancer_types=2,
                                n_latent_vector=100, n_reduction_layers=2)
 
     def forward(self, x):
@@ -128,7 +128,7 @@ class VAE_GAN_Generator(nn.Module):
 
 class Discriminator(nn.Module):
 
-    def __init__(self, factor=0.5, n_mito_input_layer=cancer_type_dataset.n_input_layer, n_cancer_types=2,
+    def __init__(self, factor=0.5, n_mito_input_layer=torch_dataset_cancer.n_input_layer, n_cancer_types=2,
                  n_latent_vector=100, n_reduction_layers=2):
         super(Discriminator, self).__init__()
         # self.factor = factor

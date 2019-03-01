@@ -5,7 +5,7 @@ import torch.optim as optim
 import os
 import numpy as np
 import constants
-from cancer_type_dataset import CancerTypesDataset
+from torch_dataset_cancer import CancerTypesDataset
 import simplejson as json
 from utils.param_builder import build_gdc_params
 import matplotlib
@@ -18,7 +18,7 @@ import matplotlib.colors as ml_colors
 
 from matplotlib.lines import Line2D
 
-from cancer_type_dataset import CANCER_TYPES
+from torch_dataset_cancer import CANCER_TYPES
 
 EPOCHS=10
 

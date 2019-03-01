@@ -5,8 +5,8 @@ import torch.optim as optim
 import os
 import numpy as np
 import constants
-from cancer_type_dataset import CancerTypesDataset
-import cancer_type_dataset
+from torch_dataset_cancer import CancerTypesDataset
+import torch_dataset_cancer
 import simplejson as json
 from utils.param_builder import build_gdc_params
 
@@ -31,12 +31,16 @@ batch_size_val=10
 def loss_function(recon_x, x, mu, logvar):
     BCE = F.binary_cross_entropy(recon_x, x, reduction='sum')
 
+    # see Appendix B from VAE paper:
+    # Kingma and Welling. Auto-Encoding Variational Bayes. ICLR, 2014
+    # https://arxiv.org/abs/1312.6114
+    # 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
     KLD = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
 
     return BCE + KLD
 
-datasets=cancer_type_dataset.CANCER_TYPES
-torch_dataset=CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=["{}".format(x,i_x) for i_x, x in enumerate(cancer_type_dataset.CANCER_TYPES)])
+datasets=torch_dataset_cancer.CANCER_TYPES
+torch_dataset=CancerTypesDataset(dataset_names=torch_dataset_cancer.CANCER_TYPES, meta_groups_files=torch_dataset_cancer.META_GROUPS, metagroups_names=["{}_{}".format(x.split("/")[1].split(".")[0], i_x) for i_x, x in enumerate(torch_dataset_cancer.META_GROUPS)])
 train_dataset,test_dataset = torch.utils.data.random_split(torch_dataset, [torch_dataset.__len__()-torch_dataset.__len__()/100, torch_dataset.__len__()/100])
 
 print "train: {}, test: {}".format(len(train_dataset), len(test_dataset))
@@ -49,148 +53,156 @@ testloader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size_val
 
 net = vae_bn_after_relu_flex_model.Net(n_reduction_layers=2 ,factor=0.5,n_latent_vector=2 )
 load_model=True # False
-if load_model:
-   PATH= "/home/hag007/Desktop/nn/VAE_model" # "/specific/netapp5/gaga/hagailevi/evaluation/bnet/output/VAE_model"
+if load_model and os.path.exists(os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model")):
+   PATH="/specific/netapp5/gaga/hagailevi/evaluation/bnet/output/VAE_model"
    net.load_state_dict(torch.load(PATH))
    net.eval()
 
 criterion = nn.BCELoss()
 
 # create your optimizer
-optimizer = optim.Adam(net.parameters(), lr=0.001)
+optimizer = optim.Adam(net.parameters(), lr=0.0005)
 
-# for epoch in range(0, 100000):  # loop over the dataset multiple times
-#
-#     train_loss = 0.0
-#     val_loss = 0.0
-#
-#     for i, data in enumerate(trainloader, 0):
-#
-#         # get the inputs
-#         inputs, labels = data
-#
-#         # zero the parameter gradients
-#         optimizer.zero_grad()
-#
-#         # forward + backward + optimize
-#         outputs, z, mu, var = net(inputs)
-#
-#         loss = loss_function(outputs, inputs, mu, var)
-#         loss.backward()
-#         train_loss += loss.item()
-#         optimizer.step()
-#
-#         # print statistics
-#         if i % 10 == 9:  # print every 2000 mini-batches
-#             print('[%d, %5d] train loss: %.3f' %
-#                   (epoch + 1, i + 1, train_loss / 100))
-#             train_loss = 0.0
-#
-#     torch.save(net.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model"))
-#
-#     for i, data in enumerate(testloader, 0):
-#         with torch.no_grad():
-#             # get the inputs
-#             inputs, labels = data
-#
-#             # forward + backward + optimize
-#             outputs, z, mu, var = net(inputs)
-#
-#             loss = loss_function(outputs, inputs, mu, var)
-#             val_loss += loss.item()
-#
-#     # print statistics
-#
-#     print('[%d, %5d] val loss: %.3f' %
-#           (epoch + 1, i + 1, val_loss / 100))
-#     val_loss = 0.0
-#
-#     ###########################
 
-correct = 0
-total = 0
-X = None
-X_z = None
-X_mu = None
-X_var = None
-y = []
+min_epoch=-1
+min_val_loss=10000000
+for epoch in range(0, 100000):  # loop over the dataset multiple times
 
-with torch.no_grad():
+    train_loss = 0.0
+    val_loss = 0.0
+
     for i, data in enumerate(trainloader, 0):
-        features, labels = data
-        _, labels = torch.max(labels, 1)
-        outputs, z, mu, var = net(features)
-        X_z = np.append(X_z, z, axis=0) if X_z is not None else z
-        X_mu=np.append(X_mu, mu, axis=0) if X_mu is not None else mu
-        X_var=np.append(X_var, var, axis=0) if X_var is not None else var
-        y = np.append(y, labels)
 
-print "len samples: {}".format(len(X_mu))
-colormap = cm.jet
-label_ids_unique = np.unique(y)
-label_ids = y
+        # get the inputs
+        inputs, labels = data
 
-n_components = 2
-fig = plt.figure(1, figsize=(20, 20))
-plt.clf()
-if n_components == 3:
-    ax = fig.add_subplot(111, projection='3d')
-    ax.scatter(X_z[:, 0], X_z[:, 1], X_z[:, 2], c=y, cmap='jet')
-if n_components == 2:
-    ax = fig.add_subplot(111)
-    ax.scatter(X_z[:, 0], X_z[:, 1], c=y, cmap='jet')
+        # zero the parameter gradients
+        optimizer.zero_grad()
 
-colorlist_unique = [ml_colors.rgb2hex(colormap(a)) for a in
-                    label_ids_unique / float(max(label_ids))]
-patches = [Line2D([0], [0], marker='o', color='gray', label=a,
-                  markerfacecolor=c) for a, c in
-           zip(torch_dataset.get_labels_unique(), colorlist_unique)]
-ax.legend(handles=patches)
+        # forward + backward + optimize
+        outputs, z, mu, var = net(inputs)
 
-plt.savefig(
-    os.path.join(constants.BASE_PROFILE, "output", "AE_by_samples_z.png"))
+        loss = loss_function(outputs, inputs, mu, var)
+        loss.backward()
+        train_loss += loss.item()
+        optimizer.step()
 
-n_components = 2
-fig = plt.figure(1, figsize=(20, 20))
-plt.clf()
-if n_components == 3:
-    ax = fig.add_subplot(111, projection='3d')
-    ax.scatter(X_mu[:, 0], X_mu[:, 1], X_mu[:, 2], c=y, cmap='jet')
-if n_components == 2:
-    ax = fig.add_subplot(111)
-    ax.scatter(X_mu[:, 0], X_mu[:, 1], c=y, cmap='jet')
+        # print statistics
+        if i % 10 == 9:  # print every 2000 mini-batches
+            print('[%d, %5d] train loss: %.3f' %
+                  (epoch + 1, i + 1, train_loss / 100))
+            train_loss = 0.0
 
-colorlist_unique = [ml_colors.rgb2hex(colormap(a)) for a in
-                    label_ids_unique / float(max(label_ids))]
-patches = [Line2D([0], [0], marker='o', color='gray', label=a,
-                  markerfacecolor=c) for a, c in
-           zip(torch_dataset.get_labels_unique(), colorlist_unique)]
-ax.legend(handles=patches)
+   
+    for i, data in enumerate(testloader, 0):
+        with torch.no_grad():
+            # get the inputs
+            inputs, labels = data
+    
+            # forward + backward + optimize
+            outputs, z, mu, var = net(inputs)
+    
+            loss = loss_function(outputs, inputs, mu, var)
+            val_loss += loss.item()
+    
+    if val_loss/100 < min_val_loss:
+       min_val_loss=val_loss/100
+       min_epoch=epoch
+       torch.save(net.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_model"))
+    print "min epoch: {}, min val: {}".format(min_epoch, min_val_loss) 
+    # print statistics
+    
+    print('[%d, %5d] val loss: %.3f' %
+          (epoch + 1, i + 1, val_loss / 100))
+    val_loss = 0.0
 
-plt.savefig(
-    os.path.join(constants.BASE_PROFILE, "output", "AE_by_samples_mu.png"))
+    ###########################
 
-n_components = 2
-fig = plt.figure(1, figsize=(20, 20))
-plt.clf()
-if n_components == 3:
-    ax = fig.add_subplot(111, projection='3d')
-    ax.scatter(X_var[:, 0], X_var[:, 1], X_var[:, 2], c=y, cmap='jet')
-if n_components == 2:
-    ax = fig.add_subplot(111)
-    ax.scatter(X_var[:, 0], X_var[:, 1], c=y, cmap='jet')
+    if epoch % 100==0: 
+        correct = 0
+        total = 0
+        X = None
+        X_z = None
+        X_mu = None
+        X_var = None
+        y = []
 
-colorlist_unique = [ml_colors.rgb2hex(colormap(a)) for a in
-                    label_ids_unique / float(max(label_ids))]
-patches = [Line2D([0], [0], marker='o', color='gray', label=a,
-                  markerfacecolor=c) for a, c in
-           zip(torch_dataset.get_labels_unique(), colorlist_unique)]
-ax.legend(handles=patches)
+        with torch.no_grad():
+            for i, data in enumerate(testloader, 0):
+                features, labels = data
+                _, labels = torch.max(labels, 1)
+                outputs, z, mu, var = net(features)
+                X_z = np.append(X_z, z, axis=0) if X_z is not None else z
+                X_mu=np.append(X_mu, mu, axis=0) if X_mu is not None else mu
+                X_var=np.append(X_var, var, axis=0) if X_var is not None else var
+                y = np.append(y, labels)
 
-plt.savefig(
-    os.path.join(constants.BASE_PROFILE, "output", "AE_by_samples_logvar.png"))
+        print "len samples: {}".format(len(X_mu))
+        colormap = cm.jet
+        label_ids_unique = np.unique(y)
+        label_ids = y
 
-###########################
+        n_components = 2
+        fig = plt.figure(1, figsize=(20, 20))
+        plt.clf()
+        if n_components == 3:
+            ax = fig.add_subplot(111, projection='3d')
+            ax.scatter(X_z[:, 0], X_z[:, 1], X_z[:, 2], c=y, cmap='jet')
+        if n_components == 2:
+            ax = fig.add_subplot(111)
+            ax.scatter(X_z[:, 0], X_z[:, 1], c=y, cmap='jet')
+
+        colorlist_unique = [ml_colors.rgb2hex(colormap(a)) for a in
+                            label_ids_unique / float(max(label_ids))]
+        patches = [Line2D([0], [0], marker='o', color='gray', label=a,
+                          markerfacecolor=c) for a, c in
+                   zip(torch_dataset.get_labels_unique(), colorlist_unique)]
+        ax.legend(handles=patches)
+
+        plt.savefig(
+            os.path.join(constants.BASE_PROFILE, "output", "AE_by_samples_z_{}.png".format(epoch)))
+
+        n_components = 2
+        fig = plt.figure(1, figsize=(20, 20))
+        plt.clf()
+        if n_components == 3:
+            ax = fig.add_subplot(111, projection='3d')
+            ax.scatter(X_mu[:, 0], X_mu[:, 1], X_mu[:, 2], c=y, cmap='jet')
+        if n_components == 2:
+            ax = fig.add_subplot(111)
+            ax.scatter(X_mu[:, 0], X_mu[:, 1], c=y, cmap='jet')
+
+        colorlist_unique = [ml_colors.rgb2hex(colormap(a)) for a in
+                            label_ids_unique / float(max(label_ids))]
+        patches = [Line2D([0], [0], marker='o', color='gray', label=a,
+                          markerfacecolor=c) for a, c in
+                   zip(torch_dataset.get_labels_unique(), colorlist_unique)]
+        ax.legend(handles=patches)
+
+        plt.savefig(
+            os.path.join(constants.BASE_PROFILE, "output", "AE_by_samples_mu_{}.png".format(epoch)))
+
+        n_components = 2
+        fig = plt.figure(1, figsize=(20, 20))
+        plt.clf()
+        if n_components == 3:
+            ax = fig.add_subplot(111, projection='3d')
+            ax.scatter(X_var[:, 0], X_var[:, 1], X_var[:, 2], c=y, cmap='jet')
+        if n_components == 2:
+            ax = fig.add_subplot(111)
+            ax.scatter(X_var[:, 0], X_var[:, 1], c=y, cmap='jet')
+
+        colorlist_unique = [ml_colors.rgb2hex(colormap(a)) for a in
+                            label_ids_unique / float(max(label_ids))]
+        patches = [Line2D([0], [0], marker='o', color='gray', label=a,
+                          markerfacecolor=c) for a, c in
+                   zip(torch_dataset.get_labels_unique(), colorlist_unique)]
+        ax.legend(handles=patches)
+
+        plt.savefig(
+            os.path.join(constants.BASE_PROFILE, "output", "AE_by_samples_logvar_{}.png".format(epoch)))
+
+    ###########################
 
 correct = 0
 total = 0
