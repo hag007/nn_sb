@@ -8,8 +8,12 @@ import simplejson as json
 from utils.param_builder import build_gdc_params
 
 # CANCER_TYPES=['LUSC', 'LUAD' , 'MESO', 'HNSC', 'BRCA', 'PRAD', 'SKCM', 'UVM', 'KIRP', 'KICH', 'KIRC', 'GBM', 'LGG', 'STAD', 'PAAD']
-CANCER_TYPES=["KIRC", "KIRP", "KICH", "LUSC", "LUAD", "COAD", "BRCA", "STAD", "LIHC", "READ", "PRAD", "BLCA", "ESCA", "HNSC", "THCA", "UCEC"]
-META_GROUPS = ["groups/temp.json", "groups/temp.json" , "groups/temp.json","groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json", "groups/temp.json"]
+CANCER_TYPES= ["ESCA", "KIRC", "KIRP", "KICH", "LUSC", "LUAD", "COAD", "BRCA", "STAD", "LIHC", "READ", "PRAD", "BLCA", "HNSC", "THCA", "UCEC"]
+
+META_GROUPS =  ["groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json",
+                "groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json"] # ["groups/temp.json", "groups/temp.json" , "groups/temp.json","groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json", "groups/temp.json"]
+
+# META_GROUPS =  ["groups/temp.json", "groups/temp.json" , "groups/temp.json","groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json", "groups/temp.json"]
 
 n_input_layer=2000
 
@@ -21,6 +25,7 @@ class CancerTypesDataset(Dataset):
         self.labels = np.array([])
         self.labels_unique=np.array([])
         self.samples = pd.DataFrame()
+        self.survival= pd.DataFrame()
         label_counter=0
         for dataset_name, meta_groups_file, metagroups_name in zip(dataset_names, meta_groups_files, metagroups_names):
             constants.update_dirs(DATASET_NAME_u=dataset_name)
@@ -41,18 +46,25 @@ class CancerTypesDataset(Dataset):
                                                  filter_expression=filter_expression)
 
             gene_expression_top_var, gene_expression_top_var_headers_rows, gene_expression_top_var_headers_columns, labels_assignment, survival_dataset = data
+            self.survival=pd.concat([self.survival, pd.DataFrame(survival_dataset[1:, 1:], index=survival_dataset[1:, 0])])
+
+            self.labels_unique = np.array([x['_name'] for x in meta_groups[0]])
 
             labels_assignment=np.array(labels_assignment)[0]
             for cur_label in np.unique(labels_assignment):
                 cur_label_name=[cur["_name"] for cur in meta_groups[0] if "_label" in cur and int(cur["_label"])==cur_label]
-                cur_label_name = "{}, {}".format(metagroups_name, cur_label_name[0] if len(cur_label_name) > 0 else "unknown")
-                print cur_label_name
+                # cur_label_name = "{}, {}".format(metagroups_name, cur_label_name[0] if len(cur_label_name) > 0 else "unknown")
+                print metagroups_name
+                cur_label_name = "{}".format(cur_label_name[0] if len(cur_label_name) > 0 else "unknown")
+                # print cur_label_name
+                # if "unknown" in cur_label_name: continue
                 df_new = pd.DataFrame(data=gene_expression_top_var[labels_assignment==cur_label], index=gene_expression_top_var_headers_rows[labels_assignment==cur_label],
                                       columns=gene_expression_top_var_headers_columns)
                 self.samples = pd.concat([self.samples, df_new], axis=0)
                 self.labels = np.append(self.labels, [cur_label_name for x in range(len(df_new.index))])
+                # self.labels_unique = np.append(self.labels_unique, [cur_label_name])
                 label_counter+=1
-                self.labels_unique = np.append(self.labels_unique, [cur_label_name])
+
 
         var_th_index =n_input_layer-1
         if var_th_index is not None:
@@ -73,6 +85,15 @@ class CancerTypesDataset(Dataset):
 
         result = torch.tensor(self.samples.iloc[idx, :].values, dtype=torch.float), torch.tensor(
             (self.labels_unique == list(self.labels)[idx]).astype(np.int), dtype=torch.long)
+        # print idx, len(self.samples.index), result[1]
+        return result
+
+    def get_full_item(self, idx):
+        if type(idx)==torch.Tensor:
+            idx=idx.item()
+
+        result = torch.tensor(self.samples.iloc[idx, :].values, dtype=torch.float), torch.tensor(
+            (self.labels_unique == list(self.labels)[idx]).astype(np.int), dtype=torch.long), self.survival.loc[list(self.samples.index)[idx]]
         # print idx, len(self.samples.index), result[1]
         return result
 

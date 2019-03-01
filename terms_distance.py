@@ -47,29 +47,39 @@ print "\n#################################"
 print "# Annotation corpus successfully loaded."
 print "#################################\n"
 
-semsim = SetSemSim(ontology, ac, TSS="SimICNP", MSS="BMA")# GSESAMESemSim(ontology, ac)  # maxSemSim(ontology, ac) #
+semsim = SetSemSim(ontology, ac, TSS="Resnik", MSS="BMA") # SetSemSim(ontology, ac, TSS="GSESAME", MSS="BMA")# GSESAMESemSim(ontology, ac)  # maxSemSim(ontology, ac) #
 
 def calc_similarity(mat_adj, i_x, i_y, x, y, x_score, y_score, norm):
+    # print (i_x, i_y, x, y, x_score, y_score, norm)
     key="{}_{}".format(i_x,i_y)
     key_inv="{}_{}".format(i_y,i_x)
     if mat_adj[key] != -2: return
-    mat_adj[key] = semsim.SemSim(x, y) * (norm-np.abs(x_score-y_score))/norm# , ResnikSemSim(ontology,ac))
-    # print mat_adj[key]
+
+    try:
+        mat_adj[key] = semsim.SemSim(x, y) # * (norm-np.abs(x_score-y_score))/norm# , ResnikSemSim(ontology,ac))
+    except:
+        mat_adj[key] = -1
     if np.isnan(mat_adj[key]):
         mat_adj[key] = -1
     mat_adj[key_inv] = mat_adj[key]
+    # print "done"
 
-def main(base_folder=os.path.join(constants.OUTPUT_GLOBAL_DIR,"top_20000_14"), pf=15):
+
+PVAL="emp_pval" # "pval"# "P-value"
+QVAL="qval"# "FDR q-value"
+METHOD='average'
+def main(base_folder="/home/hag007/Desktop/aggregate_report/oob", pf=5):
 
     go_terms_tables={}
     go_terms = {}
     norm=0
-    for cur in [x for x in os.listdir(base_folder) if not os.path.isdir(x) and x.startswith("GO_") and x.endswith(".xls")]:
-        go_terms_tables[cur[3:]]=pd.read_csv(os.path.join(base_folder, cur),sep='\t', index_col=0)
-        norm=max(-np.log10(go_terms_tables[cur[3:]]["P-value"].min()),norm)
+    for cur in [x for x in os.listdir(base_folder) if not os.path.isdir(x) and x and x.endswith(".tsv")]:
+
+        go_terms_tables[cur[9:-15]]=pd.read_csv(os.path.join(base_folder, cur),sep='\t', index_col=0)
+        norm=max(-np.log10(go_terms_tables[cur[9:-15]][PVAL].min()),norm)
 
     for k,v in go_terms_tables.iteritems():
-        go_terms[k]=v[v["FDR q-value"]<=0.05][v["B"]<=500][v["B"]>=10] #
+        go_terms[k]= v.dropna() # v[v["passed_fdr"]==True ] # v[v[QVAL]<=0.05][v["B"]<=500][v["B"]>=10]
 
     df_summary=pd.DataFrame()
     for cur_x in go_terms.keys():
@@ -89,7 +99,7 @@ def main(base_folder=os.path.join(constants.OUTPUT_GLOBAL_DIR,"top_20000_14"), p
                 params=[]
                 for i_x, x in enumerate(go_terms[cur_x].index):
                     for i_y, y in enumerate(go_terms[cur_y].index):
-                        params.append([calc_similarity, [adj, i_x, i_y, x, y, -np.log10(go_terms[cur_x].loc[x,"P-value"]), -np.log10(go_terms[cur_y].loc[y,"P-value"]), norm]])
+                        params.append([calc_similarity, [adj, i_x, i_y, x, y, -np.log10(go_terms[cur_x].loc[x,PVAL]), -np.log10(go_terms[cur_y].loc[y,PVAL]), norm]])
 
                 p = multiprocessing.Pool(pf)
                 p.map(func_star,params)
@@ -123,9 +133,9 @@ def main(base_folder=os.path.join(constants.OUTPUT_GLOBAL_DIR,"top_20000_14"), p
     print df_summary
     df_summary.to_csv(os.path.join(constants.OUTPUT_GLOBAL_DIR, "cancer_type_go_distance.tsv"), sep='\t')
 
-    distArray = ssd.squareform(df_summary[df_summary.index.values].values)
+    distArray = ssd.squareform(df_summary[df_summary.index.values].values+1)
 
-    linked = linkage(distArray, method='single', metric='euclidean')
+    linked = linkage(distArray, method=METHOD, metric='euclidean')
 
     plt.figure(figsize=(10, 7))
     dendrogram(linked,
@@ -141,7 +151,7 @@ if __name__ == "__main__":
     parser.add_argument('--datasets', dest='datasets', default="SOC")
     parser.add_argument('--prefix', dest='prefix', default="GE")
     parser.add_argument('--algos', dest='algos', default="jactivemodules_greedy")
-    parser.add_argument('--pf', dest='pf', default=30)
+    parser.add_argument('--pf', dest='pf', default=4)
     args = parser.parse_args()
 
     prefix = args.prefix

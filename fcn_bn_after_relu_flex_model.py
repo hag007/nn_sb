@@ -1,12 +1,12 @@
 import torch
 import torch.nn as nn
-import cancer_type_dataset
+import torch_dataset_cancer
 from torch.nn import functional as F
 import numpy as np
 
 class Net(nn.Module):
 
-    def __init__(self, factor=0.5, n_mito_input_layer=cancer_type_dataset.n_input_layer, n_cancer_types=2, n_latent_vector=2, n_reduction_layers=2):
+    def __init__(self, factor=0.5, n_mito_input_layer=torch_dataset_cancer.n_input_layer, n_cancer_types=2, n_latent_vector=2, n_reduction_layers=2):
         super(Net, self).__init__()
         # self.factor = factor
         # self.n_mito_input_layer=n_mito_input_layer
@@ -18,7 +18,7 @@ class Net(nn.Module):
 
         self.fc_l = nn.Linear(int(n_mito_input_layer * factor ** n_reduction_layers), n_latent_vector)
         self.fc_l_bn = nn.BatchNorm1d(n_latent_vector)
-        self.fc_out = nn.Linear(n_latent_vector, len(cancer_type_dataset.CANCER_TYPES))
+        self.fc_out = nn.Linear(n_latent_vector, len(torch_dataset_cancer.CANCER_TYPES))
 
 
     def forward(self, x):

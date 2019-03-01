@@ -147,17 +147,20 @@ def deg(tested_gene_file_name, total_gene_file_name, gene_expression_file_name, 
             pvals.append((group_0_expression[i][0], direction, mean_differences, cur_pval, mean_foldchange))
 
     pvals.sort(key=lambda x: (x[3]), reverse=False) # x[1],
-    fdr_results = fdrcorrection0([x[3] for x in pvals], alpha=0.005, method='indep', is_sorted=False)
+    fdr_results = fdrcorrection0([x[3] for x in pvals], alpha=0.05, method='indep', is_sorted=False)
     pvals = [(cur_pval[0],cur_pval[1],cur_pval[2],cur_pval[3], fdr_results[1][i], cur_pval[4]) for i, cur_pval in enumerate(pvals)]
     true_counter = len([cur for cur in fdr_results[0] if cur == True])
     print "true hypothesis: {}/{}".format(true_counter, np.size(fdr_results[0]))
     # sort gene_id-pval pairs by pval
-    with file(os.path.join(constants.OUTPUT_GLOBAL_DIR, "deg_{}_{}_{}.txt".format(constants.CANCER_TYPE, groups_name, time.time())), "w+") as f:
+    with file(os.path.join(constants.OUTPUT_GLOBAL_DIR, "deg", "deg_{}_{}_{}.txt".format(constants.CANCER_TYPE, groups_name, time.time())), "w+") as f:
         output = ""
         df_deg=pd.DataFrame()
         for cur_pval in pvals:
-            df_deg=df_deg.append({"id" : pvals[0], "direction" : pvals[1], "mean_differences" : pvals[2], "pval" : pvals[3], "foldchange" : pvals[4]}, ignore_index=True)
+            df_deg=df_deg.append({"id" : cur_pval[0], "direction" : cur_pval[1], "mean_differences" : cur_pval[2], "pval" : cur_pval[3], "qval" : cur_pval[4] , "foldchange" : cur_pval[5]}, ignore_index=True)
             output+="{}\t{}\t{}\t{}\t{}\t{}\n".format(*cur_pval)
+
+        df_deg=df_deg.set_index("id")
+        df_deg.to_csv(os.path.join(constants.OUTPUT_GLOBAL_DIR, "deg", "deg_{}.tsv").format(constants.CANCER_TYPE), sep='\t')
         f.write(output)
         print "pval saved to file"
         return df_deg
@@ -168,7 +171,7 @@ if __name__=="__main__":
 
     groups_name = "temp"
     groups = json.load(file("../groups/{}.json".format(groups_name)))
-    datasets=["KIRC", "KIRP", "KICH", "LUSC", "LUAD", "COAD", "BRCA", "CHOL", "GBM", "PAAD", "STAD", "LIHC", "READ", "PRAD"]    
+    datasets=["ESCA", "KIRC", "KIRP", "KICH", "LUSC", "LUAD", "COAD", "BRCA", "STAD", "LIHC", "READ", "PRAD", "BLCA", "HNSC", "THCA", "UCEC"]
     for cur_ds in datasets:
         for cur_group in groups:
             cur_group["disease_code"] = {
@@ -190,7 +193,7 @@ if __name__=="__main__":
            groups_name=cur_ds)
 
         ids=[]
-        ids=np.append(df_deg.loc[:,"id"].values,ids)
+        ids=np.append(df_deg.index.values,ids)
 
     print "\n".join(list(set(list(ids))))
 

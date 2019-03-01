@@ -5,7 +5,7 @@ import torch.optim as optim
 import os
 import numpy as np
 import constants
-from cancer_type_dataset import CancerTypesDataset
+from torch_dataset_cancer import CancerTypesDataset
 import simplejson as json
 from utils.param_builder import build_gdc_params
 import matplotlib.pyplot as plt

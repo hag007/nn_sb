@@ -5,8 +5,8 @@ import torch.optim as optim
 import os
 import numpy as np
 import constants
-from cancer_type_dataset import CancerTypesDataset
-import cancer_type_dataset
+from torch_dataset_cancer import CancerTypesDataset
+import torch_dataset_cancer
 import simplejson as json
 from utils.param_builder import build_gdc_params
 
@@ -42,8 +42,8 @@ def loss_function(recon_x, x, mu, logvar):
 
     return BCE + KLD
 
-datasets=cancer_type_dataset.CANCER_TYPES
-trainset = CancerTypesDataset(dataset_names=cancer_type_dataset.CANCER_TYPES, meta_groups_files=cancer_type_dataset.META_GROUPS, metagroups_names=cancer_type_dataset.CANCER_TYPES)
+datasets=torch_dataset_cancer.CANCER_TYPES
+trainset = CancerTypesDataset(dataset_names=torch_dataset_cancer.CANCER_TYPES, meta_groups_files=torch_dataset_cancer.META_GROUPS, metagroups_names=torch_dataset_cancer.CANCER_TYPES)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=10,
                                           shuffle=True, num_workers=5, pin_memory=True)
 testset = trainset
@@ -51,7 +51,7 @@ testloader = trainloader
 
 criterion = nn.BCELoss()
 
-net = vae_bn_after_relu_flex_model.Net(n_reduction_layers=2, factor=0.5, n_latent_vector=100)
+net = vae_bn_after_relu_flex_model.Net(n_reduction_layers=2, factor=0.5, n_latent_vector=2)
 
 # create your optimizer
 optimizer = optim.Adam(net.parameters(), lr=0.00001)

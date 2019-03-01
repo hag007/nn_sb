@@ -1,14 +1,19 @@
+import argparse
+import numpy as np
+import os
+import time
 import torch
+import torch.utils.data
 import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data.dataset import Dataset
+from torch.autograd import Variable
 import torch_dataset_cancer
 from torch.nn import functional as F
-import numpy as np
-
-
+import constants
 
 class Encoder(nn.Module):
-
-    def __init__(self, factor=0.5, n_mito_input_layer=torch_dataset_cancer.n_input_layer, n_cancer_types=2, n_latent_vector=2, n_reduction_layers=2):
+    def __init__(self, factor=0.5, n_mito_input_layer=torch_dataset_cancer.n_input_layer, n_cancer_types=2, n_latent_vector=100, n_reduction_layers=2):
         super(Encoder, self).__init__()
         self.n_reduction_layers = n_reduction_layers
         self.n_latent_vector = n_latent_vector
@@ -42,12 +47,12 @@ class Encoder(nn.Module):
     def forward(self, x):
         mu, logvar = self.encode(x)
         z = self.reparameterize(mu, logvar)
-        return z, mu, logvar
+        return z
 
 
 class Decoder(nn.Module):
 
-    def __init__(self, factor=0.5, n_mito_input_layer=torch_dataset_cancer.n_input_layer, n_cancer_types=2, n_latent_vector=2, n_reduction_layers=2):
+    def __init__(self, factor=0.5, n_mito_input_layer=torch_dataset_cancer.n_input_layer, n_cancer_types=2, n_latent_vector=100, n_reduction_layers=2):
         super(Decoder, self).__init__()
         self.n_reduction_layers = n_reduction_layers
         self.n_latent_vector= n_latent_vector
@@ -76,15 +81,31 @@ class Decoder(nn.Module):
 
 
     def forward(self, input):
-        z, mu, logvar = input
+        z= input
+        
         decoded=self.decode(z)
-        return decoded, z ,mu, logvar
+        return decoded
 
+
+class VAE_GAN_Generator(nn.Module):
+    def __init__(self, factor=0.5, n_mito_input_layer=torch_dataset_cancer.n_input_layer, n_cancer_types=2, n_latent_vector=100, n_reduction_layers=2):
+        super(VAE_GAN_Generator, self).__init__()
+        self.n_reduction_layers = n_reduction_layers
+        self.n_latent_vector= n_latent_vector
+
+        self.encoder = Encoder(factor=0.5, n_mito_input_layer=torch_dataset_cancer.n_input_layer, n_cancer_types=2, n_latent_vector=n_latent_vector, n_reduction_layers=2)
+        self.decoder = Decoder(factor=0.5, n_mito_input_layer=torch_dataset_cancer.n_input_layer, n_cancer_types=2, n_latent_vector=n_latent_vector, n_reduction_layers=2)
+
+    def forward(self, x):
+        z, mu, logvar = self.encoder(x)
+        rec_images = self.decoder(z)
+
+        return mu, logvar, rec_images
 
 
 class Discriminator(nn.Module):
 
-    def __init__(self, factor=0.5, n_mito_input_layer=torch_dataset_cancer.n_input_layer, n_cancer_types=2, n_latent_vector=2, n_reduction_layers=2):
+    def __init__(self, factor=0.5, n_mito_input_layer=torch_dataset_cancer.n_input_layer, n_cancer_types=2, n_latent_vector=100, n_reduction_layers=2):
         super(Discriminator, self).__init__()
         # self.factor = factor
         # self.n_mito_input_layer=n_mito_input_layer
@@ -100,15 +121,13 @@ class Discriminator(nn.Module):
         self.fc_bn_dis_l = nn.BatchNorm1d(n_latent_vector)
         self.fc_out = nn.Linear(int(n_latent_vector), 1)
 
-
-
     def discriminate(self, x_hat):
 
         h = x_hat
         for cur in np.arange(1, self.n_reduction_layers + 1):
             h = getattr(self, "fc_bn_dis" + str(cur))(F.relu(getattr(self, "fc_dis" + str(cur))(h)))
 
-        l = F.sigmoid(getattr(self, "fc_dis_l")(h))
+        l=F.sigmoid(getattr(self, "fc_dis_l")(h))
 
 
         out_dis = F.sigmoid(self.fc_out(getattr(self, "fc_bn_dis_l")(l)))
@@ -116,61 +135,12 @@ class Discriminator(nn.Module):
         return out_dis, l
 
     def forward(self, input):
-        encoded, z, mu, logvar = input
+        encoded = input
         dis_prediction, l =self.discriminate(encoded)
-        return dis_prediction, l, encoded, z, mu, logvar
+        return dis_prediction, l
 
 
-class VAE(nn.Module):
-
-    def __init__(self, encoder, decoder):
-        super(VAE, self).__init__()
-
-        self.encoder=encoder
-        self.decoder=decoder
-
-        self.n_reduction_layers = encoder.n_reduction_layers
-        self.n_latent_vector = encoder.n_latent_vector
-
-
-    def forward(self, input):
-        z, mu, logvar =self.encoder(input)
-        decoded = self.decoder.decode(z)
-        return decoded, z, mu, logvar
-
-
-class GAN(nn.Module):
-
-    def __init__(self, decoder, discriminator):
-        super(GAN, self).__init__()
-
-        self.decoder = decoder
-        self.discriminator = discriminator
-
-        self.n_reduction_layers = decoder.n_reduction_layers
-        self.n_latent_vector = decoder.n_latent_vector
-
-    def forward(self, input):
-        z, mu, logvar = input
-        decoded = self.decoder.decode([z, mu, logvar])
-        auth, l = self.discriminator.discriminate(decoded, z, mu, logvar)
-        return auth, l, decoded, z, mu, logvar
-
-
-
-class VAEGAN(nn.Module):
-
-    def __init__(self, VAE, discriminator):
-        super(VAEGAN, self).__init__()
-
-        self.vae = VAE
-        self.discriminator = discriminator
-
-        self.n_reduction_layers = VAE.n_reduction_layers
-        self.n_latent_vector = VAE.n_latent_vector
-
-    def forward(self, input):
-        encoded, z, mu, logvar = self.vae(input)
-        auth, l, decoded, z, mu, logvar = self.discriminator([encoded, z, mu, logvar])
-        return auth, l, decoded, z, mu, logvar
-
+    def similarity(self, x):
+        batch_size = x.size()[0]
+        outputs, features = self.discriminate(x)
+        return features

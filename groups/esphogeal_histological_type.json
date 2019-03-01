@@ -1,0 +1,44 @@
+[
+    {
+      "_label": "1",
+      "_name" : "normal",
+      "sample_type.samples": {
+        "type": "string",
+        "value": [
+          "Solid Tissue Normal"
+        ]
+      }
+    },
+     {
+       "_label": "2",
+      "_name" : "tumor_s",
+      "sample_type.samples": {
+        "type": "string",
+        "value": [
+          "Primary Tumor"
+        ]
+      },
+       "histological_type": {
+        "type": "string",
+        "value": [
+          "Esophagus Squamous Cell Carcinoma"
+        ]
+      }
+    },
+     {
+       "_label": "3",
+      "_name" : "tumor_a",
+      "sample_type.samples": {
+        "type": "string",
+        "value": [
+          "Primary Tumor"
+        ]
+      },
+       "histological_type": {
+        "type": "string",
+        "value": [
+          "Esophagus Adenocarcinoma, NOS"
+        ]
+      }
+    }
+  ]

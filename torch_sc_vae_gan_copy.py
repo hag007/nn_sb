@@ -8,7 +8,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data.dataset import Dataset
 from torch.autograd import Variable
-import torch_dataset_cancer
+import torch_dataset_sc
 from torch.nn import functional as F
 import constants
 import torch_vae_gan_copy_model
@@ -19,8 +19,8 @@ num_workers=25
 
 criterion = nn.BCELoss(reduction='sum')
 
-datasets=torch_dataset_cancer.CANCER_TYPES
-torch_dataset=torch_dataset_cancer.CancerTypesDataset(dataset_names=torch_dataset_cancer.CANCER_TYPES, meta_groups_files=torch_dataset_cancer.META_GROUPS, metagroups_names=["{}_{}".format(x, i_x) for i_x, x in enumerate(torch_dataset_cancer.CANCER_TYPES)])
+datasets=torch_dataset_sc.DATASETS
+torch_dataset=torch_dataset_sc.SingleCellDataset(dataset_names=torch_dataset_sc.DATASETS, meta_groups_files=torch_dataset_sc.DATASETS, metagroups_names=["{}_{}".format(x, i_x) for i_x, x in enumerate(torch_dataset_sc.DATASETS)])
 train_dataset,test_dataset = torch.utils.data.random_split(torch_dataset, [torch_dataset.__len__()-torch_dataset.__len__()/100, torch_dataset.__len__()/100])
 
 # define constant 
