@@ -9,7 +9,25 @@ def build_gdc_params(dataset, data_normalizaton):
     mirna_file_name = "TCGA-{}.mirna.tsv".format(dataset)
     return gene_expression_file_name, phenotype_file_name, survival_file_name, mutation_file_name, mirna_file_name, pval_preprocessing_file_name
 
+def build_icgc_params(dataset, data_normalizaton):
+    gene_expression_file_name = "{}.htseq_{}.tsv".format(dataset, data_normalizaton)
+    pval_preprocessing_file_name = "_" # "pvals_protein_coding_{}.txt".format(data_normalizaton)
+    phenotype_file_name = "_" # "TCGA-{}.GDC_phenotype.tsv".format(dataset)
+    survival_file_name = "_" # "TCGA-{}.survival.tsv".format(dataset)
+    mutation_file_name = "_" # "TCGA-{}.mutect2_snv.tsv".format(dataset)
+    mirna_file_name = "_" # "TCGA-{}.mirna.tsv".format(dataset)
+    return gene_expression_file_name, phenotype_file_name, survival_file_name, mutation_file_name, mirna_file_name, pval_preprocessing_file_name
+
 def build_tcga_params(dataset, data_normalizaton):
+    gene_expression_file_name = "HiSeqV2.tsv"
+    pval_preprocessing_file_name = "_" # "pvals_protein_coding_{}.txt".format(data_normalizaton)
+    phenotype_file_name = "{}_clinicalMatrix".format(dataset[5:])
+    survival_file_name = "_" # "TCGA-{}.survival.tsv".format(dataset)
+    mutation_file_name = "_" # "TCGA-{}.mutect2_snv.tsv".format(dataset)
+    mirna_file_name = "miRNA_HiSeq_gene.gz" # "TCGA-{}.mirna.tsv".format(dataset)
+    return gene_expression_file_name, phenotype_file_name, survival_file_name, mutation_file_name, mirna_file_name, pval_preprocessing_file_name
+
+def build_gdc_tcga_params(dataset, data_normalizaton):
     gene_expression_file_name = "TCGA-{}.htseq_{}.tsv".format(dataset, data_normalizaton)
     pval_preprocessing_file_name = "pvals_protein_coding_{}.txt".format(data_normalizaton)
     phenotype_file_name = "{}_clinicalMatrix".format(dataset)
@@ -36,3 +54,4 @@ def build_params(type="DEFAULT", dataset=None, data_normalizaton=None):
         return build_default_params()
     else:
         raise ValueError
+

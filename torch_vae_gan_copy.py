@@ -15,13 +15,20 @@ import torch_vae_gan_copy_model
 
 batch_size_train=100
 batch_size_val=10
-num_workers=25
+num_workers=50
 
 criterion = nn.BCELoss(reduction='sum')
 
 datasets=torch_dataset_cancer.CANCER_TYPES
 torch_dataset=torch_dataset_cancer.CancerTypesDataset(dataset_names=torch_dataset_cancer.CANCER_TYPES, meta_groups_files=torch_dataset_cancer.META_GROUPS, metagroups_names=["{}_{}".format(x, i_x) for i_x, x in enumerate(torch_dataset_cancer.CANCER_TYPES)])
-train_dataset,test_dataset = torch.utils.data.random_split(torch_dataset, [torch_dataset.__len__()-torch_dataset.__len__()/100, torch_dataset.__len__()/100])
+train_dataset,test_dataset = torch.utils.data.random_split(torch_dataset, [torch_dataset.__len__()-torch_dataset.__len__()/10, torch_dataset.__len__()/10])
+
+print "n_train samples: {}, n_test samples: {}".format(len(train_dataset), len(test_dataset))
+
+trainloader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size_train, shuffle=True, num_workers=num_workers, pin_memory=True)
+
+testloader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size_val, shuffle=True, num_workers=num_workers, pin_memory=True)
+
 
 # define constant 
 max_epochs = 100000
@@ -39,7 +46,7 @@ opt_dec = optim.Adam(G.decoder.parameters(), lr=lr)
 opt_dis = optim.Adam(D.parameters(), lr=lr * alpha)
 
 fixed_noise = Variable(torch.randn(batch_size_train, n_latent_vector))
-data, _ = next(iter(torch_dataset))
+data, _ = next(iter(trainloader))
 fixed_batch = Variable(data)
 min_val=1000000
 min_val_epoch=-1
@@ -50,15 +57,15 @@ for epoch in range(max_epochs):
     print "cur epoch: {}".format(epoch)
     D_real_list, D_rec_enc_list, D_rec_noise_list, D_list = [], [], [], []
     g_loss_list, rec_loss_list, prior_loss_list = [], [], []
-    for i, data_tuple in enumerate(torch_dataset,0):
+    for i, data_tuple in enumerate(trainloader,0):
         data, _ = data_tuple
         batch_size = data.size()[0]
         ones_label = Variable(torch.ones(batch_size))
         zeros_label = Variable(torch.zeros(batch_size))
 
         datav = Variable(data)
-        mean, logvar, rec_enc = G(datav)
-
+        rec_enc = G(datav)
+        mean, logvar = G.encoder.encode(datav)
         noisev = Variable(torch.randn(batch_size, n_latent_vector))
         rec_noise = G.decoder(noisev)
 
@@ -120,12 +127,13 @@ for epoch in range(max_epochs):
         err_enc.backward()
         opt_enc.step()
 
-    for i, data in enumerate(torch_dataset, 0):
+    for i, data in enumerate(testloader, 0):
         with torch.no_grad():
             inputs, labels = data
 
-            mean, logvar, rec_enc = G(datav)    
-            
+            rec_enc = G(datav)    
+            mean, logvar = G.encoder.encode(datav)
+    
             prior_loss = 1 + logvar - mean.pow(2) - logvar.exp()
             prior_loss = (-0.5 * torch.sum(prior_loss)) #  
         
@@ -167,4 +175,10 @@ for epoch in range(max_epochs):
         torch.save(G.encoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_ENC_mdl"))
         torch.save(G.decoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_DEC_mdl"))
         torch.save(D.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_DIS_mdl"))
+
+    torch.save(G.encoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_ENC_mdl_"))
+    torch.save(G.decoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_DEC_mdl_"))
+    torch.save(D.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_DIS_mdl_"))
+
     print "min_val epoch: {}, min_val: {}".format(min_val_epoch, min_val)
+

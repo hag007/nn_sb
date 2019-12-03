@@ -444,8 +444,13 @@ def load_integrated_ge_data(tested_gene_list_file_name=None, total_gene_list_fil
     labels_assignment = None
     if meta_groups is not None:
         print "clustering patients by groups"
-        labels_assignment = labels_assignments(meta_groups, phenotype_file_name,
+
+        phenotype_list_path = constants.TCGA_DATA_DIR
+        if os.path.exists(os.path.join(phenotype_list_path, phenotype_file_name)):
+            labels_assignment = labels_assignments(meta_groups, phenotype_file_name,
                                                tested_gene_expression_headers_columns)
+        else:
+            labels_assignment = [[2 for x in tested_gene_expression_headers_columns]]
 
     if var_th_index is not None:
         print "filtering top vars"
@@ -519,3 +524,4 @@ def num_op_lt(ds_value, q_value):
         return str.isdigit(ds_value) and float(ds_value) < float(q_value)
     except ValueError:
         return False
+

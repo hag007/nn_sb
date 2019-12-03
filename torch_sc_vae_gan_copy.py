@@ -158,13 +158,13 @@ for epoch in range(max_epochs):
               np.mean(prior_loss_list)))
 
     model_base_folder=constants.OUTPUT_GLOBAL_DIR
-    PATH_DISCRIMINATOR= os.path.join(model_base_folder,"GAN_DIS_mdl")
-    PATH_ENCODER= os.path.join(model_base_folder,"GAN_ENC_mdl")
-    PATH_DECODER= os.path.join(model_base_folder,"GAN_DEC_mdl")
+    PATH_DISCRIMINATOR= os.path.join(model_base_folder,"GAN_SC_DIS_mdl")
+    PATH_ENCODER= os.path.join(model_base_folder,"GAN_SC_ENC_mdl")
+    PATH_DECODER= os.path.join(model_base_folder,"GAN_SC_DEC_mdl")
     if min_val > val_loss/100:
         min_val=val_loss/100
         min_val_epoch=epoch
-        torch.save(G.encoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_ENC_mdl"))
-        torch.save(G.decoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_DEC_mdl"))
-        torch.save(D.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_DIS_mdl"))
+        torch.save(G.encoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_SC_ENC_mdl"))
+        torch.save(G.decoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_SC_DEC_mdl"))
+        torch.save(D.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "GAN_SC_DIS_mdl"))
     print "min_val epoch: {}, min_val: {}".format(min_val_epoch, min_val)

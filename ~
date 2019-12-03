@@ -19,11 +19,11 @@ num_workers=25
 
 datasets=torch_dataset_cancer.CANCER_TYPES
 torch_dataset=torch_dataset_cancer.CancerTypesDataset(dataset_names=torch_dataset_cancer.CANCER_TYPES, meta_groups_files=torch_dataset_cancer.META_GROUPS, metagroups_names=["{}_{}".format(x, i_x) for i_x, x in enumerate(torch_dataset_cancer.CANCER_TYPES)])
-train_dataset,test_dataset = torch.utils.data.random_split(torch_dataset, [torch_dataset.__len__()-torch_dataset.__len__()/10, torch_dataset.__len__()/10])
+train_dataset,test_dataset = torch.utils.data.random_split(torch_dataset, [torch_dataset.__len__()-torch_dataset.__len__()/100, torch_dataset.__len__()/100])
 
 trainloader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size_train,
                                           shuffle=True, num_workers=num_workers, pin_memory=True)
-testloader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size_val,
+testloader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size_test,
                                           shuffle=True, num_workers=num_workers, pin_memory=True)
 # define constant 
 max_epochs = 100000
@@ -100,10 +100,8 @@ for epoch in range(max_epochs):
             inputs, labels = data
 
             # forward + backward + optimize
-            # mean, logvar, rec_enc = G(datav)
-            rec_enc = G(datav)    
-            mean, logvar = G.encoder.encode(datav)
- 
+            mean, logvar, rec_enc = G(datav)
+
             prior_loss = 1 + logvar - mean.pow(2) - logvar.exp()
             prior_loss = (-0.5 * torch.sum(prior_loss)) #  
 
@@ -123,10 +121,6 @@ for epoch in range(max_epochs):
         torch.save(G.encoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_ENC_mdl"))
         torch.save(G.decoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_DEC_mdl"))
         torch.save(D.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_DIS_mdl"))
-
-    torch.save(G.encoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_ENC_mdl_"))
-    torch.save(G.decoder.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_DEC_mdl_"))
-    torch.save(D.state_dict(), os.path.join(constants.OUTPUT_GLOBAL_DIR, "VAE_DIS_mdl_"))
     print "min_val epoch: {}, min_val: {}".format(min_val_epoch, min_val)
 
 

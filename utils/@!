@@ -5,17 +5,17 @@ import torch
 import infra
 import constants
 import simplejson as json
-from utils.param_builder import build_gdc_params, build_tcga_params, build_icgc_params
+from utils.param_builder import build_gdc_params, build_tcga_params
 
 # CANCER_TYPES=['LUSC', 'LUAD' , 'MESO', 'HNSC', 'BRCA', 'PRAD', 'SKCM', 'UVM', 'KIRP', 'KICH', 'KIRC', 'GBM', 'LGG', 'STAD', 'PAAD']
-CANCER_TYPES= ["KIRC" , "KIRP", "LUSC", "LUAD", "COAD", "BRCA", "STAD", "LIHC", "READ", "PRAD", "BLCA", "HNSC", "THCA", "UCEC", "OV", "PAAD"]
-CANCER_TYPES = ["ICGC_{}_US".format(a) for a in CANCER_TYPES]
+CANCER_TYPES= ["ESCA", "KIRC"] # , "KIRP", "KICH", "LUSC"] # , "LUAD", "COAD", "BRCA", "STAD", "LIHC", "READ", "PRAD", "BLCA", "HNSC", "THCA", "UCEC"]
+CANCER_TYPES = ["TCGA_{}".format(a) for a in CANCER_TYPES]
 
-param_builder_func=build_icgc_params # build_icgc_params  # build_tcga_params # build_gdc_params
+param_builder_func=build_tcga_params # build_gdc_params
 # META_GROUPS =  ["groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json",
 #                 "groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json", "groups/stages.json"] # ["groups/temp.json", "groups/temp.json" , "groups/temp.json","groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json", "groups/temp.json"]
 
-META_GROUPS =  ["groups/temp.json", "groups/temp.json", "groups/temp.json" ,"groups/temp.json", "groups/temp.json" ,  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json", "groups/temp.json"]
+META_GROUPS =  ["groups/temp.json", "groups/temp.json"] #  , "groups/temp.json","groups/temp.json", "groups/temp.json"] # ,  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json",  "groups/temp.json", "groups/temp.json", "groups/temp.json"]
 
 META_GROUPS = ["{}_tcga.json".format(cur[:-5]) for cur in META_GROUPS]
 
@@ -31,11 +31,10 @@ class CancerTypesDataset(Dataset):
         self.samples = pd.DataFrame()
         self.survival= pd.DataFrame()
         label_counter=0
-        all_genes=np.array([])
         for dataset_name, meta_groups_file, metagroups_name in zip(dataset_names, meta_groups_files, metagroups_names):
             constants.update_dirs(DATASET_NAME_u=dataset_name)
             meta_groups = [json.load(file(meta_groups_file))]
-            data_normalizaton = "rsem"
+            data_normalizaton = "fpkm"
             gene_expression_file_name, phenotype_file_name, survival_file_name, mutation_file_name, mirna_file_name, pval_preprocessing_file_name =param_builder_func(
                 dataset=dataset_name, data_normalizaton=data_normalizaton)
 
@@ -54,7 +53,6 @@ class CancerTypesDataset(Dataset):
                                                  filter_expression=filter_expression)
 
             gene_expression_top_var, gene_expression_top_var_headers_rows, gene_expression_top_var_headers_columns, labels_assignment, survival_dataset = data
-            all_genes=np.append(all_genes, gene_expression_top_var_headers_columns)
             if survival_dataset is not None:
                 self.survival=pd.concat([self.survival, pd.DataFrame(survival_dataset[1:, 1:], index=survival_dataset[1:, 0])])
 
@@ -65,35 +63,26 @@ class CancerTypesDataset(Dataset):
                 cur_label_name=[cur["_name"] for cur in meta_groups[0] if "_label" in cur and int(cur["_label"])==cur_label]
                 cur_label_name = "{}, {}".format(metagroups_name, cur_label_name[0] if len(cur_label_name) > 0 else "unknown")
                 print metagroups_name
-                # cur_label_name = "{}".format(cur_label_name[0] if len(cur_label_name) > 0 else "unknown")
+                cur_label_name = "{}".format(cur_label_name[0] if len(cur_label_name) > 0 else "unknown")
                 # print cur_label_name
                 # if "unknown" in cur_label_name: continue
                 df_new = pd.DataFrame(data=gene_expression_top_var[labels_assignment==cur_label], index=gene_expression_top_var_headers_rows[labels_assignment==cur_label],
                                       columns=gene_expression_top_var_headers_columns)
                 self.samples = pd.concat([self.samples, df_new], axis=0)
-                # print "number of nan samples: {}".format(np.sum(np.isnan(np.sum(self.samples.values, axis=0))))
-                # print "shape size: {}".format(df_new.shape)
-                all_genes=np.unique(np.append(all_genes, df_new.columns.values))
-                # print "numnber of all genes: {}. current: {}".format(all_genes.shape[0], df_new.columns.values.shape[0])
-                # print "current nan cols: {}".format(self.samples.columns[np.isnan(np.sum(self.samples.values, axis=0))])
-                # print "current filtered shape: {}".format(self.samples.dropna(axis=1).shape)
                 self.labels = np.append(self.labels, [cur_label_name for x in range(len(df_new.index))])
                 self.labels_unique = np.append(self.labels_unique, [cur_label_name])
                 label_counter+=1
 
-        # print "all genes: {}".format(len(set(all_genes)))
+
         var_th_index =n_input_layer-1
         if var_th_index is not None:
             print "filtering top vars"
-            self.samples=self.samples.dropna(axis=1)
             gene_expression_top_var, gene_expression_top_var_headers_rows, gene_expression_top_var_headers_columns = infra.filter_top_var_genes(
                 self.samples.values.T, self.samples.index.values, self.samples.columns, var_th_index)
             self.samples = pd.DataFrame(data=gene_expression_top_var, index=gene_expression_top_var_headers_rows,
                                         columns=gene_expression_top_var_headers_columns).T
 
-
-        self.samples = self.samples.divide(self.samples.max(axis=1), axis=0)
-        # self.samples = self.samples / self.samples.max()
+        self.samples = self.samples.dropna(axis=1) / self.samples.dropna(axis=1).max()
         print "total shape: {}".format(self.samples.shape)
 
     def __len__(self):
